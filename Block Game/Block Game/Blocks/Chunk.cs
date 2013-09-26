@@ -187,23 +187,20 @@ namespace BlockGame.Blocks
         {
             BlockRenderStates ret = BlockRenderStates.None; // initially no render
 
-            if (IsinRange(x, y, z)) // make sure block is in range
+            if (IsinRange(x, y, z) && GetBlockID(x,y,z) != 0) // make sure block is in range
             {
-                if (GetBlockID(x, y, z) != 0) //if the block is not air
-                {
-                    if (ShouldRenderFace(BlockFacing.Left, x, y, z))//left face
-                        ret = ret | BlockRenderStates.Left;
-                    if (ShouldRenderFace(BlockFacing.Right, x, y, z))//right face
-                        ret = ret | BlockRenderStates.Right;
-                    if (ShouldRenderFace(BlockFacing.Back, x, y, z))//back face
-                        ret = ret | BlockRenderStates.Back;
-                    if (ShouldRenderFace(BlockFacing.Front, x, y, z))//front face
-                        ret = ret | BlockRenderStates.Front;
-                    if (ShouldRenderFace(BlockFacing.Bottom, x, y, z))//bottom face
-                        ret = ret | BlockRenderStates.Bottom;
-                    if (ShouldRenderFace(BlockFacing.Top, x, y, z))//top face
-                        ret = ret | BlockRenderStates.Top;
-                }
+                if (ShouldRenderFace(BlockFacing.Left, x, y, z))//left face
+                    ret = ret | BlockRenderStates.Left;
+                if (ShouldRenderFace(BlockFacing.Right, x, y, z))//right face
+                    ret = ret | BlockRenderStates.Right;
+                if (ShouldRenderFace(BlockFacing.Back, x, y, z))//back face
+                    ret = ret | BlockRenderStates.Back;
+                if (ShouldRenderFace(BlockFacing.Front, x, y, z))//front face
+                    ret = ret | BlockRenderStates.Front;
+                if (ShouldRenderFace(BlockFacing.Bottom, x, y, z))//bottom face
+                    ret = ret | BlockRenderStates.Bottom;
+                if (ShouldRenderFace(BlockFacing.Top, x, y, z))//top face
+                    ret = ret | BlockRenderStates.Top;
             }
             return ret;
         }
@@ -219,7 +216,7 @@ namespace BlockGame.Blocks
             if (GetBlockID(position + facing.NormalVector()) == 0)
                 return true; //main cause to render the face is if it faces air
 
-            if (IsOpaque(position) & !IsOpaque(position + facing.NormalVector()))
+            if (World.IsOpaque(position) & !World.IsOpaque(position + facing.NormalVector()))
             {
                 return true; //only other case is if there is a non-opaque and an opaque
             }
@@ -251,14 +248,7 @@ namespace BlockGame.Blocks
         {
             if (IsinRange(x, y, z)) //if the pos is in range
             {
-                if (GetBlockID(x, y, z) != 0) //if it's not air
-                {
-                    return BlockManager.Blocks[GetBlockID(x, y, z)].IsOpaque; //return opacity                   
-                }
-                else
-                {
-                    return false; //it's not opaque if it's air
-                }
+                return BlockManager.Blocks[GetBlockID(x, y, z)].IsOpaque; //return opacity                   
             }
             return false; //otherwise assume it's air (TO BE FIXED WITH WORLD!!!)
         }
@@ -271,6 +261,22 @@ namespace BlockGame.Blocks
         private bool IsOpaque(Point3 pos)
         {
             return IsOpaque(pos.X, pos.Y, pos.Z);
+        }
+
+        /// <summary>
+        /// Checks if a block is opaque or not
+        /// </summary>
+        /// <param name="x">The block's x co-ord (chunk)</param>
+        /// <param name="y">The block's y co-ord (chunk)</param>
+        /// <param name="z">The block's z co-ord (chunk)</param>
+        /// <returns>True if the block at {x,y,z} is opaque</returns>
+        public bool IsOpaqueFromWorld(int x, int y, int z)
+        {
+            x -= WorldPos.X;
+            y -= WorldPos.Y;
+            z -= WorldPos.Z;
+
+            return IsOpaque(x, y, z);
         }
 
         /// <summary>
@@ -407,7 +413,7 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="pos">The chunk co-ords for the block to set</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        public void SetBlock(Point3 pos, BlockData dat)
+        private void SetBlock(Point3 pos, BlockData dat)
         {
             SetBlock(pos.X, pos.Y, pos.Z, dat);
         }
@@ -419,13 +425,31 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ords of the block (chunk)</param>
         /// <param name="z">The z co-ords of the block (chunk)</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        public void SetBlock(int x, int y, int z, BlockData dat)
+        private void SetBlock(int x, int y, int z, BlockData dat)
         {
             if (IsinRange(x, y, z))
             {
                 blocks[x, y, z] = dat;
             }
         } //base function
+
+        /// <summary>
+        /// Sets the block at {x,y,z} to dat
+        /// </summary>
+        /// <param name="x">The x co-ords of the block (world)</param>
+        /// <param name="y">The y co-ords of the block (world)</param>
+        /// <param name="z">The z co-ords of the block (world)</param>
+        /// <param name="dat">The block data to set at {x,y,z}</param>
+        public void SetBlockFromWorld(int x, int y, int z, BlockData dat)
+        {
+            x -= WorldPos.X;
+            y -= WorldPos.Y;
+            z -= WorldPos.Z;
+
+            SetBlock(x, y, z, dat);
+
+            UpdateRenderState(x, y, z);
+        }
         
         /// <summary>
         /// Sets the block at {x,y,z} to dat and updates the renderer
@@ -434,7 +458,7 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ords of the block (chunk)</param>
         /// <param name="z">The z co-ords of the block (chunk)</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        public void SetBlockWithUpdate(int x, int y, int z, BlockData dat)
+        private void SetBlockWithUpdate(int x, int y, int z, BlockData dat)
         {
             SetBlock(x, y, z, dat);
             UpdateRenderState(x, y, z);
@@ -448,7 +472,7 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ords of the block (chunk)</param>
         /// <param name="z">The z co-ords of the block (chunk)</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        public void SetBlockWithUpdate(Point3 pos, BlockData dat)
+        private void SetBlockWithUpdate(Point3 pos, BlockData dat)
         {
             SetBlockWithUpdate(pos.X, pos.Y, pos.Z, dat);
         }
@@ -459,7 +483,7 @@ namespace BlockGame.Blocks
         /// <param name="min">The minimum position to start from</param>
         /// <param name="max">The max position to start from</param>
         /// <param name="ID">The block ID to set the region to</param>
-        public void SetCuboid(Point3 min, Point3 max, byte ID)
+        private void SetCuboid(Point3 min, Point3 max, byte ID)
         {
             SetCuboid(min, max, new BlockData(ID));
         }
@@ -470,7 +494,7 @@ namespace BlockGame.Blocks
         /// <param name="min">The minimum position to start from</param>
         /// <param name="max">The max position to start from</param>
         /// <param name="dat">The block data to set the region to</param>
-        public void SetCuboid(Point3 min, Point3 max, BlockData dat)
+        private void SetCuboid(Point3 min, Point3 max, BlockData dat)
         {
             for (int x = min.X; x <= max.X; x++)
             {
@@ -491,12 +515,9 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="cuboid">The cuboid to set</param>
         /// <param name="dat">The block data to set the region to</param>
-        public void SetCuboid(Cuboid cuboid, BlockData dat)
+        private void SetCuboid(Cuboid cuboid, BlockData dat)
         {
-            cuboid.Min -= WorldPos;
-            cuboid.Max -= WorldPos;
-
-            SetCuboid(cuboid.Min, cuboid.Max, dat);
+            SetCuboid(cuboid.Min - WorldPos, cuboid.Max - WorldPos, dat);
 
             UpdateRenderStates(cuboid.Min - new Point3(1), cuboid.Max + Point3.One);
         }

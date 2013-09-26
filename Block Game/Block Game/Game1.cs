@@ -51,6 +51,7 @@ namespace Block_Game
         /// </summary>
         protected override void Initialize()
         {
+            World.Initialize();
             camera = new Camera(new Vector3(0, 0, 32), graphics);
 
             base.Initialize();
@@ -78,8 +79,8 @@ namespace Block_Game
 
             for (int x = 0; x < 3; x++)
                 for (int y = 0; y < 3; y++)
-                    for(int z = 0; z > -2; z --)
-                    World.AddChunk(new Point3(x, y, z));
+                    for(int z = 0; z < 5; z ++)
+                        World.AddChunk(new Point3(x, y, z));
             
             //testChunks = new Chunk[2, 2];
 
@@ -164,9 +165,9 @@ namespace Block_Game
 
             if (Keyboard.GetState().IsKeyDown(Keys.P))
             {
-                World.SetCuboid(new Cuboid(new Point3(1,1,1), new Point3(64,64,64)), 
+                World.SetCuboid(new Cuboid(new Point3(0,0,0), new Point3(64,64,64)), 
                     new BlockData(BlockManager.Log.ID));
-                World.SetCuboid(new Cuboid(new Point3(3, 3, 10), new Point3(62, 20, 62)),
+                World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
                     new BlockData(BlockManager.Glass.ID));
             }
 
@@ -201,6 +202,7 @@ namespace Block_Game
 
             spriteBatch.DrawString(spriteFont, "FPS: " + Spine_Library.Tools.FPSHandler.getFrameRate(), new Vector2(10,10), Color.Black);
             spriteBatch.DrawString(spriteFont, "" + camera.CameraPos, new Vector2(10, 25), Color.Black);
+            spriteBatch.DrawString(spriteFont, "Chunks: " + World.ChunkCount, new Vector2(10, 40), Color.Black);
 
             spriteBatch.End();
         }

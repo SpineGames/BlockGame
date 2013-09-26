@@ -17,6 +17,12 @@ namespace Block_Game.Utilities
             this.Max = max;
         }
 
+        public bool Contains(int x, int y, int z)
+        {
+            return (x >= Min.X & x <= Max.X) & (y >= Min.Y & y <= Max.Y) &
+                   (z >= Min.Z & z <= Max.Z);
+        }
+
         public bool Intersects(Cuboid other)
         {
             if (other.Min.IsInCuboid(this) | other.Max.IsInCuboid(this))

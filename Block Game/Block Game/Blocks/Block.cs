@@ -13,7 +13,7 @@ namespace BlockGame
 {
     public abstract class BlockManager
     {
-        public const float BlockSize = 2;
+        public const float BlockSize = 1;
         public static readonly float HalfSize = BlockSize / 2F;
         public static readonly IBlock[] Blocks = new IBlock[256];
         public static readonly IBlock Air = new BlockAir();
