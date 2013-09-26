@@ -10,15 +10,17 @@ namespace BlockGame.Render
     public static class TextureManager
     {
         static Texture2D terrain;
+        static Texture2D normal;
         /// <summary>
         /// The width/height of each texture in the sheet
         /// </summary>
         const float TexSize = 16;
         const float PercentPerBlock = (float)(0.0625F);
 
-        public static void Initialize(Texture2D terrain)
+        public static void Initialize(Texture2D terrain, Texture2D normal)
         {
             TextureManager.terrain = terrain;
+            TextureManager.normal = normal;
         }
 
         public static Vector2 BL(byte ID)
@@ -56,6 +58,11 @@ namespace BlockGame.Render
         public static Texture2D Terrain
         {
             get { return terrain; }
+        }
+
+        public static Texture2D NormalMap
+        {
+            get { return normal; }
         }
     }
 }

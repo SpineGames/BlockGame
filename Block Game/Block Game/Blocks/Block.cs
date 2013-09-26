@@ -17,6 +17,7 @@ namespace BlockGame
         public static readonly float HalfSize = BlockSize / 2F;
         public static readonly IBlock[] Blocks = new IBlock[256];
         public static readonly IBlock Air = new BlockAir();
+        public static readonly IBlock Stone = new BlockStone();
         public static readonly IBlock Gravel = new BlockGravel();
         public static readonly IBlock Dirt = new BlockDirt();
         public static readonly IBlock Glass = new BlockGlass();
@@ -32,9 +33,9 @@ namespace BlockGame
     {
         VertexPositionNormalTextureColor[] GetModel(BlockRenderStates facings, Point3 pos, byte Meta);
 
-        byte GetTexIDForFacing(BlockFacing facing);
+        byte GetTexIDForFacing(BlockFacing facing, byte meta = 0);
 
-        bool IsOpaqueOnFace(BlockFacing facing);
+        bool IsOpaqueOnFace(BlockFacing facing, byte meta = 0);
 
         byte ID {get;}
         byte texRef { get; }
@@ -44,35 +45,35 @@ namespace BlockGame
 
     public abstract class BaseBlock : IBlock
     {
-        public byte ID { get { return 0; } }
-        public byte texRef { get { return 2; } }
-        public bool IsOpaque { get { return true; } }
-        public string Name { get { return "ERROR"; } }
+        public abstract byte ID { get; }
+        public abstract byte texRef { get; }
+        public abstract bool IsOpaque { get; }
+        public abstract string Name { get; }
 
         public BaseBlock()
         {
             BlockManager.AddBlock(this);
         }
 
-        public VertexPositionNormalTextureColor[] GetModel(BlockRenderStates facings, Point3 pos, byte Meta)
+        public virtual VertexPositionNormalTextureColor[] GetModel(BlockRenderStates facings, Point3 pos, byte Meta)
         {
             List<VertexPositionNormalTextureColor> temp = new List<VertexPositionNormalTextureColor>();
 
             foreach (BlockFacing f in (BlockFacing[])Enum.GetValues(typeof(BlockFacing)))
             {
                 if (facings.IsFaced(f))
-                    temp.AddRange(BlockRenderFaces.GetFacesFromFacing(f, pos, GetTexIDForFacing(f)));
+                    temp.AddRange(BlockRenderFaces.GetFacesFromFacing(f, pos, GetTexIDForFacing(f, Meta)));
             }
 
             return temp.ToArray();// BlockRenderFaces.GetFacesFromState(facings, pos, this.texRef);
         }
 
-        public byte GetTexIDForFacing(BlockFacing facing)
+        public virtual byte GetTexIDForFacing(BlockFacing facing, byte meta = 0)
         {
             return texRef;
         }
 
-        public bool IsOpaqueOnFace(BlockFacing facing)
+        public virtual bool IsOpaqueOnFace(BlockFacing facing, byte meta = 0)
         {
             return IsOpaque;
         }
@@ -80,10 +81,10 @@ namespace BlockGame
 
     public class BlockAir : BaseBlock, IBlock
     {
-        public byte ID { get { return 0; } }
-        public byte texRef { get { return 0; } }
-        public bool IsOpaque { get { return false; } }
-        public string Name { get { return "Air"; } }
+        public override byte ID { get { return 0; } }
+        public override byte texRef { get { return 0; } }
+        public override bool IsOpaque { get { return false; } }
+        public override string Name { get { return "Air"; } }
 
         public VertexPositionNormalTextureColor[] GetModel(BlockRenderStates facings, Point3 pos, byte Meta)
         {
@@ -99,47 +100,83 @@ namespace BlockGame
         }
     }
 
+    public class BlockStone : BaseBlock, IBlock
+    {
+        public override byte ID { get { return 1; } }
+        public override byte texRef { get { return 0; } }
+        public override bool IsOpaque { get { return true; } }
+        public override string Name { get { return "Stone"; } }
+    }
+
     public class BlockDirt : BaseBlock, IBlock
     {
-        public byte ID { get { return 1; } }
-        public byte texRef { get { return 2; } }
-        public bool IsOpaque { get { return true; } }
-        public string Name { get { return "Dirt"; } }
+        public override byte ID { get { return 2; } }
+        public override byte texRef { get { return 1; } }
+        public override bool IsOpaque { get { return true; } }
+        public override string Name { get { return "Dirt"; } }
+
+        public override byte GetTexIDForFacing(BlockFacing facing, byte meta = 0)
+        {
+            if (meta != 0)
+            {
+                switch (facing)
+                {
+                    case BlockFacing.Top:
+                        return 7;
+                    case BlockFacing.Bottom:
+                        return 1;
+                    default:
+                        return 8;
+                }
+            }
+            else
+                return 1;
+        }
     }
 
     public class BlockGravel : BaseBlock, IBlock
     {
-        public byte ID { get { return 2; } }
-        public byte texRef { get { return 0; } }
-        public bool IsOpaque { get { return true; } }
-        public string Name { get { return "Gravel"; } }
+        public override byte ID { get { return 3; } }
+        public override byte texRef { get { return 2; } }
+        public override bool IsOpaque { get { return true; } }
+        public override string Name { get { return "Gravel"; } }
     }
 
     public class BlockGlass : BaseBlock, IBlock
     {
-        public byte ID { get { return 3; } }
-        public byte texRef { get { return 49; } }
-        public bool IsOpaque { get { return false; } }
-        public string Name { get { return "Glass"; } }
+        public override byte ID { get { return 4; } }
+        public override byte texRef { get { return 3; } }
+        public override bool IsOpaque { get { return false; } }
+        public override string Name { get { return "Glass"; } }
     }
 
     public class BlockLog : BaseBlock, IBlock
     {
-        public byte ID { get { return 4; } }
-        public byte texRef { get { return 20; } }
-        public bool IsOpaque { get { return true; } }
-        public string Name { get { return "Log"; } }
+        public override byte ID { get { return 5; } }
+        public override byte texRef { get { return 4; } }
+        public override bool IsOpaque { get { return true; } }
+        public override string Name { get { return "Log"; } }
 
-        public byte GetTexIDForFacing(BlockFacing facing)
+        public override byte GetTexIDForFacing(BlockFacing facing, byte meta = 0)
         {
             switch (facing)
             {
-                case BlockFacing.Top | BlockFacing.Bottom:
-                    return 21;
+                case BlockFacing.Top:
+                    return 5;
+                case BlockFacing.Bottom:
+                    return 5;
                 default:
-                    return 20;
+                    return 4;
             }
         }
+    }
+
+    public class BlockSand : BaseBlock, IBlock
+    {
+        public override byte ID { get { return 6; } }
+        public override byte texRef { get { return 6; } }
+        public override bool IsOpaque { get { return true; } }
+        public override string Name { get { return "Sand"; } }
     }
 
     public static class BlockRenderFaces
@@ -783,7 +820,7 @@ namespace BlockGame
         public BlockData(byte ID, byte Meta = 0)
         {
             this.ID = ID;
-            this.Meta = 0;
+            this.Meta = Meta;
         }
 
         public override string ToString()

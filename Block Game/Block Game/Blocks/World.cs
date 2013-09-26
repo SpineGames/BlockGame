@@ -25,7 +25,7 @@ namespace Block_Game.Blocks
         public static void LoadChunk(object pos)
         {
             Chunk chunk = new Chunk((Point3)pos);
-            chunk.SetCuboid(new Point3(0), new Point3(Chunk.ChunkSize - 1), 1);
+            chunk.GenChunk();
             LoadedHandler.Invoke(new ChunkLoadedArgs(chunk));
         }
 

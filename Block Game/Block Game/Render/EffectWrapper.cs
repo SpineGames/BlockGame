@@ -152,7 +152,7 @@ namespace Block_Game.Render
 
         public PointLightEffect(ContentManager content)
         {
-            BaseEffect = content.Load<Effect>("StandardShader");
+            BaseEffect = content.Load<Effect>("Shaders/PointLight");
         }
 
         public PointLightEffect(Effect BaseEffect)
@@ -232,6 +232,288 @@ namespace Block_Game.Render
             BaseEffect.Parameters["LightDistances"].SetValue(LightDistances);
 
             BaseEffect.Parameters["lightCount"].SetValue(lightCount);
+        }
+    }
+
+    public class NormalMapEffect
+    {
+        public readonly Effect BaseEffect;
+
+        const int MAX_LIGHTS = 50;
+
+        #region Transform
+        Matrix world;
+        public Matrix World
+        {
+            get { return world; }
+            set
+            {
+                world = value;
+                BaseEffect.Parameters["World"].SetValue(world);
+            }
+        }
+        Matrix view;
+        public Matrix View
+        {
+            get { return view; }
+            set
+            {
+                view = value;
+                BaseEffect.Parameters["View"].SetValue(view);
+            }
+        }
+        Matrix projection;
+        public Matrix Projection
+        {
+            get { return projection; }
+            set
+            {
+                projection = value;
+                BaseEffect.Parameters["Projection"].SetValue(projection);
+            }
+        }
+
+        //Matrix worldInverseTranspose;
+        ///// <summary>
+        ///// The 
+        ///// </summary>
+        //public Matrix WorldInverseTranspose
+        //{
+        //    get { return worldInverseTranspose; }
+        //    set
+        //    {
+        //        worldInverseTranspose = value;
+        //        BaseEffect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTranspose);
+        //    }
+        //}
+        #endregion
+
+        #region DefaultLighting
+        Vector4 ambientLightColor = new Vector4(1, 1, 1, 1);
+        /// <summary>
+        /// The color of the ambient lighting
+        /// </summary>
+        public Vector4 AmbientLightColor
+        {
+            get { return ambientLightColor; }
+            set
+            {
+                ambientLightColor = value;
+                BaseEffect.Parameters["AmbientColor"].SetValue(ambientLightColor);
+            }
+        }
+
+        float ambientLightIntesity = 1.0F;
+        /// <summary>
+        /// The intensity for the ambient lighting. Default is 0.1
+        /// </summary>
+        public float AmbientLightIntensity
+        {
+            get { return ambientLightIntesity; }
+            set
+            {
+                ambientLightIntesity = value;
+                BaseEffect.Parameters["AmbientIntensity"].SetValue(ambientLightIntesity);
+            }
+        }
+
+        /// <summary>
+        /// Represents the normal for the diffuse light
+        /// </summary>
+        public Vector3 DiffuseDirection
+        {
+            get { return BaseEffect.Parameters["lightDirection"].GetValueVector3(); }
+            set { BaseEffect.Parameters["lightDirection"].SetValue(value); }
+        }
+
+        /// <summary>
+        /// The color for the diffuse light
+        /// </summary>
+        public Vector4 DiffuseColor
+        {
+            get { return BaseEffect.Parameters["diffuseColor"].GetValueVector4(); }
+            set { BaseEffect.Parameters["diffuseColor"].SetValue(value); }
+        }
+        #endregion
+
+        Texture2D texture;
+        public Texture2D Texture
+        {
+            get { return texture; }
+            set
+            {
+                texture = value;
+                BaseEffect.Parameters["Texture"].SetValue(texture);
+            }
+        }
+        
+        Texture2D normalMap;
+        public Texture2D NormalMap
+        {
+            get { return normalMap; }
+            set
+            {
+                normalMap = value;
+                BaseEffect.Parameters["NormalMap"].SetValue(normalMap);
+            }
+        }
+
+        public NormalMapEffect(ContentManager content)
+        {
+            BaseEffect = content.Load<Effect>("Shaders/bumpmap");
+        }
+
+        public NormalMapEffect(Effect BaseEffect)
+        {
+            this.BaseEffect = BaseEffect;
+        }
+
+        public NormalMapEffect Clone()
+        {
+            NormalMapEffect temp = new NormalMapEffect(BaseEffect.Clone());
+
+            temp.World = World;
+            temp.View = View;
+            temp.Projection = Projection;
+
+            temp.AmbientLightColor = AmbientLightColor;
+            temp.AmbientLightIntensity = AmbientLightIntensity;
+
+            temp.DiffuseColor = DiffuseColor;
+            temp.DiffuseDirection = DiffuseDirection;
+
+            temp.Texture = Texture;
+            temp.NormalMap = NormalMap;
+
+            return temp;
+        }
+    }
+
+    public class StandardEffect
+    {
+        public readonly Effect BaseEffect;
+
+        const int MAX_LIGHTS = 50;
+
+        #region Transform
+        Matrix world;
+        public Matrix World
+        {
+            get { return world; }
+            set
+            {
+                world = value;
+                BaseEffect.Parameters["World"].SetValue(world);
+            }
+        }
+        Matrix view;
+        public Matrix View
+        {
+            get { return view; }
+            set
+            {
+                view = value;
+                BaseEffect.Parameters["View"].SetValue(view);
+            }
+        }
+        Matrix projection;
+        public Matrix Projection
+        {
+            get { return projection; }
+            set
+            {
+                projection = value;
+                BaseEffect.Parameters["Projection"].SetValue(projection);
+            }
+        }
+        #endregion
+
+        #region DefaultLighting
+        Vector4 ambientLightColor = new Vector4(1, 1, 1, 1);
+        /// <summary>
+        /// The color of the ambient lighting
+        /// </summary>
+        public Vector4 AmbientLightColor
+        {
+            get { return ambientLightColor; }
+            set
+            {
+                ambientLightColor = value;
+                BaseEffect.Parameters["AmbientColor"].SetValue(ambientLightColor);
+            }
+        }
+
+        float ambientLightIntesity = 1.0F;
+        /// <summary>
+        /// The intensity for the ambient lighting. Default is 0.1
+        /// </summary>
+        public float AmbientLightIntensity
+        {
+            get { return ambientLightIntesity; }
+            set
+            {
+                ambientLightIntesity = value;
+                BaseEffect.Parameters["AmbientIntensity"].SetValue(ambientLightIntesity);
+            }
+        }
+
+        /// <summary>
+        /// Represents the normal for the diffuse light
+        /// </summary>
+        public Vector3 DiffuseDirection
+        {
+            get { return BaseEffect.Parameters["DiffuseLightDirection"].GetValueVector3(); }
+            set { BaseEffect.Parameters["DiffuseLightDirection"].SetValue(value); }
+        }
+
+        /// <summary>
+        /// The color for the diffuse light
+        /// </summary>
+        public Vector4 DiffuseColor
+        {
+            get { return BaseEffect.Parameters["DiffuseColor"].GetValueVector4(); }
+            set { BaseEffect.Parameters["DiffuseColor"].SetValue(value); }
+        }
+        #endregion
+
+        Texture2D texture;
+        public Texture2D Texture
+        {
+            get { return texture; }
+            set
+            {
+                texture = value;
+                BaseEffect.Parameters["Texture"].SetValue(texture);
+            }
+        }
+
+        public StandardEffect(ContentManager content)
+        {
+            BaseEffect = content.Load<Effect>("Shaders/StandardShader");
+        }
+
+        public StandardEffect(Effect BaseEffect)
+        {
+            this.BaseEffect = BaseEffect;
+        }
+
+        public NormalMapEffect Clone()
+        {
+            NormalMapEffect temp = new NormalMapEffect(BaseEffect.Clone());
+
+            temp.World = World;
+            temp.View = View;
+            temp.Projection = Projection;
+
+            temp.AmbientLightColor = AmbientLightColor;
+            temp.AmbientLightIntensity = AmbientLightIntensity;
+
+            temp.DiffuseColor = DiffuseColor;
+            temp.DiffuseDirection = DiffuseDirection;
+
+            temp.Texture = Texture;
+
+            return temp;
         }
     }
 

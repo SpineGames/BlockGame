@@ -33,7 +33,7 @@ namespace Block_Game
         /// <summary>
         /// The base effect that controls lighting for the world
         /// </summary>
-        public static PointLightEffect worldEffect;
+        public static StandardEffect worldEffect;
 
         double f;
 
@@ -68,7 +68,9 @@ namespace Block_Game
             spriteFont = Content.Load<SpriteFont>("DebugFont");
 
             //initialize the texture manager
-            TextureManager.Initialize(Content.Load<Texture2D>("terrain"));
+            TextureManager.Initialize(
+                Content.Load<Texture2D>("terrain"), 
+                Content.Load<Texture2D>("terrain_normal"));
 
             //build the basic world effect
             BuildBasicEffect();
@@ -112,7 +114,7 @@ namespace Block_Game
             //t.LightingEnabled = true;
             //t.AmbientLightColor = Color.Red.ToVector3();
 
-            worldEffect = new PointLightEffect(Content.Load<Effect>("Shaders/PointLight").Clone());
+            worldEffect = new StandardEffect(Content);
 
             worldEffect.Projection = camera.View.Projection;
             worldEffect.View = camera.View.View;
@@ -123,28 +125,13 @@ namespace Block_Game
 
             worldEffect.DiffuseDirection = new Vector3(1, 1, 0.5F);
             worldEffect.DiffuseColor = Color.White.ToVector4();
-            worldEffect.DiffuseIntensity = 0.05F;
-
-            worldEffect.AddPointLight(new PointLight()
-            {
-                DiffuseColor = Color.Red.ToVector4() / 2F,
-                Radius = 30,
-                LightPos = new Vector3(16, 52, 64)
-            }
-            );
-            worldEffect.AddPointLight(new PointLight()
-            {
-                DiffuseColor = Color.Red.ToVector4() / 2F,
-                Radius = 30,
-                LightPos = new Vector3(16, 52, 64)
-            }
-);
 
             //worldEffect.DiffuseLightDirection = new Vector3(1,1,1);
             //worldEffect.DiffuseColor = Color.Green.ToVector4();
             //worldEffect.DiffuseIntensity = 1F;
 
             worldEffect.Texture = TextureManager.Terrain;
+            //worldEffect.NormalMap = TextureManager.NormalMap;
 
             worldEffect.BaseEffect.CurrentTechnique = worldEffect.BaseEffect.Techniques["Textured"];
         }
@@ -174,20 +161,13 @@ namespace Block_Game
             f++;
             //worldEffect.ViewVector = camera.CameraNormal;
             Vector3 centre = new Vector3(64, 64, 64);
-            worldEffect.SetLightPos(0, centre + new Vector3(
-                (float)Spine_Library.Tools.extraMath.lengthdir_x(MathHelper.ToRadians((float)f), 50),
-                (float)Spine_Library.Tools.extraMath.lengthdir_y(MathHelper.ToRadians((float)f), 50),
-                0));
-
-            worldEffect.SetLightPos(1, centre + new Vector3(
-                (float)Spine_Library.Tools.extraMath.lengthdir_x(MathHelper.ToRadians((float)f - 180), 50),
-                (float)Spine_Library.Tools.extraMath.lengthdir_y(MathHelper.ToRadians((float)f - 180), 50),
-                0));
 
             if (Keyboard.GetState().IsKeyDown(Keys.P))
             {
-                World.SetCuboid(new Cuboid(new Point3(1,1,1), new Point3(12,64,64)), 
-                    new BlockData(BlockManager.Gravel.ID));
+                World.SetCuboid(new Cuboid(new Point3(1,1,1), new Point3(64,64,64)), 
+                    new BlockData(BlockManager.Log.ID));
+                World.SetCuboid(new Cuboid(new Point3(3, 3, 10), new Point3(62, 20, 62)),
+                    new BlockData(BlockManager.Glass.ID));
             }
 
             camera.UpdateMovement();

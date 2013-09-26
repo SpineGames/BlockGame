@@ -9,6 +9,7 @@ using BlockGame.Render;
 using Block_Game.Render;
 using Block_Game;
 using Block_Game.Utilities;
+using Block_Game.Blocks;
 
 namespace BlockGame.Blocks
 {
@@ -24,7 +25,7 @@ namespace BlockGame.Blocks
 
         public static Point3 WorldChunkSize
         {
-            get { return new Point3((int)(ChunkSize * BlockManager.BlockSize)); }
+            get { return new Point3((int)((ChunkSize - 1) * BlockManager.BlockSize)); }
         }
         /// <summary>
         /// The array holding all of the block ID's and metaData
@@ -140,7 +141,8 @@ namespace BlockGame.Blocks
                 renderStates[x, y, z].verts =
                         BlockManager.Blocks[GetBlockID(x, y, z)].GetModel(
                         GetRenderStateForBlock(x, y, z),
-                        new Point3(x, y, z), blocks[x, y, z].Meta);
+                        new Point3(x, y, z), 
+                        blocks[x, y, z].Meta);
             }
         }
 
@@ -362,6 +364,22 @@ namespace BlockGame.Blocks
         #endregion
 
         #region Set Block
+        public void GenChunk()
+        {
+            for (int x = 0; x < ChunkSize; x++)
+            {
+                for (int y = 0; y < ChunkSize; y++)
+                {
+                    for (int z = 0; z < ChunkSize; z++)
+                    {
+                        SetBlock(x,y,z, 
+                            TerrainGen.GetBlockAtPos(x + WorldPos.X, y + WorldPos.Y, z + WorldPos.Z));
+                    }
+                }
+            }
+            UpdateRenderStates(new Point3(0), new Point3(ChunkSize));
+        }
+
         /// <summary>
         /// Sets the block at {x,y,z}
         /// </summary>
@@ -475,6 +493,9 @@ namespace BlockGame.Blocks
         /// <param name="dat">The block data to set the region to</param>
         public void SetCuboid(Cuboid cuboid, BlockData dat)
         {
+            cuboid.Min -= WorldPos;
+            cuboid.Max -= WorldPos;
+
             SetCuboid(cuboid.Min, cuboid.Max, dat);
 
             UpdateRenderStates(cuboid.Min - new Point3(1), cuboid.Max + Point3.One);
