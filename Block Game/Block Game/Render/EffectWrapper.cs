@@ -474,6 +474,15 @@ namespace Block_Game.Render
             get { return BaseEffect.Parameters["DiffuseColor"].GetValueVector4(); }
             set { BaseEffect.Parameters["DiffuseColor"].SetValue(value); }
         }
+
+        /// <summary>
+        /// The color for the diffuse light
+        /// </summary>
+        public float DiffuseIntensity
+        {
+            get { return BaseEffect.Parameters["DiffuseIntensity"].GetValueSingle(); }
+            set { BaseEffect.Parameters["DiffuseIntensity"].SetValue(value); }
+        }
         #endregion
 
         Texture2D texture;
@@ -497,9 +506,9 @@ namespace Block_Game.Render
             this.BaseEffect = BaseEffect;
         }
 
-        public NormalMapEffect Clone()
+        public StandardEffect Clone()
         {
-            NormalMapEffect temp = new NormalMapEffect(BaseEffect.Clone());
+            StandardEffect temp = new StandardEffect(BaseEffect.Clone());
 
             temp.World = World;
             temp.View = View;
@@ -510,6 +519,7 @@ namespace Block_Game.Render
 
             temp.DiffuseColor = DiffuseColor;
             temp.DiffuseDirection = DiffuseDirection;
+            temp.DiffuseIntensity = DiffuseIntensity;
 
             temp.Texture = Texture;
 

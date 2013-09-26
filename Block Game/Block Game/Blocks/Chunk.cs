@@ -46,13 +46,23 @@ namespace BlockGame.Blocks
         {
             get
             {
-                return ChunkPos * (int)(ChunkSize * BlockManager.BlockSize);
+                return ChunkPos * (int)(ChunkSize);
             }
         }
         /// <summary>
         /// The position that the block furthest from [0,0,0] has in the world
         /// </summary>
         public Point3 MaxWorldPos { get { return WorldPos + WorldChunkSize; } }
+        /// <summary>
+        /// The Transformation position
+        /// </summary>
+        public Point3 TransformedWorldPos
+        {
+            get
+            {
+                return ChunkPos * (int)(ChunkSize * BlockManager.BlockSize);
+            }
+        }
         /// <summary>
         /// The private collision bounding box
         /// </summary>
@@ -74,7 +84,7 @@ namespace BlockGame.Blocks
         {
             this.ChunkPos = chunkPos;
             collision = new Cuboid(WorldPos, MaxWorldPos);
-            Renderer = new PolyRender(Matrix.CreateTranslation(WorldPos));
+            Renderer = new PolyRender(Matrix.CreateTranslation(TransformedWorldPos));
             InitialRenderStates();
         }
 

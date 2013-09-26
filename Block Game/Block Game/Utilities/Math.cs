@@ -34,4 +34,48 @@ namespace Block_Game.Utilities
             return Normal;
         }
     }
+
+    public static class Extensions
+    {
+        /// <summary>
+        /// Returns true if either the X or y values are larger than the other
+        /// vector's
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static bool IsGreater(this Vector2 v1, Vector2 v2)
+        {
+            return (v1.X > v2.X || v1.Y > v2.Y);
+        }
+    }
+
+    public class TrackableVariable
+    {
+        object val;
+        public object Value
+        {
+            get{return val;}
+            set
+            {
+                val = value;
+                if (valueChanged != null)
+                    valueChanged.Invoke(new ObjectiveEventArgs(val));
+            }
+        }
+
+        public ObjectiveEventHandler valueChanged;
+    }
+    
+    public delegate void ObjectiveEventHandler(ObjectiveEventArgs e);
+
+    public class ObjectiveEventArgs : EventArgs
+    {
+        public object Value { get; set; }
+
+        public ObjectiveEventArgs(object value)
+        {
+            this.Value = value;
+        }
+    }
 }
