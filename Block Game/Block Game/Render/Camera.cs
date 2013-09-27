@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Block_Game.Utilities;
 
 namespace Block_Game.Render
 {
@@ -22,10 +23,6 @@ namespace Block_Game.Render
         /// The normal for the camera
         /// </summary>
         Vector3 cameraNormal;
-        /// <summary>
-        /// The left-facing vector to the camera
-        /// </summary>
-        Vector3 cameraCrossNormal;
         /// <summary>
         /// The Yaw around the z-axis
         /// </summary>
@@ -52,7 +49,7 @@ namespace Block_Game.Render
         {
             get
             {
-                Vector3 temp = Spine_Library.Tools.extraMath.getVector3(new Vector2(CameraYaw, CameraPitch), 1);
+                Vector3 temp = Spine_Library.Tools.extraMath.getVector3(new Vector2(MathHelper.ToRadians(CameraYaw), MathHelper.ToRadians(CameraPitch)), 1);
                 temp.Normalize();
                 return temp;
             }
@@ -64,7 +61,7 @@ namespace Block_Game.Render
         {
             get
             {
-                Vector3 temp = Spine_Library.Tools.extraMath.getVector3(new Vector2(cameraYaw + 45, 0), 1);
+                Vector3 temp = Spine_Library.Tools.extraMath.getVector3(new Vector2(MathHelper.ToRadians(cameraYaw + 90), 0), 1);
                 temp.Normalize();
                 return temp;
             }
@@ -75,7 +72,7 @@ namespace Block_Game.Render
         public float CameraYaw
         {
             get { return cameraYaw; }
-            set { cameraYaw = MathHelper.Clamp(value, -90, 90); }
+            set { cameraYaw = value.Wrap(0,360); }
         }
         /// <summary>
         /// The up/down pitch of the camera
@@ -115,13 +112,13 @@ namespace Block_Game.Render
         public void UpdateMovement()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                cameraYaw += 0.03F;
+                CameraYaw += 2.6F;
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                cameraYaw -= 0.03F;
+                CameraYaw -= 2.6F;
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                cameraPitch += 0.03F;
+                CameraPitch += 2.6F;
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                cameraPitch -= 0.03F;
+                CameraPitch -= 2.6F;
 
             if (Keyboard.GetState().IsKeyDown(Keys.W))
                 CameraPos += CameraNormal;

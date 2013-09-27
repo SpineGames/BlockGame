@@ -28,7 +28,6 @@ namespace Block_Game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
-        Chunk[,] testChunks;
         public static Camera camera;
         public static Sun sun;
 
@@ -44,6 +43,8 @@ namespace Block_Game
         TrackableVariable FrameRate = new TrackableVariable();
         TrackableVariable CameraPos = new TrackableVariable();
         TrackableVariable ChunkCount = new TrackableVariable();
+        TrackableVariable CameraFacing = new TrackableVariable();
+        TrackableVariable CameraYaw = new TrackableVariable();
 
         public Game1()
         {
@@ -100,11 +101,17 @@ namespace Block_Game
                 new UIE_String(spriteFont, "{0}", Color.Black, ref CameraPos, null));
             UI.AddElementLeftAlign(
                 new UIE_String(spriteFont, "Chunks: {0}", Color.Black, ref ChunkCount, null));
+            UI.AddElementLeftAlign(
+                new UIE_String(spriteFont, "Camera Yaw: {0}", Color.Black, ref CameraYaw, null));
+            UI.AddElementLeftAlign(
+                new UIE_String(spriteFont, "Camera Facing: {0}", Color.Black, ref CameraFacing, null));
 
             for (int x = 0; x < 3; x++)
                 for (int y = 0; y < 3; y++)
-                    for(int z = 0; z < 5; z ++)
+                    for (int z = 0; z < 5; z++)
                         World.AddChunk(new Point3(x, y, z));
+
+            //World.AddChunk(new Point3(0, 0, 0));
         }
 
         /// <summary>
@@ -168,6 +175,8 @@ namespace Block_Game
             FrameRate.Value = Spine_Library.Tools.FPSHandler.getFrameRate();
             CameraPos.Value = camera.CameraPos;
             ChunkCount.Value = World.ChunkCount;
+            CameraFacing.Value = camera.CameraYaw.ToBlockFacing();
+            CameraYaw.Value = camera.CameraYaw;
 
             foreach (KeyWatcher k in keyWatchers.Values)
             {

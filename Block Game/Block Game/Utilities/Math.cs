@@ -48,6 +48,15 @@ namespace Block_Game.Utilities
         {
             return (v1.X > v2.X || v1.Y > v2.Y);
         }
+
+        public static float Wrap(this float val, float min, float max)
+        {
+            while (val < min)
+                val += max - min;
+            while (val > max)
+                val -= max - min;
+            return val;
+        }
     }
 
     public class TrackableVariable
