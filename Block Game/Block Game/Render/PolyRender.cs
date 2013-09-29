@@ -1,4 +1,7 @@
-﻿using System;
+﻿///A renderer for rending poly batches
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,6 +60,12 @@ namespace BlockGame.Render
 
         public void Render(ViewParameters view)
         {
+            RenderOpaque(view);
+            RenderNonOpaque(view);
+        }
+
+        public void RenderOpaque(ViewParameters view)
+        {
             if (OpaquePrimitiveCount > 0)
             {
                 Game1.worldEffect.World = World;
@@ -69,6 +78,10 @@ namespace BlockGame.Render
                         OpaqueBuffer, 0, OpaquePrimitiveCount);
                 }
             }
+        }
+
+        public void RenderNonOpaque(ViewParameters view)
+        {
             if (NonOpaquePrimitiveCount > 0)
             {
                 Game1.worldEffect.World = World;

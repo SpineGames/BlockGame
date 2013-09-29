@@ -1,4 +1,7 @@
-﻿using System;
+﻿///A texture manager for acessing multiple sub textures from one main texture
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

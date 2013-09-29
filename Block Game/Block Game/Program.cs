@@ -1,3 +1,6 @@
+///The main entry point for block game
+///© 2013 Spine Games
+
 using System;
 
 namespace Block_Game

@@ -1,4 +1,7 @@
-﻿using System;
+﻿///Represents a cuboid in 3D space
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

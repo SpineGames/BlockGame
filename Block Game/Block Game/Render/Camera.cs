@@ -1,4 +1,7 @@
-﻿using System;
+﻿///Represents a camera with it's own view parameters
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -80,7 +83,7 @@ namespace Block_Game.Render
         public float CameraPitch
         {
             get { return cameraPitch; }
-            set { cameraPitch = MathHelper.Clamp(value, -90, 90); }
+            set { cameraPitch = MathHelper.Clamp(value, -89, 89); }
         }
         /// <summary>
         /// The view parameters for this camera

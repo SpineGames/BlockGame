@@ -1,4 +1,7 @@
-﻿using System;
+﻿///Represents a chunk of blocks
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -296,6 +299,24 @@ namespace BlockGame.Blocks
         public void Render(Camera camera)
         {
             Renderer.Render(camera.View);
+        }
+
+        /// <summary>
+        /// Renders this chunk's Opaque surfaces
+        /// </summary>
+        /// <param name="view">The camera to render with</param>
+        public void RenderOpaque(Camera camera)
+        {
+            Renderer.RenderOpaque(camera.View);
+        }
+
+        /// <summary>
+        /// Renders this chunk's non-opaque surfaces
+        /// </summary>
+        /// <param name="view">The camera to render with</param>
+        public void RenderNonOPaque(Camera camera)
+        {
+            Renderer.RenderNonOpaque(camera.View);
         }
         #endregion
 

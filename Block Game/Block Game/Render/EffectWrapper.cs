@@ -1,4 +1,7 @@
-﻿using System;
+﻿///Wrappers for custom HLSL shaders
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

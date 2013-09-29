@@ -120,7 +120,6 @@
     <Compile Include="Render\Camera.cs" />
     <Compile Include="Render\EffectWrapper.cs" />
     <Compile Include="Render\PolyRender.cs" />
-    <Compile Include="Render\RenderUtils.cs" />
     <Compile Include="Render\Skybox.cs" />
     <Compile Include="Render\TextureManager.cs" />
     <Compile Include="UI\UIElements.cs" />

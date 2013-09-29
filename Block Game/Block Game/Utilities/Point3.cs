@@ -1,4 +1,7 @@
-﻿using System;
+﻿///REpresents a point in 3D space that has integer co-ordinates
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

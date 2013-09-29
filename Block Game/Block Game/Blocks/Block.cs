@@ -1,4 +1,7 @@
-﻿using System;
+﻿///Multiple classes to do with blocks from BLock Game
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +16,7 @@ namespace BlockGame
 {
     public abstract class BlockManager
     {
-        public const float BlockSize = 1;
+        public const float BlockSize = 2.0F;
         public static readonly float HalfSize = BlockSize / 2F;
         public static readonly IBlock[] Blocks = new IBlock[256];
         public static readonly IBlock Air = new BlockAir();
@@ -180,127 +183,56 @@ namespace BlockGame
         public override string Name { get { return "Sand"; } }
     }
 
+    public class BlockSlope: BaseBlock, IBlock
+    {
+        public override byte ID { get { return 7; } }
+        public override byte texRef { get { return 6; } }
+        public override bool IsOpaque { get { return false; } }
+        public override string Name { get { return "Slope"; } }
+
+        private static byte[] TexRefs = new byte[] { 0, 1, 4, 6, 7};
+
+        public override VertexPositionNormalTextureColor[] GetModel(BlockRenderStates facings, Point3 pos, byte Meta)
+        {
+            List<VertexPositionNormalTextureColor> temp = new List<VertexPositionNormalTextureColor>();
+
+            BlockRenderStates state;
+            byte texR = TexRefs[Meta << 4];
+
+            if (Meta >> 7 == 0)
+            {
+                temp.AddRange(BlockRenderFaces.GetFacesFromFacing(BlockFacing.Left, pos, texR));
+                temp.AddRange(BlockRenderFaces.GetFacesFromFacing(BlockFacing.Bottom, pos, texR));
+                temp.AddRange(BlockRenderFaces.GetFacesFromNormal(pos, BlockFacing.Bottom.NormalVector(), 
+                    BlockFacing.Bottom.CrossNormalVector(), texR, BlockManager.BlockSize));
+
+                temp.Add(new VertexPositionNormalTextureColor(pos + new Vector3(-BlockManager.HalfSize,-BlockManager.HalfSize,BlockManager.HalfSize),
+                    new Vector3(0,-1,0), TextureManager.TL(texR)));
+                temp.Add(new VertexPositionNormalTextureColor(pos + new Vector3(-BlockManager.HalfSize,-BlockManager.HalfSize,-BlockManager.HalfSize),
+                    new Vector3(0,-1,0), TextureManager.BL(texR)));
+            }
+            else
+            {
+                state = BlockRenderStates.Left | BlockRenderStates.Top;
+            }
+        }
+    }
+
     public static class BlockRenderFaces
     {
         static Color DefaultColor { get { return Color.Black; } }
-        #region Front
-        public static readonly VertexPositionNormalTextureColor[] FrontFace = new VertexPositionNormalTextureColor[]{
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,1,0), new Vector2(0,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,1,0), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,1,0), new Vector2(1,0)),
-                
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,1,0), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,1,0), new Vector2(1,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,1,0), new Vector2(1,0))
-        };
-        #endregion
-
-        #region Back
-        public static readonly VertexPositionNormalTextureColor[] BackFace = new VertexPositionNormalTextureColor[]{
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, -BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,-1,0), new Vector2(0,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,-1,0), new Vector2(1,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,-1,0), new Vector2(0,1)),
-                
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,-1,0), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,-1,0), new Vector2(1,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,-1,0), new Vector2(1,1))
-        };
-        #endregion
-
-        #region Top
-        public static readonly VertexPositionNormalTextureColor[] TopFace = new VertexPositionNormalTextureColor[]{
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,0,1), new Vector2(0,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,0,1), new Vector2(1,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,0,1), new Vector2(0,1)),
-                
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,0,1), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,0,1), new Vector2(1,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(0,0,1), new Vector2(1,1))
-        };
-        #endregion
-
-        #region Bottom
-        public static readonly VertexPositionNormalTextureColor[] BottomFace = new VertexPositionNormalTextureColor[]{
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, -BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,0,-1), new Vector2(0,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,0,-1), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,0,-1), new Vector2(1,0)),
-                
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,0,-1), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,0,-1), new Vector2(1,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(0,0,-1), new Vector2(1,0))
-        };
-        #endregion
-
-        #region Left
-        public static readonly VertexPositionNormalTextureColor[] LeftFace = new VertexPositionNormalTextureColor[]{
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, -BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(-1,0,0), new Vector2(0,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(-1,0,0), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(-1,0,0), new Vector2(1,0)),
-                
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(-1,0,0), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(-1,0,0), new Vector2(1,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(-BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(-1,0,0), new Vector2(1,0))
-        };
-        #endregion
-
-        #region Right
-        public static readonly VertexPositionNormalTextureColor[] RightFace = new VertexPositionNormalTextureColor[]{
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(1,0,0), new Vector2(0,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(1,0,0), new Vector2(1,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(1,0,0), new Vector2(0,1)),
-                
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, -BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(1,0,0), new Vector2(0,1)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, BlockManager.HalfSize, -BlockManager.HalfSize), new Vector3(1,0,0), new Vector2(1,0)),
-            new VertexPositionNormalTextureColor(
-                new Vector3(BlockManager.HalfSize, BlockManager.HalfSize, BlockManager.HalfSize), new Vector3(1,0,0), new Vector2(1,1))
-        };
-        #endregion
 
         public static VertexPositionNormalTextureColor[] GetFacesFromNormal(Vector3 Centre, Vector3 Normal, Vector3 CrossNormal, byte texID, float size)
         {
             Normal.Normalize();
             CrossNormal.Normalize();
+            Centre *= size;
 
-            Vector3 UpDown = Vector3.Normalize(Vector3.Cross(Normal, CrossNormal));
-            Vector3 TL = (Centre + UpDown - CrossNormal + Normal) * size;
-            Vector3 TR = (Centre + UpDown + CrossNormal + Normal) * size;
-            Vector3 BL = (Centre - UpDown - CrossNormal + Normal) * size;
-            Vector3 BR = (Centre - UpDown + CrossNormal + Normal) * size;
+            Vector3 Cross = Vector3.Normalize(Vector3.Cross(Normal, CrossNormal));
+            Vector3 TL = (Centre + Cross - CrossNormal + Normal);
+            Vector3 TR = (Centre + Cross + CrossNormal + Normal);
+            Vector3 BL = (Centre - Cross - CrossNormal + Normal);
+            Vector3 BR = (Centre - Cross + CrossNormal + Normal);
 
             VertexPositionNormalTextureColor[] temp = new VertexPositionNormalTextureColor[]
             {
@@ -319,39 +251,14 @@ namespace BlockGame
                 TR, Normal, TextureManager.TR(texID))
             };
             
-            Matrix trans = Matrix.CreateTranslation(Centre);
+            //Matrix trans = Matrix.CreateTranslation(Centre);
 
-            for (int i = 0; i < temp.Length; i++)
-            {
-                temp[i].Position = Vector3.Transform(temp[i].Position, trans);
-            }
+            //for (int i = 0; i < temp.Length; i++)
+            //{
+            //    temp[i].Position = Vector3.Transform(temp[i].Position, trans);
+            //}
 
             return temp;
-        }
-
-        public static VertexPositionNormalTextureColor[] GetFacesFromState(BlockRenderStates state, Point3 point)
-        {
-            List<VertexPositionNormalTextureColor> temp = new List<VertexPositionNormalTextureColor>();
-
-            if (state.HasFlag(BlockRenderStates.Front))
-                temp.AddRange(FrontFace);
-
-            if (state.HasFlag(BlockRenderStates.Back))
-                temp.AddRange(BackFace);
-
-            if (state.HasFlag(BlockRenderStates.Top))
-                temp.AddRange(TopFace);
-
-            if (state.HasFlag(BlockRenderStates.Bottom))
-                temp.AddRange(BottomFace);
-
-            if (state.HasFlag(BlockRenderStates.Left))
-                temp.AddRange(LeftFace);
-
-            if (state.HasFlag(BlockRenderStates.Right))
-                temp.AddRange(RightFace);
-
-            return temp.ToArray();
         }
 
         public static VertexPositionNormalTextureColor[] GetFacesFromState(BlockRenderStates state, Point3 point, byte texID)
@@ -371,7 +278,7 @@ namespace BlockGame
                 temp.AddRange(GetFacesFromNormal(point, BlockFacing.Bottom.NormalVector(), BlockFacing.Bottom.CrossNormalVector(), texID, BlockManager.BlockSize));
 
             if (state.HasFlag(BlockRenderStates.Left))
-                temp.AddRange(GetFacesFromNormal(point, BlockFacing.Left.NormalVector(), BlockFacing.Right.CrossNormalVector(), texID, BlockManager.BlockSize));
+                temp.AddRange(GetFacesFromNormal(point, BlockFacing.Left.NormalVector(), BlockFacing.Left.CrossNormalVector(), texID, BlockManager.BlockSize));
 
             if (state.HasFlag(BlockRenderStates.Right))
                 temp.AddRange(GetFacesFromNormal(point, BlockFacing.Right.NormalVector(), BlockFacing.Right.CrossNormalVector(), texID, BlockManager.BlockSize));
@@ -402,7 +309,7 @@ namespace BlockGame
                     break;
 
                 case BlockFacing.Left:
-                    temp = (GetFacesFromNormal(point, BlockFacing.Left.NormalVector(), BlockFacing.Right.CrossNormalVector(), texID, BlockManager.BlockSize));
+                    temp = (GetFacesFromNormal(point, BlockFacing.Left.NormalVector(), BlockFacing.Left.CrossNormalVector(), texID, BlockManager.BlockSize));
                     break;
 
                 case BlockFacing.Right:

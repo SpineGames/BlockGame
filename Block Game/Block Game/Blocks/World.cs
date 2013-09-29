@@ -1,4 +1,7 @@
-﻿using System;
+﻿///Represents a Block Game world
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -145,12 +148,17 @@ namespace Block_Game.Blocks
             return IsOpaque(pos.X, pos.Y, pos.Z);
         }
 
+        /// <summary>
+        /// Renders all the currently loaded chunks
+        /// </summary>
+        /// <param name="camera"></param>
         public static void Render(Camera camera)
         {
             foreach (Point3 point in loaded)
-            {
-                GetChunkFromChunkPos(point.X, point.Y, point.Z).Render(camera);
-            }
+                GetChunkFromChunkPos(point.X, point.Y, point.Z).RenderOpaque(camera);
+
+            foreach (Point3 point in loaded)
+                GetChunkFromChunkPos(point.X, point.Y, point.Z).RenderNonOPaque(camera);
         }
     }
 

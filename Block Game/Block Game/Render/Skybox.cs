@@ -1,4 +1,7 @@
-﻿using System;
+﻿///A dysfunctional skybox class
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

@@ -1,4 +1,7 @@
-﻿using System;
+﻿///A User Iterface manager originally created for Block Game
+///© 2013 Spine Games
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

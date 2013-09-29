@@ -1,3 +1,6 @@
+///The main game class for the block game
+///© 2013 Spine Games
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,7 +72,8 @@ namespace Block_Game
             UIManager.Initialize(blank);
             camera = new Camera(new Vector3(0, 0, 32), graphics);
 
-            keyWatchers.Add("Debug",new KeyWatcher(Keys.F1, OnDebugPressed));
+            keyWatchers.Add("Debug", new KeyWatcher(Keys.F1, OnDebugPressed));
+            keyWatchers.Add("P", new KeyWatcher(Keys.P, PPressed));
 
             base.Initialize();
         }
@@ -164,14 +168,6 @@ namespace Block_Game
             //worldEffect.ViewVector = camera.CameraNormal;
             Vector3 centre = new Vector3(64, 64, 64);
 
-            if (Keyboard.GetState().IsKeyDown(Keys.P))
-            {
-                World.SetCuboid(new Cuboid(new Point3(0,0,0), new Point3(64,64,64)), 
-                    new BlockData(BlockManager.Log.ID));
-                World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
-                    new BlockData(BlockManager.Glass.ID));
-            }
-
             FrameRate.Value = Spine_Library.Tools.FPSHandler.getFrameRate();
             CameraPos.Value = camera.CameraPos;
             ChunkCount.Value = World.ChunkCount;
@@ -202,6 +198,14 @@ namespace Block_Game
             {
                 UI.Show = false;
             }
+        }
+
+        public void PPressed(object sender, EventArgs e)
+        {
+            World.SetCuboid(new Cuboid(new Point3(0, 0, 0), new Point3(64, 64, 64)),
+                new BlockData(BlockManager.Log.ID));
+            World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
+                new BlockData(BlockManager.Glass.ID));
         }
 #endregion
 
