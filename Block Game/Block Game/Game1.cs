@@ -28,27 +28,74 @@ namespace Block_Game
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        SpriteFont spriteFont;
+        #region Static Variables
+        /// <summary>
+        /// The manin camera in the game
+        /// </summary>
         public static Camera camera;
+        /// <summary>
+        /// The sun for the level
+        /// </summary>
         public static Sun sun;
-
-        Dictionary<string, KeyWatcher> keyWatchers = new Dictionary<string, KeyWatcher>();
-        bool IsBebugging = true;
-
         /// <summary>
         /// The base effect that controls lighting for the world
         /// </summary>
-        public static StandardEffect worldEffect;
+        public static VegetationEffect worldEffect;
+        #endregion
+
+        #region private variables
+        /// <summary>
+        /// The graphics device manager
+        /// </summary>
+        GraphicsDeviceManager graphics;
+        /// <summary>
+        /// The spritebbatch used for 2D drawing
+        /// </summary>
+        SpriteBatch spriteBatch;
+        /// <summary>
+        /// The standard font to draw with
+        /// </summary>
+        SpriteFont spriteFont;
+
+        /// <summary>
+        /// A dictionary of all the keywatchers used in this game
+        /// </summary>
+        Dictionary<string, KeyWatcher> keyWatchers = new Dictionary<string, KeyWatcher>();
+        /// <summary>
+        /// True if the game is in debugging mode
+        /// </summary>
+        bool IsBebugging = true;
+
+        /// <summary>
+        /// The UI manager for the game
+        /// </summary>
         UIManager UI;
 
+        /// <summary>
+        /// A trackable version of the framerate
+        /// </summary>
         TrackableVariable FrameRate = new TrackableVariable();
+        /// <summary>
+        /// A trackable version of the camera;s position
+        /// </summary>
         TrackableVariable CameraPos = new TrackableVariable();
+        /// <summary>
+        /// A trackable version of the number of currently loaded chunks
+        /// </summary>
         TrackableVariable ChunkCount = new TrackableVariable();
+        /// <summary>
+        /// A trackable version of the the camera's block facing
+        /// </summary>
         TrackableVariable CameraFacing = new TrackableVariable();
+        /// <summary>
+        /// A trackable version of the camera's yaw
+        /// </summary>
         TrackableVariable CameraYaw = new TrackableVariable();
+        #endregion
 
+        /// <summary>
+        /// The initializer for the main game class
+        /// </summary>
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -123,7 +170,7 @@ namespace Block_Game
         /// </summary>
         private void BuildBasicEffect()
         {
-            worldEffect = new StandardEffect(Content);
+            worldEffect = new VegetationEffect(Content);
 
             worldEffect.Projection = camera.View.Projection;
             worldEffect.View = camera.View.View;
@@ -171,8 +218,10 @@ namespace Block_Game
             FrameRate.Value = Spine_Library.Tools.FPSHandler.getFrameRate();
             CameraPos.Value = camera.CameraPos;
             ChunkCount.Value = World.ChunkCount;
-            CameraFacing.Value = camera.CameraYaw.ToBlockFacing();
+            CameraFacing.Value = camera.CameraNormal.ToBlockFacing();
             CameraYaw.Value = camera.CameraYaw;
+
+            worldEffect.Wind += 1;
 
             foreach (KeyWatcher k in keyWatchers.Values)
             {
@@ -185,7 +234,12 @@ namespace Block_Game
             base.Update(gameTime);
         }
 
-#region Input
+        #region Input
+        /// <summary>
+        /// Called when the debug key is pressed
+        /// </summary>
+        /// <param name="sender">The object that raised this event (the KeyWatcher in this case)</param>
+        /// <param name="e">The event args generated for this event</param>
         public void OnDebugPressed(object sender, EventArgs e)
         {
             IsBebugging = !IsBebugging;
@@ -200,6 +254,11 @@ namespace Block_Game
             }
         }
 
+        /// <summary>
+        /// Called when the test key is pressed
+        /// </summary>
+        /// <param name="sender">The object that raised this event (the KeyWatcher in this case)</param>
+        /// <param name="e">The event args generated for this event</param>
         public void PPressed(object sender, EventArgs e)
         {
             World.SetCuboid(new Cuboid(new Point3(0, 0, 0), new Point3(64, 64, 64)),
@@ -207,7 +266,7 @@ namespace Block_Game
             World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
                 new BlockData(BlockManager.Glass.ID));
         }
-#endregion
+        #endregion
 
         /// <summary>
         /// This is called when the game should draw itself.

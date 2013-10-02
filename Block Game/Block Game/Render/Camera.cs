@@ -91,6 +91,11 @@ namespace Block_Game.Render
         public ViewParameters View;
         #endregion
 
+        /// <summary>
+        /// Creates a new camera instance
+        /// </summary>
+        /// <param name="Position">The camera's position</param>
+        /// <param name="graphics">The GraphicsDeviceManager to use</param>
         public Camera(Vector3 Position, GraphicsDeviceManager graphics)
         {
             this.cameraPos = Position;
@@ -107,11 +112,17 @@ namespace Block_Game.Render
             View.World = Matrix.CreateTranslation(Vector3.Zero);
         }
 
+        /// <summary>
+        /// Force update the view parameter
+        /// </summary>
         public void UpdateViewParameters()
         {
             View.View = Matrix.CreateLookAt(CameraPos, CameraPos + CameraNormal, new Vector3(0, 0, 1));
         }
 
+        /// <summary>
+        /// Handles moing the camera around using W/A/S/D and arrow keys
+        /// </summary>
         public void UpdateMovement()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Left))

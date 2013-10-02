@@ -9,49 +9,31 @@ using Microsoft.Xna.Framework;
 
 namespace Block_Game.Utilities
 {
-    public class SpineMath
-    {
-        public static Vector3 GetCrossNormal(Vector3 Normal)
-        {
-            if (Normal.X != 0)
-            {
-                Normal.Y = Normal.X;
-                Normal.Z = Normal.X;
-                Normal.X = 0;
-            }
-
-            if (Normal.Y != 0)
-            {
-                Normal.X = Normal.Y;
-                Normal.Z = Normal.Y;
-                Normal.Y = 0;
-            }
-
-            if (Normal.Z != 0)
-            {
-                Normal.X = Normal.Z;
-                Normal.Y = Normal.Z;
-                Normal.Z = 0;
-            }
-
-            return Normal;
-        }
-    }
-
+    /// <summary>
+    /// A class holding miscelaneous extenstions for other classes
+    /// </summary>
     public static class Extensions
     {
         /// <summary>
         /// Returns true if either the X or y values are larger than the other
         /// vector's
         /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
+        /// <param name="v1">The first vector to compare</param>
+        /// <param name="v2">The second vector to compare</param>
+        /// <returns>True if x or y in v1 is greater than the same component in
+        /// v2</returns>
         public static bool IsGreater(this Vector2 v1, Vector2 v2)
         {
             return (v1.X > v2.X || v1.Y > v2.Y);
         }
 
+        /// <summary>
+        /// Wraps this float around a min and a max
+        /// </summary>
+        /// <param name="val">The value to wrap</param>
+        /// <param name="min">The min value to wrap by</param>
+        /// <param name="max">The max value to wrap by</param>
+        /// <returns>val wrapped to min -> max</returns>
         public static float Wrap(this float val, float min, float max)
         {
             while (val < min)
@@ -59,35 +41,6 @@ namespace Block_Game.Utilities
             while (val > max)
                 val -= max - min;
             return val;
-        }
-    }
-
-    public class TrackableVariable
-    {
-        object val;
-        public object Value
-        {
-            get{return val;}
-            set
-            {
-                val = value;
-                if (valueChanged != null)
-                    valueChanged.Invoke(new ObjectiveEventArgs(val));
-            }
-        }
-
-        public ObjectiveEventHandler valueChanged;
-    }
-    
-    public delegate void ObjectiveEventHandler(ObjectiveEventArgs e);
-
-    public class ObjectiveEventArgs : EventArgs
-    {
-        public object Value { get; set; }
-
-        public ObjectiveEventArgs(object value)
-        {
-            this.Value = value;
         }
     }
 }

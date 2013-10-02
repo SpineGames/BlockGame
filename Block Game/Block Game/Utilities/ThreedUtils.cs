@@ -19,18 +19,32 @@ namespace Block_Game.Utilities
     /// </summary>
     public struct VertexPositionNormalTextureColor : IVertexType
     {
-        // Stores the positiom
+        /// <summary>
+        /// Stores the position of this vertex
+        /// </summary>
         public Vector3 Position;
 
-        // Stores the normal
+        /// <summary>
+        /// The normal for this vertex
+        /// </summary>
         public Vector3 Normal;
 
-        // Stores the Color
+        /// <summary>
+        /// The color of this vertex
+        /// </summary>
         public Color Color;
 
-        // The texco-ords for this vertex
+        /// <summary>
+        /// The UV co-ords for this vertex (the co-ords in the texture)
+        /// </summary>
         public Vector2 TexCoords;
 
+        /// <summary>
+        /// Creates a new VertexPositionNormalTextureColor
+        /// </summary>
+        /// <param name="position">The position in space for this vertex</param>
+        /// <param name="Normal">The nomal for this vector</param>
+        /// <param name="TexCoords">The UV co-ords for this vertex</param>
         public VertexPositionNormalTextureColor(Vector3 position, Vector3 Normal, Vector2 TexCoords)
         {
             this.Position = position;
@@ -39,6 +53,13 @@ namespace Block_Game.Utilities
             this.Color = Color.Black;
         }
 
+        /// <summary>
+        /// Creates a new VertexPositionNormalTextureColor
+        /// </summary>
+        /// <param name="position">The position in space for this vertex</param>
+        /// <param name="Normal">The nomal for this vector</param>
+        /// <param name="TexCoords">The UV co-ords for this vertex</param>
+        /// <param name="color">The color of this vertex</param>
         public VertexPositionNormalTextureColor(Vector3 position, Vector3 Normal, Vector2 TexCoords, Color color)
         {
             this.Position = position;
@@ -47,7 +68,9 @@ namespace Block_Game.Utilities
             this.Color = color;
         }
 
-        // Describe the layout of this vertex structure.
+        /// <summary>
+        /// The vertex declaration for this vertex type
+        /// </summary>
         public VertexDeclaration VertexDeclaration
         {
             get
@@ -68,9 +91,10 @@ namespace Block_Game.Utilities
                     );
             }
         }
-
-
-        // Describe the size of this vertex structure.
+        
+        /// <summary>
+        /// The byte size of this vertex declaration
+        /// </summary>
         public const int SizeInBytes = 36;
     }
 }

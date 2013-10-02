@@ -215,6 +215,8 @@ namespace BlockGame
             {
                 state = BlockRenderStates.Left | BlockRenderStates.Top;
             }
+
+            return temp.ToArray();
         }
     }
 
@@ -435,6 +437,27 @@ namespace BlockGame
             if (direction > 225 & direction < 315)
                 return BlockFacing.Back;
             return BlockFacing.Right;
+        }
+
+        public static BlockFacing ToBlockFacing(this Vector3 normal)
+        {
+            normal.Normalize();
+            normal.X = (float)Math.Round(normal.X);
+            normal.Y = (float)Math.Round(normal.Y);
+            normal.Z = (float)Math.Round(normal.Z);
+
+            if (normal.X == -1)
+                return BlockFacing.Left;
+            if (normal.X == 1)
+                return BlockFacing.Right;
+            if (normal.Y == -1)
+                return BlockFacing.Back;
+            if (normal.Y == 1)
+                return BlockFacing.Front;
+            if (normal.Z == -1)
+                return BlockFacing.Bottom;
+
+            return BlockFacing.Top;
         }
 
         public static bool IsFaced(this BlockRenderStates self, BlockFacing facing)
