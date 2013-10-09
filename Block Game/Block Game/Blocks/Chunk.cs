@@ -26,9 +26,12 @@ namespace BlockGame.Blocks
         /// </summary>
         public const int ChunkSize = 16;
 
+        /// <summary>
+        /// Gets the size of a chunk in the world
+        /// </summary>
         public static Point3 WorldChunkSize
         {
-            get { return new Point3((int)((ChunkSize - 1) * BlockManager.BlockSize)); }
+            get { return new Point3((int)(ChunkSize  * BlockManager.BlockSize)); }
         }
         /// <summary>
         /// The array holding all of the block ID's and metaData
@@ -401,6 +404,9 @@ namespace BlockGame.Blocks
         #endregion
 
         #region Set Block
+        /// <summary>
+        /// Generates this chunk using TerrainGen
+        /// </summary>
         public void GenChunk()
         {
             for (int x = 0; x < ChunkSize; x++)
@@ -477,7 +483,7 @@ namespace BlockGame.Blocks
             y -= WorldPos.Y;
             z -= WorldPos.Z;
 
-            SetBlock(x, y, z, dat);
+            SetBlockWithUpdate(x, y, z, dat);
 
             UpdateRenderState(x, y, z);
         }
@@ -599,26 +605,56 @@ namespace BlockGame.Blocks
         }
         #endregion
 
+        /// <summary>
+        /// Checks if the position is within this chunk's range
+        /// </summary>
+        /// <param name="pos">The position to check for (chunk co-ords)</param>
+        /// <returns>True if pos is within this chunk's range</returns>
         private bool IsinRange(Point3 pos)
         {
             return IsinRange(pos.X, pos.Y, pos.Z);
         }
 
+        /// <summary>
+        /// Returns true if the given point is within range of this chunk
+        /// </summary>
+        /// <param name="x">The X co-ord (Chunk)</param>
+        /// <param name="y">The Y co-ord (Chunk)</param>
+        /// <param name="z">The Z co-ord (Chunk)</param>
+        /// <returns>Returns true if point {x,y,z} can exist in this chunk</returns>
         private bool IsinRange(int x, int y, int z)
         {
             return (x >= 0 & x < ChunkSize) & (y >= 0 & y < ChunkSize) & (z >= 0 & z < ChunkSize);
         }
 
+        /// <summary>
+        /// Converts world co-ords to chunk co-ords
+        /// </summary>
+        /// <param name="worldPos">The world point to convert</param>
+        /// <returns>A point relative to this chunk</returns>
         public Point3 ToChunkCoord(Point3 worldPos)
         {
-            return new Point3(worldPos.X % ChunkSize, worldPos.Y % ChunkSize, worldPos.Z % ChunkSize);
+            return new Point3(
+                worldPos.X - (int)(ChunkPos.X * ChunkSize * BlockManager.BlockSize),
+                worldPos.Y - (int)(ChunkPos.Y * ChunkSize * BlockManager.BlockSize),
+                worldPos.Z - (int)(ChunkPos.Z * ChunkSize * BlockManager.BlockSize));
         }
 
+        /// <summary>
+        /// Converts a chunk to a Point3
+        /// </summary>
+        /// <param name="c">The chunk to be converted</param>
+        /// <returns>c cast to a Point3</returns>
         public static implicit operator Point3(Chunk c)
         {
             return c.ChunkPos;
         }
 
+        /// <summary>
+        /// Converts a point to a chunk
+        /// </summary>
+        /// <param name="p">The Point3 to convert</param>
+        /// <returns>p cast to a Chunk</returns>
         public static implicit operator Chunk(Point3 p)
         {
             return new Chunk(p);

@@ -70,9 +70,11 @@ namespace Block_Game.Blocks
         /// <param name="e">The work event args containing the chunk co-ords to be loaded</param>
         private static void LoadChunk(object sender, DoWorkEventArgs e)
         {
-            Chunk chunk = new Chunk((Point3)e.Argument);
+            Point3 t = (Point3)e.Argument;
+            Chunk chunk = new Chunk(t);
             chunk.GenChunk();
-            e.Result = new object[] { chunk, (Point3)e.Argument };
+            chunk.SetBlockFromWorld(t.X * Chunk.ChunkSize, t.Y * Chunk.ChunkSize, t.Z * Chunk.ChunkSize, new BlockData(0));
+            e.Result = new object[] { chunk, t};
         }
 
         /// <summary>
@@ -109,28 +111,59 @@ namespace Block_Game.Blocks
             return CoordChunks[x / Chunk.ChunkSize, y / Chunk.ChunkSize, z / Chunk.ChunkSize] != null;
         }
         
+        /// <summary>
+        /// Gets the chunks from the given world position
+        /// </summary>
+        /// <param name="x">The x co-ord (world)</param>
+        /// <param name="y">The y co-ord (world)</param>
+        /// <param name="z">The z co-ord (world)</param>
+        /// <returns>The chunk that contains the given world co-ord</returns>
         public static Chunk GetChunk(int x, int y, int z)
         {
             return CoordChunks[x / Chunk.ChunkSize, y / Chunk.ChunkSize, z / Chunk.ChunkSize];
         }
 
+        /// <summary>
+        /// Gets the chunks from the given chunk position
+        /// </summary>
+        /// <param name="x">The x co-ord (chunk ref)</param>
+        /// <param name="y">The y co-ord (chunk ref)</param>
+        /// <param name="z">The z co-ord (chunk ref)</param>
+        /// <returns>The chunk at data slot {x,y,z}</returns>
         public static Chunk GetChunkFromChunkPos(int x, int y, int z)
         {
             return CoordChunks[x, y, z];
         }
 
+        /// <summary>
+        /// Sets a block in the world to the given ID
+        /// </summary>
+        /// <param name="x">The x co-ord (world)</param>
+        /// <param name="y">The y co-ord (world)</param>
+        /// <param name="z">The z co-ord (world)</param>
+        /// <param name="dat">The new block data to set to</param>
         public static void SetBlock(int x, int y, int z, BlockData dat)
         {
             if (ChunkExists(x, y, z))
                 GetChunk(x, y, z).SetBlockFromWorld(x, y, z, dat);
         }
 
+        /// <summary>
+        /// Sets a block in the world to the given ID
+        /// </summary>
+        /// <param name="Pos">The co-ords (world)</param>
+        /// <param name="dat">The new block data to set to</param>
         public static void SetBlock(Point3 Pos, BlockData dat)
         {
             if (ChunkExists(Pos.X, Pos.Y, Pos.Z))
                 GetChunk(Pos.X, Pos.Y, Pos.Z).SetBlockFromWorld(Pos.X, Pos.Y, Pos.Z, dat);
         }
 
+        /// <summary>
+        /// Sets a cuboid in the world
+        /// </summary>
+        /// <param name="cuboid">The cuboid to set</param>
+        /// <param name="dat">The block data to set</param>
         public static void SetCuboid(Cuboid cuboid, BlockData dat)
         {
             for (int x = cuboid.Min.X; x < cuboid.Max.X; x++)
@@ -205,12 +238,26 @@ namespace Block_Game.Blocks
         }
     }
 
+    /// <summary>
+    /// Invoked when a chunk is loaded
+    /// </summary>
+    /// <param name="e">The ChunkLoadedArgs to use</param>
     public delegate void ChunkLoadedHandler(ChunkLoadedArgs e);
 
+    /// <summary>
+    /// Represents the agruments for a chunk loaded event
+    /// </summary>
     public class ChunkLoadedArgs : EventArgs
     {
-        public Chunk chunk {get; set;}
+        /// <summary>
+        /// The chunk that was generated
+        /// </summary>
+        public Chunk chunk {get;}
 
+        /// <summary>
+        /// Creates a new event args for a chunk load
+        /// </summary>
+        /// <param name="chunk">The chunk that has been loaded</param>
         public ChunkLoadedArgs(Chunk chunk)
         {
             this.chunk = chunk;
