@@ -15,21 +15,46 @@ using System.ComponentModel;
 
 namespace Block_Game.Blocks
 {
+    /// <summary>
+    /// Represents the world that can be edited
+    /// </summary>
     public static class World
     {
+        /// <summary>
+        /// The chunks in this world
+        /// </summary>
         static Chunk[, ,] CoordChunks = new Chunk[512, 1024, 32]; 
+        /// <summary>
+        /// Holds all of the points where chunks were loaded
+        /// </summary>
         static Point3[] loaded = new Point3[0];
+        /// <summary>
+        /// Gets the number of chunks
+        /// </summary>
         public static int ChunkCount { get { return loaded.Length; } }
 
+        /// <summary>
+        /// The list of all points where chunks should be loaded
+        /// </summary>
         static List<Point3> ToBeLoaded = new List<Point3>();
+        /// <summary>
+        /// The thread used to load chunks
+        /// </summary>
         static BackgroundWorker ChunkThread = new BackgroundWorker();
 
+        /// <summary>
+        /// Initializes the world
+        /// </summary>
         public static void Initialize()
         {
             ChunkThread.DoWork += LoadChunk;
             ChunkThread.RunWorkerCompleted += ChunkLoaded;
         }
 
+        /// <summary>
+        /// Registered a chunk t be loaded at the specified chunk co-ords
+        /// </summary>
+        /// <param name="chunkPos">The chunk co-ords to load</param>
         public static void AddChunk(Point3 chunkPos)
         {
             ToBeLoaded.Add(chunkPos);
@@ -38,14 +63,25 @@ namespace Block_Game.Blocks
                 ChunkThread.RunWorkerAsync(ToBeLoaded[0]);
         }
 
-        public static void LoadChunk(object sender, DoWorkEventArgs e)
+        /// <summary>
+        /// Performs the chunk loading/generating event
+        /// </summary>
+        /// <param name="sender">The object that raised this event</param>
+        /// <param name="e">The work event args containing the chunk co-ords to be loaded</param>
+        private static void LoadChunk(object sender, DoWorkEventArgs e)
         {
             Chunk chunk = new Chunk((Point3)e.Argument);
             chunk.GenChunk();
             e.Result = new object[] { chunk, (Point3)e.Argument };
         }
 
-        public static void ChunkLoaded(object sender, RunWorkerCompletedEventArgs e)
+        /// <summary>
+        /// Finalizes the chunk loading by adding it back to the map, and starts loading the next chunk
+        /// if need be
+        /// </summary>
+        /// <param name="sender">The object that raised this event (should be this world)</param>
+        /// <param name="e">The WorkCompleted containing the chunk that was loaded</param>
+        private static void ChunkLoaded(object sender, RunWorkerCompletedEventArgs e)
         {
             ToBeLoaded.RemoveAt(0);
 
@@ -61,6 +97,13 @@ namespace Block_Game.Blocks
                 ChunkThread.RunWorkerAsync(ToBeLoaded[0]);
         }
 
+        /// <summary>
+        /// Gets if the chunk at {x,y,z} is loaded
+        /// </summary>
+        /// <param name="x">The x co-ord (chunk)</param>
+        /// <param name="y">The y co-ord (chunk)</param>
+        /// <param name="z">The z co-ord (chunk)</param>
+        /// <returns>True if a chunk exists at {x,y,z}</returns>
         public static bool ChunkExists(int x, int y, int z)
         {
             return CoordChunks[x / Chunk.ChunkSize, y / Chunk.ChunkSize, z / Chunk.ChunkSize] != null;

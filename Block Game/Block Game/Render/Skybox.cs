@@ -14,11 +14,26 @@ using Block_Game.Utilities;
 
 namespace Block_Game.Render
 {
+    /// <summary>
+    /// Represents the sun
+    /// </summary>
     public class Sun
     {
+        /// <summary>
+        /// The pixel-distance from the sun to the player
+        /// </summary>
         const float Radius = 100;
+        /// <summary>
+        /// The angle that the sun is relative to the player
+        /// </summary>
         float sunAngle;
+        /// <summary>
+        /// The centre point of the sun
+        /// </summary>
         Vector3 Pos;
+        /// <summary>
+        /// The vertices to render
+        /// </summary>
         VertexPositionNormalTextureColor[] verts =
         BlockRenderFaces.GetFacesFromState(
             BlockRenderStates.Back |
@@ -28,6 +43,9 @@ namespace Block_Game.Render
             BlockRenderStates.Top |
             BlockRenderStates.Bottom, new Point3(0, 0, 0), 23);
 
+        /// <summary>
+        /// Creates a new sun
+        /// </summary>
         public Sun()
         {
             foreach (VertexPositionNormalTextureColor t in verts)
@@ -36,6 +54,10 @@ namespace Block_Game.Render
             }
         }
 
+        /// <summary>
+        /// Renders this sun
+        /// </summary>
+        /// <param name="camera">The camera to render with</param>
         public void Render(Camera camera)
         {
             Pos = camera.CameraPos + new Vector3(
@@ -57,6 +79,9 @@ namespace Block_Game.Render
             }
         }
 
+        /// <summary>
+        /// Ticks this sun
+        /// </summary>
         public void SunTick()
         {
             sunAngle += 0.1F;
