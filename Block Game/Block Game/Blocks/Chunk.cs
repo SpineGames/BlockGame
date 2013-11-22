@@ -24,7 +24,7 @@ namespace BlockGame.Blocks
         /// <summary>
         /// The size of chunks in blocks
         /// </summary>
-        public const int ChunkSize = 16;
+        public const int ChunkSize = 128;
 
         /// <summary>
         /// Gets the size of a chunk in the world

@@ -252,7 +252,7 @@ namespace Block_Game.Blocks
         /// <summary>
         /// The chunk that was generated
         /// </summary>
-        public Chunk chunk {get;}
+        public readonly Chunk chunk;
 
         /// <summary>
         /// Creates a new event args for a chunk load
