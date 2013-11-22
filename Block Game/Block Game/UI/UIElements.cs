@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Block_Game.Utilities;
+using BlockGame.Utilities;
 
-namespace Block_Game.UI
+namespace BlockGame.UI
 {
     public abstract class UIElement
     {

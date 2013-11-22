@@ -50,7 +50,7 @@ namespace BlockGame.Render
         /// <returns>The bottom-left corner for the texture refrence</returns>
         public static Vector2 BL(byte ID)
         {
-            int y = (int)Math.Round(ID / 16F);
+            int y = (int)(ID / 16F);
             int x = ID - (int)(y * 16);
 
             return new Vector2((float)x * PercentPerBlock, (float)y * PercentPerBlock);
@@ -63,7 +63,7 @@ namespace BlockGame.Render
         /// <returns>The bottom-right corner for the texture refrence</returns>
         public static Vector2 BR(byte ID)
         {
-            int y = (int)Math.Round(ID / 16F);
+            int y = (int)(ID / 16F);
             int x = ID - (int)(y * 16);
 
             return new Vector2(((float)x + 1F) * PercentPerBlock, ((float)y) * PercentPerBlock);
@@ -76,7 +76,7 @@ namespace BlockGame.Render
         /// <returns>The top-left corner for the texture refrence</returns>
         public static Vector2 TL(byte ID)
         {
-            int y = (int)Math.Round(ID / 16F);
+            int y = (int)(ID / 16F);
             int x = ID - (int)((float)y * 16);
 
             return new Vector2(((float)x) * PercentPerBlock, ((float)y + 1F) * PercentPerBlock);
@@ -89,7 +89,7 @@ namespace BlockGame.Render
         /// <returns>The top-right corner for the texture refrence</returns>
         public static Vector2 TR(byte ID)
         {
-            int y = (int)Math.Round(ID / 16F);
+            int y = (int)(ID / 16F);
             int x = ID - (int)(y * 16);
 
             return new Vector2(((float)x + 1F) * PercentPerBlock, ((float)y + 1F) * PercentPerBlock);

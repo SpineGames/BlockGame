@@ -10,9 +10,9 @@ using Microsoft.Xna.Framework;
 using BlockGame;
 using BlockGame.Utilities;
 using Spine_Library.Tools;
-using Block_Game.Utilities;
+using BlockGame.Blocks;
 
-namespace Block_Game.Render
+namespace BlockGame.Render
 {
     /// <summary>
     /// Represents the sun

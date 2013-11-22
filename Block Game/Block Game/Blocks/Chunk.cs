@@ -9,10 +9,8 @@ using Microsoft.Xna.Framework;
 using BlockGame.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using BlockGame.Render;
-using Block_Game.Render;
-using Block_Game;
-using Block_Game.Utilities;
-using Block_Game.Blocks;
+using BlockGame;
+using BlockGame.Blocks;
 
 namespace BlockGame.Blocks
 {
@@ -24,14 +22,14 @@ namespace BlockGame.Blocks
         /// <summary>
         /// The size of chunks in blocks
         /// </summary>
-        public const int ChunkSize = 128;
+        public const int ChunkSize = 32;
 
         /// <summary>
         /// Gets the size of a chunk in the world
         /// </summary>
         public static Point3 WorldChunkSize
         {
-            get { return new Point3((int)(ChunkSize  * BlockManager.BlockSize)); }
+            get { return new Point3((int)(ChunkSize  * BlockRenderer.BlockSize)); }
         }
         /// <summary>
         /// The array holding all of the block ID's and metaData
@@ -66,7 +64,7 @@ namespace BlockGame.Blocks
         {
             get
             {
-                return ChunkPos * (int)(ChunkSize * BlockManager.BlockSize);
+                return ChunkPos * (int)(ChunkSize * BlockRenderer.BlockSize);
             }
         }
         /// <summary>
@@ -415,11 +413,22 @@ namespace BlockGame.Blocks
                 {
                     for (int z = 0; z < ChunkSize; z++)
                     {
-                        SetBlock(x,y,z, 
+                        SetBlockWithoutNotify(x,y,z, 
                             TerrainGen.GetBlockAtPos(x + WorldPos.X, y + WorldPos.Y, z + WorldPos.Z));
                     }
                 }
             }
+
+            int treeCount = TerrainGen.Random.Next(0, 10);
+
+            for (int i = 0; i < treeCount; i++)
+            {
+                TerrainGen.GenTree(
+                    TerrainGen.Random.Next(2, ChunkSize - 2),
+                    TerrainGen.Random.Next(2, ChunkSize - 2),
+                    TerrainGen.GroundLevel - WorldPos.Z, 4 + TerrainGen.Random.Next(0, 3), this);
+            }
+
             UpdateRenderStates(new Point3(0), new Point3(ChunkSize));
         }
 
@@ -432,7 +441,7 @@ namespace BlockGame.Blocks
         /// <param name="ID">The ID to set the block to</param>
         private void SetBlock(int x, int y, int z, byte ID)
         {
-            SetBlock(x, y, z, new BlockData { ID = ID });
+            SetBlockWithoutNotify(x, y, z, new BlockData { ID = ID });
         }
 
         /// <summary>
@@ -442,7 +451,7 @@ namespace BlockGame.Blocks
         /// <param name="ID">The ID to set the block to</param>
         private void SetBlock(Point3 pos, byte ID)
         {
-            SetBlock(pos.X, pos.Y, pos.Z, new BlockData { ID = ID });
+            SetBlockWithoutNotify(pos.X, pos.Y, pos.Z, new BlockData { ID = ID });
         }
         
         /// <summary>
@@ -452,7 +461,7 @@ namespace BlockGame.Blocks
         /// <param name="dat">The block data to set at {x,y,z}</param>
         private void SetBlock(Point3 pos, BlockData dat)
         {
-            SetBlock(pos.X, pos.Y, pos.Z, dat);
+            SetBlockWithoutNotify(pos.X, pos.Y, pos.Z, dat);
         }
 
         /// <summary>
@@ -462,7 +471,7 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ords of the block (chunk)</param>
         /// <param name="z">The z co-ords of the block (chunk)</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        private void SetBlock(int x, int y, int z, BlockData dat)
+        public void SetBlockWithoutNotify(int x, int y, int z, BlockData dat)
         {
             if (IsinRange(x, y, z))
             {
@@ -497,7 +506,7 @@ namespace BlockGame.Blocks
         /// <param name="dat">The block data to set at {x,y,z}</param>
         private void SetBlockWithUpdate(int x, int y, int z, BlockData dat)
         {
-            SetBlock(x, y, z, dat);
+            SetBlockWithoutNotify(x, y, z, dat);
             UpdateRenderState(x, y, z);
             PushRenderState();
         }
@@ -539,7 +548,7 @@ namespace BlockGame.Blocks
                 {
                     for (int z = min.Z; z <= max.Z; z++)
                     {
-                        SetBlock(x, y, z, dat);
+                        SetBlockWithoutNotify(x, y, z, dat);
                     }
                 }
             }
@@ -577,7 +586,7 @@ namespace BlockGame.Blocks
                     }
                 }
             }
-            Point3 size = new Point3((int)Math.Ceiling(radius + BlockManager.BlockSize));
+            Point3 size = new Point3((int)Math.Ceiling(radius + BlockRenderer.BlockSize));
             UpdateRenderStates(centre - size, centre + size);      
         }
 
@@ -596,11 +605,11 @@ namespace BlockGame.Blocks
                     for (int z = 0; z < ChunkSize; z++)
                     {
                         if (Vector3.Distance(centre, new Vector3(x, y, z)) <= radius)
-                            SetBlock(x, y, z, dat);
+                            SetBlockWithoutNotify(x, y, z, dat);
                     }
                 }
             }
-            Point3 size = new Point3((int)Math.Ceiling(radius + BlockManager.BlockSize));
+            Point3 size = new Point3((int)Math.Ceiling(radius + BlockRenderer.BlockSize));
             UpdateRenderStates(centre - size, centre + size);
         }
         #endregion
@@ -635,9 +644,9 @@ namespace BlockGame.Blocks
         public Point3 ToChunkCoord(Point3 worldPos)
         {
             return new Point3(
-                worldPos.X - (int)(ChunkPos.X * ChunkSize * BlockManager.BlockSize),
-                worldPos.Y - (int)(ChunkPos.Y * ChunkSize * BlockManager.BlockSize),
-                worldPos.Z - (int)(ChunkPos.Z * ChunkSize * BlockManager.BlockSize));
+                worldPos.X - (int)(ChunkPos.X * ChunkSize * BlockRenderer.BlockSize),
+                worldPos.Y - (int)(ChunkPos.Y * ChunkSize * BlockRenderer.BlockSize),
+                worldPos.Z - (int)(ChunkPos.Z * ChunkSize * BlockRenderer.BlockSize));
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace Block_Game.Utilities
+namespace BlockGame.Utilities
 {
     /// <summary>
     /// A class holding miscelaneous extenstions for other classes

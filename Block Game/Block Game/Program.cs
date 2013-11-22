@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Block_Game
+namespace BlockGame
 {
 #if WINDOWS || XBOX
     static class Program

@@ -11,17 +11,15 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using BlockGame;
+using BlockGame.UI;
 using BlockGame.Render;
 using BlockGame.Blocks;
 using BlockGame.Utilities;
-using Block_Game.Render;
-using BlockGame;
-using Block_Game.Blocks;
-using Block_Game.Utilities;
-using Block_Game.UI;
+using BlockGame.Blocks.BlockTypes;
 using Spine_Library.Input;
 
-namespace Block_Game
+namespace BlockGame
 {
     /// <summary>
     /// This is the main type for your game
@@ -112,7 +110,7 @@ namespace Block_Game
         {
             Texture2D blank = new Texture2D(GraphicsDevice, 1, 1);
             blank.SetData<Color>(new Color[] { Color.White });
-            
+
             this.IsMouseVisible = true;
 
             World.Initialize();
@@ -262,9 +260,9 @@ namespace Block_Game
         public void PPressed(object sender, EventArgs e)
         {
             World.SetCuboid(new Cuboid(new Point3(0, 0, 0), new Point3(64, 64, 64)),
-                new BlockData(BlockManager.Log.ID));
+                new BlockData(BlockManager.GetBlock("Log").ID));
             World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
-                new BlockData(BlockManager.Glass.ID));
+                new BlockData(BlockManager.GetBlock("Glass").ID));
         }
         #endregion
 

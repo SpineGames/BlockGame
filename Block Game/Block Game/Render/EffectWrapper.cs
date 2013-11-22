@@ -8,9 +8,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using Block_Game.Utilities;
+using BlockGame.Utilities;
 
-namespace Block_Game.Render
+namespace BlockGame.Render
 {
     /// <summary>
     /// Represents a point light shader

@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
-using Block_Game.Render;
-using Block_Game;
+using BlockGame.Render;
+using BlockGame;
 using Microsoft.Xna.Framework;
-using Block_Game.Utilities;
+using BlockGame.Utilities;
 
 namespace BlockGame.Render
 {
@@ -124,7 +124,8 @@ namespace BlockGame.Render
                 {
                     p.Apply();
 
-                    Game1.worldEffect.BaseEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(PrimitiveType.TriangleList,
+                    Game1.worldEffect.BaseEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(
+                        PrimitiveType.TriangleList,
                         OpaqueBuffer, 0, OpaquePrimitiveCount);
                 }
             }

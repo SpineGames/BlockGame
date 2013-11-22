@@ -8,12 +8,12 @@ using System.Text;
 using BlockGame.Blocks;
 using BlockGame.Utilities;
 using System.Threading;
-using Block_Game.Render;
+using BlockGame.Render;
 using BlockGame;
-using Block_Game.Utilities;
 using System.ComponentModel;
+using Microsoft.Xna.Framework;
 
-namespace Block_Game.Blocks
+namespace BlockGame.Blocks
 {
     /// <summary>
     /// Represents the world that can be edited
@@ -74,6 +74,7 @@ namespace Block_Game.Blocks
             Chunk chunk = new Chunk(t);
             chunk.GenChunk();
             chunk.SetBlockFromWorld(t.X * Chunk.ChunkSize, t.Y * Chunk.ChunkSize, t.Z * Chunk.ChunkSize, new BlockData(0));
+            
             e.Result = new object[] { chunk, t};
         }
 
@@ -93,7 +94,6 @@ namespace Block_Game.Blocks
             CoordChunks[pos.X, pos.Y, pos.Z] = chunk;
             Array.Resize<Point3>(ref loaded, loaded.Length + 1);
             loaded[loaded.Length - 1] = pos;
-
 
             if (ToBeLoaded.Count > 0)
                 ChunkThread.RunWorkerAsync(ToBeLoaded[0]);
@@ -170,6 +170,43 @@ namespace Block_Game.Blocks
                 for (int y = cuboid.Min.Y; y < cuboid.Max.Y; y++)
                     for (int z = cuboid.Min.Z; z < cuboid.Max.Z; z++)
                         SetBlock(x, y, z, dat);
+        }
+
+        /// <summary>
+        /// Sets a sphere in the world
+        /// </summary>
+        /// <param name="cuboid">The bounds of the sphere to set</param>
+        /// <param name="dat">The block data to set</param>
+        public static void SetSphere(Cuboid cuboid, BlockData dat)
+        {
+            Point3 centre = (cuboid.Max - cuboid.Min) / 2;
+            float radius = ((Vector3)centre).Length();
+
+            for (int x = cuboid.Min.X; x < cuboid.Max.X; x++)
+                for (int y = cuboid.Min.Y; y < cuboid.Max.Y; y++)
+                    for (int z = cuboid.Min.Z; z < cuboid.Max.Z; z++)
+                    {
+                        if ((new Vector3(x,y,z) - (Vector3)centre).Length() < radius)
+                            SetBlock(x, y, z, dat);
+                    }
+        }
+
+        /// <summary>
+        /// Sets a sphere in the world
+        /// </summary>
+        /// <param name="cuboid">The bounds of the sphere to set</param>
+        /// <param name="dat">The block data to set</param>
+        public static void SetSphere(Point3 centre, float radius, BlockData dat)
+        {
+            Cuboid cuboid = new Cuboid(centre - (int)radius, centre + (int)radius);
+
+            for (int x = cuboid.Min.X; x < cuboid.Max.X; x++)
+                for (int y = cuboid.Min.Y; y < cuboid.Max.Y; y++)
+                    for (int z = cuboid.Min.Z; z < cuboid.Max.Z; z++)
+                    {
+                        if ((new Vector3(x, y, z) - (Vector3)centre).Length() < radius)
+                            SetBlock(x, y, z, dat);
+                    }
         }
 
         /// <summary>

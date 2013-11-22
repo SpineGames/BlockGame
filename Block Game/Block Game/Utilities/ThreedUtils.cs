@@ -8,7 +8,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Block_Game.Utilities
+namespace BlockGame.Utilities
 {
     class ThreedUtils
     {

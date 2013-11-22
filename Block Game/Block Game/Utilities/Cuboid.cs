@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using BlockGame.Utilities;
 
-namespace Block_Game.Utilities
+namespace BlockGame.Utilities
 {
     /// <summary>
     /// Represents an axis aligned, integer co-ord cuboid

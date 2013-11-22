@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Block_Game.Utilities;
+using BlockGame.Utilities;
 
 namespace BlockGame.Utilities
 {
@@ -241,6 +241,28 @@ namespace BlockGame.Utilities
         public static Point3 operator /(Point3 p1, int p)
         {
             return new Point3(p1.X / p, p1.Y / p, p1.Z / p);
+        }
+
+        /// <summary>
+        /// Handles subtracting one point from another
+        /// </summary>
+        /// <param name="p1">The source point</param>
+        /// <param name="v">The distance to add</param>
+        /// <returns>p1 - v</returns>
+        public static Point3 operator -(Point3 p1, int v)
+        {
+            return new Point3(p1.X - v, p1.Y - v, p1.Z - v);
+        }
+
+        /// <summary>
+        /// Handles adding one point to another
+        /// </summary>
+        /// <param name="p1">The source point</param>
+        /// <param name="v">The distance to add</param>
+        /// <returns>p1 + v</returns>
+        public static Point3 operator +(Point3 p1, int v)
+        {
+            return new Point3(p1.X + v, p1.Y + v, p1.Z + v);
         }
 
         /// <summary>

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Block_Game.Utilities
+namespace BlockGame.Utilities
 {
     /// <summary>
     /// Represents a variable which can be tracked by event handlers
