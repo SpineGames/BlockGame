@@ -123,6 +123,9 @@ namespace BlockGame.Blocks
             Point3 min = new Point3(ChunkSize / 2) - corner + (facing.NormalVector() * ChunkSize / 2);
             Point3 max = new Point3(ChunkSize / 2) + corner + (facing.NormalVector() * (ChunkSize / 2 - 1));
 
+            if (facing == BlockFacing.Top | facing == BlockFacing.Right | facing == BlockFacing.Front)
+                System.Diagnostics.Debug.Print("f: " + facing);
+
             UpdateRenderStates(min, max);
         }
 
@@ -133,8 +136,8 @@ namespace BlockGame.Blocks
         /// <param name="max">The maximum of the cube to update (chunk)</param>
         private void UpdateRenderStates(Point3 min, Point3 max)
         {
-            min.Clamp(new Point3(0), new Point3(ChunkSize));
-            max.Clamp(new Point3(0), new Point3(ChunkSize));
+            //min.Clamp(new Point3(0), new Point3(ChunkSize));
+            //max.Clamp(new Point3(0), new Point3(ChunkSize));
 
             for (int x = min.X; x <= max.X; x++)
             {
@@ -243,12 +246,32 @@ namespace BlockGame.Blocks
         /// <returns>True if the face should be rendered</returns>
         private bool ShouldRenderFace(BlockFacing facing, Point3 position)
         {
-            if (GetBlockID(position + facing.NormalVector()) == 0)
-                return true; //main cause to render the face is if it faces air
+            Point3 facePos = position + facing.NormalVector();
 
-            if (World.IsOpaque(position) & !World.IsOpaque(position + facing.NormalVector()))
+            if (facePos.X >= 0 & facePos.X < ChunkSize &
+                facePos.Y >= 0 & facePos.Y < ChunkSize &
+                facePos.Z >= 0 & facePos.Z < ChunkSize)
             {
-                return true; //only other case is if there is a non-opaque and an opaque
+                if (GetBlockID(facePos) == 0)
+                    return true; //main cause to render the face is if it faces air
+
+                if (IsOpaque(position) & !IsOpaque(facePos))
+                {
+                    return true; //only other case is if there is a non-opaque and an opaque
+                }
+            }
+            else
+            {
+                position += WorldPos;
+                facePos += WorldPos;
+
+                if (World.GetBlockID(facePos) == 0)
+                    return true; //main cause to render the face is if it faces air
+
+                if (World.IsOpaque(position) & !World.IsOpaque(facePos))
+                {
+                    return true; //only other case is if there is a non-opaque and an opaque
+                }
             }
 
             return false;
@@ -296,9 +319,9 @@ namespace BlockGame.Blocks
         /// <summary>
         /// Checks if a block is opaque or not
         /// </summary>
-        /// <param name="x">The block's x co-ord (chunk)</param>
-        /// <param name="y">The block's y co-ord (chunk)</param>
-        /// <param name="z">The block's z co-ord (chunk)</param>
+        /// <param name="x">The block's x co-ord (world)</param>
+        /// <param name="y">The block's y co-ord (world)</param>
+        /// <param name="z">The block's z co-ord (world)</param>
         /// <returns>True if the block at {x,y,z} is opaque</returns>
         public bool IsOpaqueFromWorld(int x, int y, int z)
         {
@@ -347,6 +370,26 @@ namespace BlockGame.Blocks
         /// <returns>The block's ID at {x,y,z}</returns>
         public byte GetBlockID(int x, int y, int z)
         {
+            if (IsinRange(x, y, z))
+            {
+                return blocks[x, y, z].ID;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Return the ID of the block at {x,y,z}
+        /// </summary>
+        /// <param name="x">The x co-ord of the block (world)</param>
+        /// <param name="y">The y co-ord of the block (world)</param>
+        /// <param name="z">The z co-ord of the block (world)</param>
+        /// <returns>The block's ID at {x,y,z}</returns>
+        public byte GetBlockIDFromWorld(int x, int y, int z)
+        {
+            x -= WorldPos.X;
+            y -= WorldPos.Y;
+            z -= WorldPos.Z;
+
             if (IsinRange(x, y, z))
             {
                 return blocks[x, y, z].ID;

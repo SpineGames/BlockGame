@@ -114,6 +114,19 @@ namespace BlockGame.Utilities
         }
 
         /// <summary>
+        /// Checks if this point is equal to another object
+        /// </summary>
+        /// <param name="obj">The object to compare</param>
+        /// <returns>True if this point is equal to the object</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() == typeof(Point3))
+                return this == (Point3)obj;
+            else
+                return false;
+        }
+
+        /// <summary>
         /// Casts this point to a string
         /// </summary>
         /// <returns>The string representation of this point</returns>
@@ -177,6 +190,28 @@ namespace BlockGame.Utilities
         #endregion
 
         #region Static Operators
+        /// <summary>
+        /// Checks if two points are equal
+        /// </summary>
+        /// <param name="source">The source point to check</param>
+        /// <param name="other">The other point to check</param>
+        /// <returns>True if <i>source</i> has the same x/y/z values as <i>other</i></returns>
+        public static bool operator == (Point3 source, Point3 other)
+        {
+            return source.X == other.X & source.Y == other.Y & source.Z == other.Z;
+        }
+
+        /// <summary>
+        /// Checks if two points are not equal
+        /// </summary>
+        /// <param name="source">The source point to check</param>
+        /// <param name="other">The other point to check</param>
+        /// <returns>True if <i>source</i> does not have the same x/y/z values as <i>other</i></returns>
+        public static bool operator !=(Point3 source, Point3 other)
+        {
+            return source.X != other.X || source.Y != other.Y || source.Z != other.Z;
+        }
+
         /// <summary>
         /// Handles subtracting one point from another
         /// </summary>

@@ -95,8 +95,35 @@ namespace BlockGame.Blocks
             Array.Resize<Point3>(ref loaded, loaded.Length + 1);
             loaded[loaded.Length - 1] = pos;
 
+            InvalidateChunkFaces(pos);
+
             if (ToBeLoaded.Count > 0)
                 ChunkThread.RunWorkerAsync(ToBeLoaded[0]);
+        }
+
+        /// <summary>
+        /// Invalidates the chunks that share a face with the given chunk position
+        /// </summary>
+        /// <param name="CentreChunk">The centre chunk to invalidate faces towards</param>
+        private static void InvalidateChunkFaces(Point3 CentreChunk)
+        {
+            if (loaded.Contains(new Point3(CentreChunk.X - 1, CentreChunk.Y, CentreChunk.Z)))
+                GetChunk(CentreChunk.X - 1, CentreChunk.Y, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Right);
+            
+            if (loaded.Contains(new Point3(CentreChunk.X + 1, CentreChunk.Y, CentreChunk.Z)))
+                GetChunk(CentreChunk.X + 1, CentreChunk.Y, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Left);
+
+            if (loaded.Contains(new Point3(CentreChunk.X, CentreChunk.Y - 1, CentreChunk.Z)))
+                GetChunk(CentreChunk.X, CentreChunk.Y - 1, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Front);
+
+            if (loaded.Contains(new Point3(CentreChunk.X, CentreChunk.Y + 1, CentreChunk.Z)))
+                GetChunk(CentreChunk.X, CentreChunk.Y + 1, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Back);
+
+            if (loaded.Contains(new Point3(CentreChunk.X, CentreChunk.Y, CentreChunk.Z - 1)))
+                GetChunk(CentreChunk.X, CentreChunk.Y, CentreChunk.Z - 1).InvalidateChunkFace(BlockFacing.Top);
+
+            if (loaded.Contains(new Point3(CentreChunk.X, CentreChunk.Y, CentreChunk.Z + 1)))
+                GetChunk(CentreChunk.X, CentreChunk.Y, CentreChunk.Z + 1).InvalidateChunkFace(BlockFacing.Bottom);
         }
 
         /// <summary>
@@ -219,7 +246,7 @@ namespace BlockGame.Blocks
         public static byte GetBlockID(int x, int y, int z)
         {
             if (ChunkExists(x, y, z))
-                return GetChunk(x, y, z).GetBlockID(x, y, z);
+                return GetChunk(x, y, z).GetBlockIDFromWorld(x, y, z);
             return 0;
         }
 
