@@ -419,7 +419,7 @@ namespace BlockGame.Blocks
                 }
             }
 
-            int treeCount = TerrainGen.Random.Next(0, 10);
+            int treeCount = TerrainGen.Random.Next(5, 20);
 
             for (int i = 0; i < treeCount; i++)
             {
