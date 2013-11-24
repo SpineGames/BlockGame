@@ -111,6 +111,22 @@ namespace BlockGame.Blocks
         }
 
         /// <summary>
+        /// Invalidates all the renderstates along one fae of the chunk
+        /// </summary>
+        /// <param name="facing">The facing to invalidate</param>
+        public void InvalidateChunkFace(BlockFacing facing)
+        {
+            Point3 corner = (Point3)(Vector3.Cross(facing.NormalVector(), facing.CrossNormalVector())) +
+                facing.CrossNormalVector();
+            corner *= ChunkSize / 2;
+
+            Point3 min = new Point3(ChunkSize / 2) - corner + (facing.NormalVector() * ChunkSize / 2);
+            Point3 max = new Point3(ChunkSize / 2) + corner + (facing.NormalVector() * (ChunkSize / 2 - 1));
+
+            UpdateRenderStates(min, max);
+        }
+
+        /// <summary>
         /// Updates all render states in a cuboid
         /// </summary>
         /// <param name="min">The minimum of the cube to update (chunk)</param>

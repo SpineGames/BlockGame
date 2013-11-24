@@ -222,6 +222,54 @@ namespace BlockGame.Utilities
         }
 
         /// <summary>
+        /// Handles subtracting a vector from a point
+        /// </summary>
+        /// <param name="p1">The source point</param>
+        /// <param name="p2">The vector to subtract</param>
+        /// <returns>p1 - p2</returns>
+        public static Point3 operator -(Point3 p1, Vector3 p2)
+        {
+            return new Point3((int)Math.Round(p2.X - p1.X), (int)Math.Round(p2.Y - p1.Y),
+                (int)Math.Round(p2.Z - p1.Z));
+        }
+
+        /// <summary>
+        /// Handles adding one point to another
+        /// </summary>
+        /// <param name="p1">The source point</param>
+        /// <param name="p2">The point to add</param>
+        /// <returns>p1 + p2</returns>
+        public static Point3 operator +(Point3 p1, Vector3 p2)
+        {
+            return new Point3((int)Math.Round(p2.X + p1.X), (int)Math.Round(p2.Y + p1.Y), 
+                (int)Math.Round(p2.Z + p1.Z));
+        }
+
+        /// <summary>
+        /// Handles multiplying a point by a vector
+        /// </summary>
+        /// <param name="p1">The source point</param>
+        /// <param name="p2">The vector to multiply by</param>
+        /// <returns>p1 * p2</returns>
+        public static Point3 operator *(Point3 p1, Vector3 p2)
+        {
+            return new Point3((int)Math.Round(p2.X * p1.X), (int)Math.Round(p2.Y * p1.Y), 
+                (int)Math.Round(p2.Z * p1.Z));
+        }
+
+        /// <summary>
+        /// Handles dividing a point by a vector
+        /// </summary>
+        /// <param name="p1">The source point</param>
+        /// <param name="p2">The vector to divide by</param>
+        /// <returns>p1 / p2</returns>
+        public static Point3 operator /(Point3 p1, Vector3 p2)
+        {
+            return new Point3((int)Math.Round(p2.X / p1.X), (int)Math.Round(p2.Y / p1.Y), 
+                (int)Math.Round(p2.Z / p1.Z));
+        }
+
+        /// <summary>
         /// Handles multiplying a point by an integer value
         /// </summary>
         /// <param name="p1">The source point</param>
@@ -273,6 +321,16 @@ namespace BlockGame.Utilities
         public static implicit operator Vector3(Point3 point)
         {
             return new Vector3(point.X, point.Y, point.Z);
+        }
+
+        /// <summary>
+        /// Handles casting a Vector3 to a 3D point 
+        /// </summary>
+        /// <param name="point">The point to cast</param>
+        /// <returns>The Point3 version of <i>point</i></returns>
+        public static implicit operator Point3(Vector3 point)
+        {
+            return new Point3((int)Math.Round(point.X), (int)Math.Round(point.Y), (int)Math.Round(point.Z));
         }
         #endregion
     }
