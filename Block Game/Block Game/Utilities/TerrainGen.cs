@@ -82,7 +82,7 @@ namespace BlockGame.Blocks
                     for (int sZ = - 3; sZ < + 3; sZ++)
                     {
                         if (Math.Pow(1.5, 3) > Math.Pow(sX, 2) + Math.Pow(sY, 2) + Math.Pow(sZ, 2))
-                            World.SetBlock(x + sX, y + sY, z + sZ + height, new BlockData(BlockManager.Leaves.ID, 1));
+                            World.SetBlock(x + sX, y + sY, z + sZ + height, new BlockData(BlockManager.Leaves.ID, 0));
 
                     }
                 for (int zP = 0; zP <= height; zP++)
@@ -105,7 +105,7 @@ namespace BlockGame.Blocks
                     for (int sZ = -3; sZ < +3; sZ++)
                     {
                         if (Math.Pow(2, 3) > Math.Pow(sX, 2) + Math.Pow(sY, 2) + Math.Pow(sZ, 2))
-                            chunk.SetBlockWithoutNotify(x + sX, y + sY, z + sZ + height, new BlockData(BlockManager.Leaves.ID, 1));
+                            chunk.SetBlockWithoutNotify(x + sX, y + sY, z + sZ + height, new BlockData(BlockManager.Leaves.ID, 0));
 
                     }
             for (int zP = 0; zP <= height; zP++)

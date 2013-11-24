@@ -70,6 +70,14 @@ namespace BlockGame.Utilities
 
         #region Methods
         /// <summary>
+        /// Gets the voulume under this point
+        /// </summary>
+        public int Volume
+        {
+            get { return X * Y * Z; }
+        }
+
+        /// <summary>
         /// Checks if this point is inside a cuboid
         /// </summary>
         /// <param name="min">The minimum point in the cuboid</param>
@@ -97,10 +105,9 @@ namespace BlockGame.Utilities
         /// <param name="max">The max value to clamp to</param>
         public void Clamp(Point3 min, Point3 max)
         {
-            Point3 t = Clamp(this, min, max);
-            this.X = t.X;
-            this.Y = t.Y;
-            this.Z = t.Z;
+            X = X < min.X ? min.X : X > max.X ? max.X : X;
+            Y = Y < min.Y ? min.Y : Y > max.Y ? max.Y : Y;
+            Z = Z < min.Z ? min.Z : Z > max.Z ? max.Z : Z;
         }
 
         /// <summary>
@@ -146,10 +153,8 @@ namespace BlockGame.Utilities
         /// <returns>A new point representing p as a clamped value</returns>
         public static Point3 Clamp(Point3 p, Point3 min, Point3 max)
         {
-            return new Point3(
-                (int)MathHelper.Clamp(p.X, min.X, max.X),
-                (int)MathHelper.Clamp(p.Y, min.Y, max.Y),
-                (int)MathHelper.Clamp(p.Z, min.Z, max.Z));
+            p.Clamp(min, max);
+            return p;
         }
 
         /// <summary>

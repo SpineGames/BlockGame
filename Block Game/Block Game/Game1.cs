@@ -18,6 +18,7 @@ using BlockGame.Blocks;
 using BlockGame.Utilities;
 using BlockGame.Blocks.BlockTypes;
 using Spine_Library.Input;
+using System.Diagnostics;
 
 namespace BlockGame
 {
@@ -266,11 +267,22 @@ namespace BlockGame
         {
             if (!didPerf)
             {
-                //World.SetCuboid(new Cuboid(new Point3(0, 0, 0), new Point3(64, 64, 64)),
-                //new BlockData(BlockManager.GetBlock("Log").ID));
+                Stopwatch time = new Stopwatch();
+                time.Start();
+                Debug.WriteLine("\nSetting Glass Cuboid\n");
                 World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
                     new BlockData(BlockManager.GetBlock("Glass").ID));
 
+                Debug.WriteLine("\nSetting Log Cuboid\n");
+                World.SetCuboid(new Cuboid(new Point3(10, 10, 10), new Point3(54, 54, 54)),
+                new BlockData(BlockManager.GetBlock("Log").ID, 1));
+
+                Debug.WriteLine("\nSetting Leaves Sphere\n");
+                World.SetSphere(new Point3(8, 8, 52), 5.0F,
+                new BlockData(BlockManager.GetBlock("Leaves").ID));
+
+                Debug.WriteLine("\nTotal time: {0}s", time.Elapsed.TotalSeconds);
+                time.Stop();
                 didPerf = true;
             }
         }

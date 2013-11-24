@@ -15,6 +15,17 @@ namespace BlockGame.Utilities
     public static class Extensions
     {
         /// <summary>
+        /// Checks if a given bit is set in this byte
+        /// </summary>
+        /// <param name="b">The byte to check</param>
+        /// <param name="pos">The position to check at</param>
+        /// <returns>True if the n'th bit is set</returns>
+        public static bool IsBitSet(this byte b, int pos)
+        {
+            return (b & (1 << pos)) != 0;
+        }
+
+        /// <summary>
         /// Returns true if either the X or y values are larger than the other
         /// vector's
         /// </summary>

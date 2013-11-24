@@ -12,6 +12,7 @@ using BlockGame.Render;
 using BlockGame;
 using System.ComponentModel;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace BlockGame.Blocks
 {
@@ -70,6 +71,9 @@ namespace BlockGame.Blocks
         /// <param name="e">The work event args containing the chunk co-ords to be loaded</param>
         private static void LoadChunk(object sender, DoWorkEventArgs e)
         {
+            if (Thread.CurrentThread.Name == null)
+                Thread.CurrentThread.Name = "ChunkLoadThread";
+
             Point3 t = (Point3)e.Argument;
             Chunk chunk = new Chunk(t);
             chunk.GenChunk();
@@ -206,14 +210,20 @@ namespace BlockGame.Blocks
         /// <param name="dat">The block data to set</param>
         public static void SetCuboid(Cuboid cuboid, BlockData dat)
         {
+            Stopwatch time = new Stopwatch();
+            time.Start();
+
             for (int x = cuboid.Min.X; x < cuboid.Max.X; x++)
                 for (int y = cuboid.Min.Y; y < cuboid.Max.Y; y++)
                     for (int z = cuboid.Min.Z; z < cuboid.Max.Z; z++)
                         SetBlockNoNotify(x, y, z, dat);
 
+            Debug.WriteLine("Time to set {0} blocks: {1}s\n", cuboid.Volume, time.Elapsed.TotalSeconds);
+            time.Restart();
+
             foreach (Point3 cPos in loaded)
-                if (CoordChunks[cPos.X, cPos.Y, cPos.Z].Collision.Intersects(cuboid))
-                    CoordChunks[cPos.X, cPos.Y, cPos.Z].ForceUpdate(cuboid.Min, cuboid.Max);
+                    CoordChunks[cPos.X, cPos.Y, cPos.Z].ForceUpdate(cuboid);
+            Debug.WriteLine("Time to check @ update {0} chunks: {1}s\n", loaded.Length, time.Elapsed.TotalSeconds);
         }
 
         /// <summary>
@@ -223,6 +233,9 @@ namespace BlockGame.Blocks
         /// <param name="dat">The block data to set</param>
         public static void SetSphere(Cuboid cuboid, BlockData dat)
         {
+            Stopwatch time = new Stopwatch();
+            time.Start();
+
             Point3 centre = (cuboid.Max - cuboid.Min) / 2;
             float radius = ((Vector3)centre).Length();
 
@@ -230,9 +243,19 @@ namespace BlockGame.Blocks
                 for (int y = cuboid.Min.Y; y < cuboid.Max.Y; y++)
                     for (int z = cuboid.Min.Z; z < cuboid.Max.Z; z++)
                     {
-                        if ((new Vector3(x,y,z) - (Vector3)centre).Length() < radius)
+                        if ((new Vector3(x, y, z) - (Vector3)centre).Length() < radius)
                             SetBlock(x, y, z, dat);
                     }
+
+
+            Debug.WriteLine("Time to set {0} blocks: {1}s\n", cuboid.Volume, time.Elapsed.TotalSeconds);
+            time.Restart();
+
+
+            foreach (Point3 cPos in loaded)
+                CoordChunks[cPos.X, cPos.Y, cPos.Z].ForceUpdate(cuboid);
+
+            Debug.WriteLine("Time to check & update {0} chunks: {1}s\n", loaded.Length, time.Elapsed.TotalSeconds);
         }
 
         /// <summary>
@@ -243,14 +266,7 @@ namespace BlockGame.Blocks
         public static void SetSphere(Point3 centre, float radius, BlockData dat)
         {
             Cuboid cuboid = new Cuboid(centre - (int)radius, centre + (int)radius);
-
-            for (int x = cuboid.Min.X; x < cuboid.Max.X; x++)
-                for (int y = cuboid.Min.Y; y < cuboid.Max.Y; y++)
-                    for (int z = cuboid.Min.Z; z < cuboid.Max.Z; z++)
-                    {
-                        if ((new Vector3(x, y, z) - (Vector3)centre).Length() < radius)
-                            SetBlock(x, y, z, dat);
-                    }
+            SetSphere(cuboid, dat);
         }
 
         /// <summary>

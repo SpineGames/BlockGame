@@ -22,6 +22,13 @@ namespace BlockGame.Utilities
         /// The maximum value of this cuboid
         /// </summary>
         public Point3 Max;
+        /// <summary>
+        /// Gets the volume of this cuboid
+        /// </summary>
+        public int Volume
+        {
+            get { return (Max - Min).Volume; }
+        }
 
         /// <summary>
         /// Creates a new cuboid with the given min/max
@@ -54,7 +61,13 @@ namespace BlockGame.Utilities
         /// <returns>True if this cuboid intersects another</returns>
         public bool Intersects(Cuboid other)
         {
-            return ! (Min.X > other.Max.X || Min.Y > other.Max.Y || Min.Z > other.Max.Z);
+            return ! (
+                Min.X > other.Max.X || 
+                Min.Y > other.Max.Y ||
+                Min.Z > other.Max.Z ||
+                Max.X < other.Min.X ||
+                Max.Y < other.Min.Y ||
+                Max.Z < other.Min.Z);
         }
     }
 }

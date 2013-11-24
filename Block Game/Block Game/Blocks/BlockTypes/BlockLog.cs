@@ -6,6 +6,11 @@ namespace BlockGame.Blocks.BlockTypes
     /// <summary>
     /// Represents a Log block
     /// </summary>
+    /// <remarks>
+    /// The logs meta mask is as follows:
+    /// b0 - is sideways (false if the the open face is on the top/bottom)
+    /// b0 - is rotated (false if open face faces front/back)
+    /// </remarks>
     public class BlockLog : Block
     {
         public override byte ID { get { return 5; } }
@@ -22,11 +27,45 @@ namespace BlockGame.Blocks.BlockTypes
             switch (facing)
             {
                 case BlockFacing.Top :
-                    return 5;
+                    if (meta.IsBitSet(0))
+                        return 5;
+                    else
+                        return 4;
+
                 case BlockFacing.Bottom:
-                    return 5;
+                    if (meta.IsBitSet(0))
+                        return 5;
+                    else
+                        return 4;
+
+                case BlockFacing.Left:
+                    if (meta.IsBitSet(1) & meta.IsBitSet(0))
+                        return 5;
+                    else
+                        return 4;
+
+                case BlockFacing.Right:
+                    if (meta.IsBitSet(1) & meta.IsBitSet(0))
+                        return 5;
+                    else
+                        return 4;
+
+                case BlockFacing.Front:
+                    if (meta.IsBitSet(0) & !meta.IsBitSet(1))
+                        return 4;
+                    else
+                        return 5;
+
+                case BlockFacing.Back:
+                    if (meta.IsBitSet(0) & !meta.IsBitSet(1))
+                        return 4;
+                    else
+                        return 5;
                 default:
-                    return 4;
+                    if (meta.IsBitSet(0))
+                        return 5;
+                    else
+                        return 4;
             }
         }
     }

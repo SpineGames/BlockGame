@@ -11,6 +11,8 @@ using Microsoft.Xna.Framework.Graphics;
 using BlockGame.Render;
 using BlockGame;
 using BlockGame.Blocks;
+using System.Timers;
+using System.Diagnostics;
 
 namespace BlockGame.Blocks
 {
@@ -23,6 +25,10 @@ namespace BlockGame.Blocks
         /// The size of chunks in blocks
         /// </summary>
         public const int ChunkSize = 32;
+        /// <summary>
+        /// Gets the size of a chunk in a point3
+        /// </summary>
+        public static readonly Point3 ChunkSizeP = new Point3(ChunkSize);
 
         /// <summary>
         /// Gets the size of a chunk in the world
@@ -122,10 +128,7 @@ namespace BlockGame.Blocks
 
             Point3 min = new Point3(ChunkSize / 2) - corner + (facing.NormalVector() * ChunkSize / 2);
             Point3 max = new Point3(ChunkSize / 2) + corner + (facing.NormalVector() * (ChunkSize / 2 - 1));
-
-            if (facing == BlockFacing.Top | facing == BlockFacing.Right | facing == BlockFacing.Front)
-                System.Diagnostics.Debug.Print("f: " + facing);
-
+            
             UpdateRenderStates(min, max);
         }
 
@@ -157,22 +160,36 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="min">The minimum of the cube to update (world)</param>
         /// <param name="max">The maximum of the cube to update (worl)</param>
-        public void ForceUpdate(Point3 min, Point3 max)
+        public void ForceUpdate(Cuboid cuboid)
         {
-            min -= WorldPos;
-            max -= WorldPos;
-
-            for (int x = min.X; x <= max.X; x++)
+            Point3 min  = cuboid.Min - WorldPos;
+            Point3 max = cuboid.Max - WorldPos;
+            
+            if (collision.Intersects(cuboid))
             {
-                for (int y = min.Y; y <= max.Y; y++)
+                min.Clamp(Point3.Zero, ChunkSizeP);
+                max.Clamp(Point3.Zero, ChunkSizeP);
+
+                Stopwatch time = new Stopwatch();
+                time.Start();
+
+                for (int x = min.X; x <= max.X; x++)
                 {
-                    for (int z = min.Z; z <= max.Z; z++)
+                    for (int y = min.Y; y <= max.Y; y++)
                     {
-                        UpdateRenderState(x, y, z);
+                        for (int z = min.Z; z <= max.Z; z++)
+                        {
+                            UpdateRenderState(x, y, z);
+                        }
                     }
                 }
+
+                Debug.WriteLine("Time to update {0} render states: {1}s", (max - min).Volume, time.Elapsed.TotalSeconds);
+                time.Restart();
+
+                PushRenderState();
+                Debug.WriteLine("Time to Push render states: {0}s \n", time.Elapsed.TotalSeconds);
             }
-            PushRenderState();
         }
 
         /// <summary>
@@ -280,8 +297,11 @@ namespace BlockGame.Blocks
 
                 if (IsOpaque(position) & !IsOpaque(facePos))
                 {
-                    return true; //only other case is if there is a non-opaque and an opaque
+                    return true; //second case is if there is a non-opaque and an opaque
                 }
+
+                if (!IsOpaque(position) & (GetBlockID(position) != GetBlockID(facePos)))
+                    return true; //final case is two different types of transparent blocks
             }
             else
             {
@@ -293,8 +313,12 @@ namespace BlockGame.Blocks
 
                 if (World.IsOpaque(position) & !World.IsOpaque(facePos))
                 {
-                    return true; //only other case is if there is a non-opaque and an opaque
+                    return true; //second case is if there is a non-opaque and an opaque
                 }
+                
+
+                if (!World.IsOpaque(position) & (World.GetBlockID(position) != World.GetBlockID(facePos)))
+                    return true; //final case is two different types of transparent blocks
             }
 
             return false;
