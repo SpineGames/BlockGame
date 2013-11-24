@@ -90,9 +90,9 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
-    <Reference Include="SpineGames">
-      <HintPath>..\..\..\SpineGames\SpineGames\bin\Release\SpineGames.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="SpineGames, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\SpineGames.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>

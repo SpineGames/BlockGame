@@ -151,6 +151,29 @@ namespace BlockGame.Blocks
             }
             PushRenderState();
         }
+        
+        /// <summary>
+        /// Updates all render states in a cuboid
+        /// </summary>
+        /// <param name="min">The minimum of the cube to update (world)</param>
+        /// <param name="max">The maximum of the cube to update (worl)</param>
+        public void ForceUpdate(Point3 min, Point3 max)
+        {
+            min -= WorldPos;
+            max -= WorldPos;
+
+            for (int x = min.X; x <= max.X; x++)
+            {
+                for (int y = min.Y; y <= max.Y; y++)
+                {
+                    for (int z = min.Z; z <= max.Z; z++)
+                    {
+                        UpdateRenderState(x, y, z);
+                    }
+                }
+            }
+            PushRenderState();
+        }
 
         /// <summary>
         /// Updates the render state at pos
@@ -552,8 +575,22 @@ namespace BlockGame.Blocks
             z -= WorldPos.Z;
 
             SetBlockWithUpdate(x, y, z, dat);
+        }
 
-            UpdateRenderState(x, y, z);
+        /// <summary>
+        /// Sets the block at {x,y,z} to dat
+        /// </summary>
+        /// <param name="x">The x co-ords of the block (world)</param>
+        /// <param name="y">The y co-ords of the block (world)</param>
+        /// <param name="z">The z co-ords of the block (world)</param>
+        /// <param name="dat">The block data to set at {x,y,z}</param>
+        public void SetBlockFromWorldNoNotify(int x, int y, int z, BlockData dat)
+        {
+            x -= WorldPos.X;
+            y -= WorldPos.Y;
+            z -= WorldPos.Z;
+
+            SetBlockWithoutNotify(x, y, z, dat);
         }
         
         /// <summary>

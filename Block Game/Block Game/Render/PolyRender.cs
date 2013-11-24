@@ -48,12 +48,29 @@ namespace BlockGame.Render
         public Matrix World;
 
         /// <summary>
+        /// Represents the depth stencil uses for opaque polies
+        /// </summary>
+        DepthStencilState OpaqueDepthStencil;
+        /// <summary>
+        /// Represents the depth stencil uses for transparent polies
+        /// </summary>
+        DepthStencilState TransparentDepthStencil;
+
+        /// <summary>
         /// Creates a new poly renderer
         /// </summary>
         /// <param name="World">The world transformation to use</param>
         public PolyRender(Matrix World)
         {
             this.World = World;
+
+            OpaqueDepthStencil = new DepthStencilState();
+            OpaqueDepthStencil.DepthBufferEnable = true;
+            OpaqueDepthStencil.DepthBufferWriteEnable = true;
+
+            TransparentDepthStencil = new DepthStencilState();
+            TransparentDepthStencil.DepthBufferEnable = true;
+            TransparentDepthStencil.DepthBufferWriteEnable = false;
         }
 
         /// <summary>
@@ -119,6 +136,7 @@ namespace BlockGame.Render
             if (OpaquePrimitiveCount > 0)
             {
                 Game1.worldEffect.World = World * view.World;
+                Game1.worldEffect.BaseEffect.GraphicsDevice.DepthStencilState = OpaqueDepthStencil;
 
                 foreach (EffectPass p in Game1.worldEffect.BaseEffect.CurrentTechnique.Passes)
                 {
@@ -140,6 +158,7 @@ namespace BlockGame.Render
             if (NonOpaquePrimitiveCount > 0)
             {
                 Game1.worldEffect.World = World * view.World;
+                Game1.worldEffect.BaseEffect.GraphicsDevice.DepthStencilState = TransparentDepthStencil;
 
                 foreach (EffectPass p in Game1.worldEffect.BaseEffect.CurrentTechnique.Passes)
                 {

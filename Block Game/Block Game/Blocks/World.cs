@@ -176,6 +176,19 @@ namespace BlockGame.Blocks
         }
 
         /// <summary>
+        /// Sets a block in the world to the given ID without pushing the render state
+        /// </summary>
+        /// <param name="x">The x co-ord (world)</param>
+        /// <param name="y">The y co-ord (world)</param>
+        /// <param name="z">The z co-ord (world)</param>
+        /// <param name="dat">The new block data to set to</param>
+        public static void SetBlockNoNotify(int x, int y, int z, BlockData dat)
+        {
+            if (ChunkExists(x, y, z))
+                GetChunk(x, y, z).SetBlockFromWorldNoNotify(x, y, z, dat);
+        }
+
+        /// <summary>
         /// Sets a block in the world to the given ID
         /// </summary>
         /// <param name="Pos">The co-ords (world)</param>
@@ -196,7 +209,11 @@ namespace BlockGame.Blocks
             for (int x = cuboid.Min.X; x < cuboid.Max.X; x++)
                 for (int y = cuboid.Min.Y; y < cuboid.Max.Y; y++)
                     for (int z = cuboid.Min.Z; z < cuboid.Max.Z; z++)
-                        SetBlock(x, y, z, dat);
+                        SetBlockNoNotify(x, y, z, dat);
+
+            foreach (Point3 cPos in loaded)
+                if (CoordChunks[cPos.X, cPos.Y, cPos.Z].Collision.Intersects(cuboid))
+                    CoordChunks[cPos.X, cPos.Y, cPos.Z].ForceUpdate(cuboid.Min, cuboid.Max);
         }
 
         /// <summary>

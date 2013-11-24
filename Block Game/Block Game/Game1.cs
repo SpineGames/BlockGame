@@ -89,6 +89,11 @@ namespace BlockGame
         /// A trackable version of the camera's yaw
         /// </summary>
         TrackableVariable CameraYaw = new TrackableVariable();
+
+        /// <summary>
+        /// Gets if the p command was performed
+        /// </summary>
+        private bool didPerf;
         #endregion
 
         /// <summary>
@@ -259,10 +264,15 @@ namespace BlockGame
         /// <param name="e">The event args generated for this event</param>
         public void PPressed(object sender, EventArgs e)
         {
-            World.SetCuboid(new Cuboid(new Point3(0, 0, 0), new Point3(64, 64, 64)),
-                new BlockData(BlockManager.GetBlock("Log").ID));
-            World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
-                new BlockData(BlockManager.GetBlock("Glass").ID));
+            if (!didPerf)
+            {
+                //World.SetCuboid(new Cuboid(new Point3(0, 0, 0), new Point3(64, 64, 64)),
+                //new BlockData(BlockManager.GetBlock("Log").ID));
+                World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
+                    new BlockData(BlockManager.GetBlock("Glass").ID));
+
+                didPerf = true;
+            }
         }
         #endregion
 
