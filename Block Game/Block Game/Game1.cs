@@ -162,9 +162,19 @@ namespace BlockGame
                 new UIE_String(spriteFont, "Camera Facing: {0}", Color.Black, ref CameraFacing, null));
 
             for (int x = 0; x < 3; x++)
-                for (int y = 0; y < 3; y++)
-                    for (int z = 0; z < 5; z++)
+                for (int z = 3; z >= 0; z--)
+                    for (int y = 0; y < 3; y++)
                         World.AddChunk(new Point3(x, y, z));
+
+            World.AddChunk(new Point3(3, 0, 1));
+            World.AddChunk(new Point3(4, 0, 1));
+            World.AddChunk(new Point3(3, 1, 1));
+            World.AddChunk(new Point3(4, 1, 1));
+
+            World.AddChunk(new Point3(3, 0, 0));
+            World.AddChunk(new Point3(4, 0, 0));
+            World.AddChunk(new Point3(3, 1, 0));
+            World.AddChunk(new Point3(4, 1, 0));
 
             //World.AddChunk(new Point3(0, 0, 0));
         }

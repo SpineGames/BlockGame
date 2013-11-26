@@ -122,12 +122,23 @@ namespace BlockGame.Blocks
         /// <param name="facing">The facing to invalidate</param>
         public void InvalidateChunkFace(BlockFacing facing)
         {
-            Point3 corner = (Point3)(Vector3.Cross(facing.NormalVector(), facing.CrossNormalVector())) +
-                facing.CrossNormalVector();
+            Point3 corner = facing.CornerVector();
+
             corner *= ChunkSize / 2;
 
-            Point3 min = new Point3(ChunkSize / 2) - corner + (facing.NormalVector() * ChunkSize / 2);
-            Point3 max = new Point3(ChunkSize / 2) + corner + (facing.NormalVector() * (ChunkSize / 2 - 1));
+            Point3 Normal = facing.NormalVector() * (ChunkSize / 2);
+            Point3 NormalMin = facing.NormalVector() * (ChunkSize / 2 - 1);
+
+            Point3 Centre = new Point3(ChunkSize / 2);
+
+            Point3 min = Centre - corner + Normal;
+            Point3 max = Centre + corner + NormalMin;
+
+            if ((facing == BlockFacing.Front || facing == BlockFacing.Top || facing == BlockFacing.Right))
+            {
+                //Normal = facing.NormalVector() * ((ChunkSize / 2) - 2);
+                Debug.WriteLine(facing + " | " + corner + " Min: " + min + " Max: " + max);
+            }
             
             UpdateRenderStates(min, max);
         }

@@ -92,6 +92,31 @@ namespace BlockGame.Blocks
         }
 
         /// <summary>
+        /// Gets a corner that is on a 90° plane to the normal
+        /// </summary>
+        /// <param name="self">The block facing to get the cross normal from</param>
+        /// <returns>A corner vecto for this block facing</returns>
+        public static Point3 CornerVector(this BlockFacing self)
+        {
+            switch (self)
+            {
+                case BlockFacing.Front:
+                    return new Point3(1, 0, 1);
+                case BlockFacing.Back:
+                    return new Point3(1, 0, 1);
+                case BlockFacing.Left:
+                    return new Point3(0, 1, 1);
+                case BlockFacing.Right:
+                    return new Point3(0, 1, 1);
+                case BlockFacing.Top:
+                    return new Point3(1, 1, 0);
+                case BlockFacing.Bottom:
+                    return new Point3(1, 1, 0);
+                default: return null;
+            }
+        }
+
+        /// <summary>
         /// Converts this direction in degrees to a block facing (left, right, front, back)
         /// </summary>
         /// <param name="direction">The direction in <b>degrees</b></param>

@@ -111,35 +111,59 @@ namespace BlockGame.Blocks
         /// <param name="CentreChunk">The centre chunk to invalidate faces towards</param>
         private static void InvalidateChunkFaces(Point3 CentreChunk)
         {
-            if (loaded.Contains(new Point3(CentreChunk.X - 1, CentreChunk.Y, CentreChunk.Z)))
-                GetChunk(CentreChunk.X - 1, CentreChunk.Y, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Right);
-            
-            if (loaded.Contains(new Point3(CentreChunk.X + 1, CentreChunk.Y, CentreChunk.Z)))
-                GetChunk(CentreChunk.X + 1, CentreChunk.Y, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Left);
+            if (ChunkExistsChunkPos(CentreChunk.X - 1,CentreChunk.Y, CentreChunk.Z))
+                GetChunkFromChunkPos(CentreChunk.X - 1, CentreChunk.Y, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Right);
 
-            if (loaded.Contains(new Point3(CentreChunk.X, CentreChunk.Y - 1, CentreChunk.Z)))
-                GetChunk(CentreChunk.X, CentreChunk.Y - 1, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Front);
+            if (ChunkExistsChunkPos(CentreChunk.X + 1, CentreChunk.Y, CentreChunk.Z))
+                GetChunkFromChunkPos(CentreChunk.X + 1, CentreChunk.Y, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Left);
 
-            if (loaded.Contains(new Point3(CentreChunk.X, CentreChunk.Y + 1, CentreChunk.Z)))
-                GetChunk(CentreChunk.X, CentreChunk.Y + 1, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Back);
+            if (ChunkExistsChunkPos(CentreChunk.X, CentreChunk.Y - 1, CentreChunk.Z))
+                GetChunkFromChunkPos(CentreChunk.X, CentreChunk.Y - 1, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Front);
 
-            if (loaded.Contains(new Point3(CentreChunk.X, CentreChunk.Y, CentreChunk.Z - 1)))
-                GetChunk(CentreChunk.X, CentreChunk.Y, CentreChunk.Z - 1).InvalidateChunkFace(BlockFacing.Top);
+            if (ChunkExistsChunkPos(CentreChunk.X, CentreChunk.Y + 1, CentreChunk.Z))
+                GetChunkFromChunkPos(CentreChunk.X, CentreChunk.Y + 1, CentreChunk.Z).InvalidateChunkFace(BlockFacing.Back);
 
-            if (loaded.Contains(new Point3(CentreChunk.X, CentreChunk.Y, CentreChunk.Z + 1)))
-                GetChunk(CentreChunk.X, CentreChunk.Y, CentreChunk.Z + 1).InvalidateChunkFace(BlockFacing.Bottom);
+            if (ChunkExistsChunkPos(CentreChunk.X, CentreChunk.Y, CentreChunk.Z - 1))
+                GetChunkFromChunkPos(CentreChunk.X, CentreChunk.Y, CentreChunk.Z - 1).InvalidateChunkFace(BlockFacing.Top);
+
+            if (ChunkExistsChunkPos(CentreChunk.X, CentreChunk.Y, CentreChunk.Z + 1))
+                GetChunkFromChunkPos(CentreChunk.X, CentreChunk.Y, CentreChunk.Z + 1).InvalidateChunkFace(BlockFacing.Bottom);
+        }
+
+        /// <summary>
+        /// Gets a string containing all the loaded chunks
+        /// </summary>
+        /// <returns></returns>
+        private static string LoadedStrings()
+        {
+            string s = "";
+            foreach (Point3 p in loaded)
+                s += " \n" + p;
+            return s;
         }
 
         /// <summary>
         /// Gets if the chunk at {x,y,z} is loaded
         /// </summary>
-        /// <param name="x">The x co-ord (chunk)</param>
-        /// <param name="y">The y co-ord (chunk)</param>
-        /// <param name="z">The z co-ord (chunk)</param>
+        /// <param name="x">The x co-ord (world)</param>
+        /// <param name="y">The y co-ord (world)</param>
+        /// <param name="z">The z co-ord (world)</param>
         /// <returns>True if a chunk exists at {x,y,z}</returns>
-        public static bool ChunkExists(int x, int y, int z)
+        public static bool ChunkExistsCoords(int x, int y, int z)
         {
-            return CoordChunks[x / Chunk.ChunkSize, y / Chunk.ChunkSize, z / Chunk.ChunkSize] != null;
+            return GetChunkFromCoords(x, y, z) != null;
+        }
+
+        /// <summary>
+        /// Gets if the chunk at {x,y,z} is loaded
+        /// </summary>
+        /// <param name="x">The x co-ord (chunk pos)</param>
+        /// <param name="y">The y co-ord (chunk pos)</param>
+        /// <param name="z">The z co-ord (chunk pos)</param>
+        /// <returns>True if a chunk exists at {x,y,z}</returns>
+        public static bool ChunkExistsChunkPos(int x, int y, int z)
+        {
+            return loaded.Contains(new Point3(x,y,z));
         }
         
         /// <summary>
@@ -149,11 +173,11 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ord (world)</param>
         /// <param name="z">The z co-ord (world)</param>
         /// <returns>The chunk that contains the given world co-ord</returns>
-        public static Chunk GetChunk(int x, int y, int z)
+        public static Chunk GetChunkFromCoords(int x, int y, int z)
         {
             return CoordChunks[x / Chunk.ChunkSize, y / Chunk.ChunkSize, z / Chunk.ChunkSize];
         }
-
+        
         /// <summary>
         /// Gets the chunks from the given chunk position
         /// </summary>
@@ -175,8 +199,8 @@ namespace BlockGame.Blocks
         /// <param name="dat">The new block data to set to</param>
         public static void SetBlock(int x, int y, int z, BlockData dat)
         {
-            if (ChunkExists(x, y, z))
-                GetChunk(x, y, z).SetBlockFromWorld(x, y, z, dat);
+            if (ChunkExistsCoords(x, y, z))
+                GetChunkFromCoords(x, y, z).SetBlockFromWorld(x, y, z, dat);
         }
 
         /// <summary>
@@ -188,8 +212,8 @@ namespace BlockGame.Blocks
         /// <param name="dat">The new block data to set to</param>
         public static void SetBlockNoNotify(int x, int y, int z, BlockData dat)
         {
-            if (ChunkExists(x, y, z))
-                GetChunk(x, y, z).SetBlockFromWorldNoNotify(x, y, z, dat);
+            if (ChunkExistsCoords(x, y, z))
+                GetChunkFromCoords(x, y, z).SetBlockFromWorldNoNotify(x, y, z, dat);
         }
 
         /// <summary>
@@ -199,8 +223,8 @@ namespace BlockGame.Blocks
         /// <param name="dat">The new block data to set to</param>
         public static void SetBlock(Point3 Pos, BlockData dat)
         {
-            if (ChunkExists(Pos.X, Pos.Y, Pos.Z))
-                GetChunk(Pos.X, Pos.Y, Pos.Z).SetBlockFromWorld(Pos.X, Pos.Y, Pos.Z, dat);
+            if (ChunkExistsCoords(Pos.X, Pos.Y, Pos.Z))
+                GetChunkFromCoords(Pos.X, Pos.Y, Pos.Z).SetBlockFromWorld(Pos.X, Pos.Y, Pos.Z, dat);
         }
 
         /// <summary>
@@ -278,8 +302,8 @@ namespace BlockGame.Blocks
         /// <returns>True if the block at {x,y,z} is opaque</returns>
         public static byte GetBlockID(int x, int y, int z)
         {
-            if (ChunkExists(x, y, z))
-                return GetChunk(x, y, z).GetBlockIDFromWorld(x, y, z);
+            if (ChunkExistsCoords(x, y, z))
+                return GetChunkFromCoords(x, y, z).GetBlockIDFromWorld(x, y, z);
             return 0;
         }
 
@@ -304,8 +328,8 @@ namespace BlockGame.Blocks
         /// <returns>True if the block at {x,y,z} is opaque</returns>
         public static bool IsOpaque(int x, int y, int z)
         {
-            if (ChunkExists(x, y, z))
-                return GetChunk(x, y, z).IsOpaqueFromWorld(x, y, z);
+            if (ChunkExistsCoords(x, y, z))
+                return GetChunkFromCoords(x, y, z).IsOpaqueFromWorld(x, y, z);
             return true;
         }
 
