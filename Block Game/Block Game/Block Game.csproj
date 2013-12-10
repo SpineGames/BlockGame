@@ -125,12 +125,14 @@
     <Compile Include="Blocks\BlockTypes\BlockLeaves.cs" />
     <Compile Include="Blocks\Chunk.cs" />
     <Compile Include="Blocks\World.cs" />
+    <Compile Include="Perlin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Render\Camera.cs" />
     <Compile Include="Render\EffectWrapper.cs" />
     <Compile Include="Render\PolyRender.cs" />
+    <Compile Include="Render\ShadowWrapper.cs" />
     <Compile Include="Render\Skybox.cs" />
     <Compile Include="Render\TextureManager.cs" />
     <Compile Include="UI\UIElements.cs" />

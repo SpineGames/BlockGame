@@ -89,6 +89,11 @@ namespace BlockGame.Render
         /// The view parameters for this camera
         /// </summary>
         public ViewParameters View;
+        BoundingFrustum frustum = new BoundingFrustum(Matrix.Identity);
+        public BoundingFrustum ViewFrustum
+        {
+            get { return frustum; }
+        }
         #endregion
 
         /// <summary>
@@ -110,6 +115,8 @@ namespace BlockGame.Render
 
             View.View = Matrix.CreateLookAt(CameraPos, CameraPos + CameraNormal, new Vector3(0, 0, 1));
             View.World = Matrix.CreateTranslation(Vector3.Zero);
+
+            frustum.Matrix = View.View * View.Projection;
         }
 
         /// <summary>
@@ -118,6 +125,7 @@ namespace BlockGame.Render
         public void UpdateViewParameters()
         {
             View.View = Matrix.CreateLookAt(CameraPos, CameraPos + CameraNormal, new Vector3(0, 0, 1));
+            frustum.Matrix = View.View * View.Projection;
         }
 
         /// <summary>

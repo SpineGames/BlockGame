@@ -66,15 +66,12 @@ namespace BlockGame.Render
                     (float)extraMath.lengthdir_y(MathHelper.ToRadians(sunAngle), 500));
 
             Game1.worldEffect.World = Matrix.CreateScale(10F) * Matrix.CreateTranslation(Pos);
-
-            Game1.worldEffect.View = camera.View.View;
-            Game1.worldEffect.Projection = camera.View.Projection;
-
-            foreach (EffectPass p in Game1.worldEffect.BaseEffect.CurrentTechnique.Passes)
+            
+            foreach (EffectPass p in Game1.worldEffect.CurrentTechnique.Passes)
             {
                 p.Apply();
 
-                Game1.worldEffect.BaseEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(PrimitiveType.TriangleList,
+                Game1.worldEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(PrimitiveType.TriangleList,
                        verts, 0, 2);
             }
         }

@@ -46,26 +46,55 @@ namespace BlockGame.Blocks
         /// <param name="z">The z co-ords of the block to get</param>
         /// <returns>The BlockData for position {x,y,z}</returns>
         public static BlockData GetBlockAtPos(int x, int y, int z)
-        {
-            if (z < GroundLevel - 3)
+        { 
+            float txSample = 0.02F;
+            float tySample = 0.02F;
+            float tzSample = 0.02F;
+
+            float oxSample = 0.5F;
+            float oySample = 0.5F;
+            float ozSample = 0.5F;
+
+            int oreOctaves = 8;
+            int terrainOctaves = 3;
+
+            float perlin = Perlin.GetAtMap(x + 1000, y + 1000, z + 1000, terrainOctaves, txSample, tySample, tzSample);
+            float orePerlin = Perlin.GetAtMap(x + 1000, y + 1000, z + 1000, oreOctaves, oxSample, oySample, ozSample);
+
+            bool solid = false;
+
+            if (perlin >= 0F)
+                solid = true;
+
+            if (!solid)
+                return new BlockData(BlockManager.Air.ID);
+            else
             {
-                if (rand.Next(100) < 20)
+                if (orePerlin - ((z + 64) / GroundLevel) >= -0.3F)
                     return new BlockData(BlockManager.Gravel.ID);
-                else
-                    return new BlockData(BlockManager.Stone.ID);
-            }
-            else if (z < GroundLevel)
-                return new BlockData(BlockManager.Dirt.ID);
-            else if (z == GroundLevel)
-            {
-                //if ((x + y) % 2 != 1)
-                    return new BlockData(BlockManager.Dirt.ID, 1);
-               // else
-                   // return new BlockData(BlockManager.Log.ID, 0);
+
+                return new BlockData(BlockManager.Stone.ID);
             }
 
-            return new BlockData(BlockManager.Air.ID);
 
+            //if (z < GroundLevel - 3)
+            //{
+            //    if (rand.Next(100) < 20)
+            //        return new BlockData(BlockManager.Gravel.ID);
+            //    else
+            //        return new BlockData(BlockManager.Stone.ID);
+            //}
+            //else if (z < GroundLevel)
+            //    return new BlockData(BlockManager.Dirt.ID);
+            //else if (z == GroundLevel)
+            //{
+            //    //if ((x + y) % 2 != 1)
+            //        return new BlockData(BlockManager.Dirt.ID, 1);
+            //   // else
+            //       // return new BlockData(BlockManager.Log.ID, 0);
+            //}
+
+            //return new BlockData(BlockManager.Air.ID);
         }
 
         /// <summary>

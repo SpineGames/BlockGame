@@ -136,13 +136,13 @@ namespace BlockGame.Render
             if (OpaquePrimitiveCount > 0)
             {
                 Game1.worldEffect.World = World * view.World;
-                Game1.worldEffect.BaseEffect.GraphicsDevice.DepthStencilState = OpaqueDepthStencil;
+                Game1.worldEffect.GraphicsDevice.DepthStencilState = OpaqueDepthStencil;
 
-                foreach (EffectPass p in Game1.worldEffect.BaseEffect.CurrentTechnique.Passes)
+                foreach (EffectPass p in Game1.worldEffect.CurrentTechnique.Passes)
                 {
                     p.Apply();
 
-                    Game1.worldEffect.BaseEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(
+                    Game1.worldEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(
                         PrimitiveType.TriangleList,
                         OpaqueBuffer, 0, OpaquePrimitiveCount);
                 }
@@ -158,13 +158,13 @@ namespace BlockGame.Render
             if (NonOpaquePrimitiveCount > 0)
             {
                 Game1.worldEffect.World = World * view.World;
-                Game1.worldEffect.BaseEffect.GraphicsDevice.DepthStencilState = TransparentDepthStencil;
+                Game1.worldEffect.GraphicsDevice.DepthStencilState = TransparentDepthStencil;
 
-                foreach (EffectPass p in Game1.worldEffect.BaseEffect.CurrentTechnique.Passes)
+                foreach (EffectPass p in Game1.worldEffect.CurrentTechnique.Passes)
                 {
                     p.Apply();
 
-                    Game1.worldEffect.BaseEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(PrimitiveType.TriangleList,
+                    Game1.worldEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(PrimitiveType.TriangleList,
                         NonOpaqueBuffer, 0, NonOpaquePrimitiveCount);
                 }
             }

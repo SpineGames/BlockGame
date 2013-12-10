@@ -81,6 +81,7 @@ namespace BlockGame.Blocks
         /// The world-oriented collision box
         /// </summary>
         public Cuboid Collision { get { return collision; } }
+        BoundingBox Bounding;
         /// <summary>
         /// The renderer used to render this chunk
         /// </summary>
@@ -93,6 +94,7 @@ namespace BlockGame.Blocks
         public Chunk(Point3 chunkPos)
         {
             this.ChunkPos = chunkPos;
+            Bounding = new BoundingBox(WorldPos, MaxWorldPos);
             collision = new Cuboid(WorldPos, MaxWorldPos);
             Renderer = new PolyRender(Matrix.CreateTranslation(TransformedWorldPos));
             InitialRenderStates();
@@ -395,8 +397,9 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="view">The camera to render with</param>
         public void Render(Camera camera)
-        {
-            Renderer.Render(camera.View);
+        { 
+            if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint)
+                Renderer.Render(camera.View);
         }
 
         /// <summary>
@@ -405,7 +408,8 @@ namespace BlockGame.Blocks
         /// <param name="view">The camera to render with</param>
         public void RenderOpaque(Camera camera)
         {
-            Renderer.RenderOpaque(camera.View);
+            if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint)
+                Renderer.RenderOpaque(camera.View);
         }
 
         /// <summary>

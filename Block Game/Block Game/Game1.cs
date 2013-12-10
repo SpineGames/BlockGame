@@ -39,7 +39,7 @@ namespace BlockGame
         /// <summary>
         /// The base effect that controls lighting for the world
         /// </summary>
-        public static VegetationEffect worldEffect;
+        public static BasicEffect worldEffect;
         #endregion
 
         #region private variables
@@ -95,6 +95,8 @@ namespace BlockGame
         /// Gets if the p command was performed
         /// </summary>
         private bool didPerf;
+
+        RenderTarget2D temp;
         #endregion
 
         /// <summary>
@@ -114,6 +116,9 @@ namespace BlockGame
         /// </summary>
         protected override void Initialize()
         {
+            //Perlin.SetOctaves(5);
+            Perlin.Reseed();
+
             Texture2D blank = new Texture2D(GraphicsDevice, 1, 1);
             blank.SetData<Color>(new Color[] { Color.White });
 
@@ -125,7 +130,7 @@ namespace BlockGame
 
             keyWatchers.Add("Debug", new KeyWatcher(Keys.F1, OnDebugPressed));
             keyWatchers.Add("P", new KeyWatcher(Keys.P, PPressed));
-
+            
             base.Initialize();
         }
 
@@ -144,7 +149,7 @@ namespace BlockGame
             TextureManager.Initialize(
                 Content.Load<Texture2D>("terrain"), 
                 Content.Load<Texture2D>("terrain_normal"));
-
+            
             //build the basic world effect
             BuildBasicEffect();
             sun = new Sun();
@@ -175,6 +180,9 @@ namespace BlockGame
             World.AddChunk(new Point3(4, 0, 0));
             World.AddChunk(new Point3(3, 1, 0));
             World.AddChunk(new Point3(4, 1, 0));
+            
+            temp = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width,
+                GraphicsDevice.Viewport.Height);
 
             //World.AddChunk(new Point3(0, 0, 0));
         }
@@ -184,23 +192,22 @@ namespace BlockGame
         /// </summary>
         private void BuildBasicEffect()
         {
-            worldEffect = new VegetationEffect(Content);
+            worldEffect = new BasicEffect(GraphicsDevice);
 
             worldEffect.Projection = camera.View.Projection;
             worldEffect.View = camera.View.View;
             worldEffect.World = camera.View.World;
+             
+            worldEffect.AmbientLightColor = Color.DarkGray.ToVector3();
+            worldEffect.World = camera.View.World;
 
-            worldEffect.AmbientLightColor = Color.LightYellow.ToVector4();
-            worldEffect.AmbientLightIntensity = 0.3F;
+            worldEffect.DirectionalLight0.Direction = new Vector3(1, 1, 0.5F);
+            worldEffect.DirectionalLight0.DiffuseColor = Color.LightYellow.ToVector3();
+            worldEffect.DirectionalLight0.Enabled = true;
+            worldEffect.LightingEnabled = true;
 
-            worldEffect.DiffuseDirection = new Vector3(1, 1, 0.5F);
-            worldEffect.DiffuseColor = Color.White.ToVector4();
-            worldEffect.DiffuseIntensity = 1F;
-
+            worldEffect.TextureEnabled = true;
             worldEffect.Texture = TextureManager.Terrain;
-            //worldEffect.NormalMap = TextureManager.NormalMap;
-
-            worldEffect.BaseEffect.CurrentTechnique = worldEffect.BaseEffect.Techniques["Textured"];
         }
 
         /// <summary>
@@ -209,7 +216,7 @@ namespace BlockGame
         /// </summary>
         protected override void UnloadContent()
         {
-            worldEffect.BaseEffect.Dispose();
+            worldEffect.Dispose();
         }
 
         /// <summary>
@@ -223,7 +230,6 @@ namespace BlockGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            worldEffect.Projection = camera.View.Projection;
             worldEffect.View = camera.View.View;
 
             //worldEffect.ViewVector = camera.CameraNormal;
@@ -234,9 +240,7 @@ namespace BlockGame
             ChunkCount.Value = World.ChunkCount;
             CameraFacing.Value = camera.CameraNormal.ToBlockFacing();
             CameraYaw.Value = camera.CameraYaw;
-
-            worldEffect.Wind += 1;
-
+            
             foreach (KeyWatcher k in keyWatchers.Values)
             {
                 k.update();
@@ -244,7 +248,7 @@ namespace BlockGame
 
             camera.UpdateMovement();
             sun.SunTick();
-
+            
             base.Update(gameTime);
         }
 
@@ -336,7 +340,7 @@ namespace BlockGame
             GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             GraphicsDevice.RasterizerState = RasterizerState.CullClockwise;
-
+            
             World.Render(camera);
 
             sun.Render(camera);
