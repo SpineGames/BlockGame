@@ -34,6 +34,10 @@ namespace BlockGame.Render
         /// The up/down pitch of the camera
         /// </summary>
         float cameraPitch;
+        /// <summary>
+        /// The graphicsdevice that this camera was initialized with
+        /// </summary>
+        GraphicsDevice graphicsDevice;
         #endregion
 
         #region Public Variables
@@ -89,6 +93,15 @@ namespace BlockGame.Render
         /// The view parameters for this camera
         /// </summary>
         public ViewParameters View;
+
+        /// <summary>
+        /// Gets the graphicsdevice that this camera was initialized with
+        /// </summary>
+        public GraphicsDevice GraphicsDevice
+        {
+            get { return graphicsDevice; }
+        }
+
         BoundingFrustum frustum = new BoundingFrustum(Matrix.Identity);
         public BoundingFrustum ViewFrustum
         {
@@ -101,16 +114,17 @@ namespace BlockGame.Render
         /// </summary>
         /// <param name="Position">The camera's position</param>
         /// <param name="graphics">The GraphicsDeviceManager to use</param>
-        public Camera(Vector3 Position, GraphicsDeviceManager graphics)
+        public Camera(Vector3 Position, GraphicsDevice graphics)
         {
+            this.graphicsDevice = graphics;
             this.cameraPos = Position;
             this.cameraNormal = new Vector3(1,0,0);
 
             View = new ViewParameters();
             View.Projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(60),
-                (float)graphics.GraphicsDevice.Viewport.Width /
-                (float)graphics.GraphicsDevice.Viewport.Height,
+                (float)graphics.Viewport.Width /
+                (float)graphics.Viewport.Height,
                 0.1f, 1000.0f);
 
             View.View = Matrix.CreateLookAt(CameraPos, CameraPos + CameraNormal, new Vector3(0, 0, 1));

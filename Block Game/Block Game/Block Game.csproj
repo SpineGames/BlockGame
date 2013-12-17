@@ -136,6 +136,7 @@
     <Compile Include="Render\Skybox.cs" />
     <Compile Include="Render\TextureManager.cs" />
     <Compile Include="UI\UIElements.cs" />
+    <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Utilities\Cuboid.cs" />
     <Compile Include="Utilities\Math.cs" />
     <Compile Include="Utilities\Point3.cs" />

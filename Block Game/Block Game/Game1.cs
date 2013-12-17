@@ -40,6 +40,10 @@ namespace BlockGame
         /// The base effect that controls lighting for the world
         /// </summary>
         public static BasicEffect worldEffect;
+        /// <summary>
+        /// True if the game is in debugging mode
+        /// </summary>
+        public static bool IsBebugging = true;
         #endregion
 
         #region private variables
@@ -60,10 +64,6 @@ namespace BlockGame
         /// A dictionary of all the keywatchers used in this game
         /// </summary>
         Dictionary<string, KeyWatcher> keyWatchers = new Dictionary<string, KeyWatcher>();
-        /// <summary>
-        /// True if the game is in debugging mode
-        /// </summary>
-        bool IsBebugging = true;
 
         /// <summary>
         /// The UI manager for the game
@@ -126,7 +126,7 @@ namespace BlockGame
 
             World.Initialize();
             UIManager.Initialize(blank);
-            camera = new Camera(new Vector3(0, 0, 32), graphics);
+            camera = new Camera(new Vector3(0, 0, 32), GraphicsDevice);
 
             keyWatchers.Add("Debug", new KeyWatcher(Keys.F1, OnDebugPressed));
             keyWatchers.Add("P", new KeyWatcher(Keys.P, PPressed));

@@ -94,7 +94,9 @@ namespace BlockGame.Blocks
         public Chunk(Point3 chunkPos)
         {
             this.ChunkPos = chunkPos;
-            Bounding = new BoundingBox(WorldPos, MaxWorldPos);
+
+            Bounding = new BoundingBox(TransformedWorldPos, TransformedWorldPos + WorldChunkSize);
+
             collision = new Cuboid(WorldPos, MaxWorldPos);
             Renderer = new PolyRender(Matrix.CreateTranslation(TransformedWorldPos));
             InitialRenderStates();
@@ -397,7 +399,10 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="view">The camera to render with</param>
         public void Render(Camera camera)
-        { 
+        {
+            if (Game1.IsBebugging)
+                RenderBounds(camera);
+
             if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint)
                 Renderer.Render(camera.View);
         }
@@ -408,6 +413,9 @@ namespace BlockGame.Blocks
         /// <param name="view">The camera to render with</param>
         public void RenderOpaque(Camera camera)
         {
+            if (Game1.IsBebugging)
+                RenderBounds(camera);
+
             if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint)
                 Renderer.RenderOpaque(camera.View);
         }
@@ -418,7 +426,17 @@ namespace BlockGame.Blocks
         /// <param name="view">The camera to render with</param>
         public void RenderNonOPaque(Camera camera)
         {
-            Renderer.RenderNonOpaque(camera.View);
+            if (Game1.IsBebugging)
+                RenderBounds(camera);
+
+            if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint)
+                Renderer.RenderNonOpaque(camera.View);
+        }
+
+        private void RenderBounds(Camera camera)
+        {
+            Utils.ApplyCamera(camera);
+            Utils.DrawBoundingBox(Bounding, Color.Red, camera.GraphicsDevice);
         }
         #endregion
 
