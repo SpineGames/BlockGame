@@ -8,6 +8,7 @@ using System.Text;
 using BlockGame;
 using BlockGame.Blocks;
 using BlockGame.Utilities;
+using Microsoft.Xna.Framework;
 
 namespace BlockGame.Blocks
 {
@@ -46,55 +47,57 @@ namespace BlockGame.Blocks
         /// <param name="z">The z co-ords of the block to get</param>
         /// <returns>The BlockData for position {x,y,z}</returns>
         public static BlockData GetBlockAtPos(int x, int y, int z)
-        { 
-            float txSample = 0.02F;
-            float tySample = 0.02F;
-            float tzSample = 0.02F;
+        {
+            BlockData SolidData = new BlockData(BlockManager.Stone.ID);
+            BlockData SurfaceData = new BlockData(BlockManager.Dirt.ID, 1);
+            BlockData FillerData = new BlockData(BlockManager.Dirt.ID);
 
-            float oxSample = 0.5F;
-            float oySample = 0.5F;
-            float ozSample = 0.5F;
-
-            int oreOctaves = 8;
-            int terrainOctaves = 3;
-
-            float perlin = Perlin.GetAtMap(x + 1000, y + 1000, z + 1000, terrainOctaves, txSample, tySample, tzSample);
-            float orePerlin = Perlin.GetAtMap(x + 1000, y + 1000, z + 1000, oreOctaves, oxSample, oySample, ozSample);
-
-            bool solid = false;
-
-            if (perlin >= 0F)
-                solid = true;
+            bool solid = IsSolid(x, y, z);
 
             if (!solid)
                 return new BlockData(BlockManager.Air.ID);
             else
             {
-                if (orePerlin - ((z + 64) / GroundLevel) >= -0.3F)
-                    return new BlockData(BlockManager.Gravel.ID);
+                if (!IsSolid(x, y, z + 1))
+                    return SurfaceData;
 
-                return new BlockData(BlockManager.Stone.ID);
+                else if (!IsSolid(x, y, z + 2) | !IsSolid(x, y, z + 3) | !IsSolid(x, y, z + 4))
+                    return FillerData;
+
+                return SolidData;
             }
+        }
 
+        /// <summary>
+        /// Checks if a given position is solid
+        /// </summary>
+        /// <param name="x">The x co-ord to check</param>
+        /// <param name="y">The y co-ord to check</param>
+        /// <param name="z">The z co-ord to check</param>
+        /// <returns>True if the position at {x,y,z} is solid</returns>
+        private static bool IsSolid(int x, int y, int z)
+        {
+            float txSample = 0.01F;
+            float tySample = 0.01F;
+            float tzSample = 0.01F;
 
-            //if (z < GroundLevel - 3)
-            //{
-            //    if (rand.Next(100) < 20)
-            //        return new BlockData(BlockManager.Gravel.ID);
-            //    else
-            //        return new BlockData(BlockManager.Stone.ID);
-            //}
-            //else if (z < GroundLevel)
-            //    return new BlockData(BlockManager.Dirt.ID);
-            //else if (z == GroundLevel)
-            //{
-            //    //if ((x + y) % 2 != 1)
-            //        return new BlockData(BlockManager.Dirt.ID, 1);
-            //   // else
-            //       // return new BlockData(BlockManager.Log.ID, 0);
-            //}
+            int terrainOctaves = 1;
 
-            //return new BlockData(BlockManager.Air.ID);
+            float tHeight = 64;
+
+            float perlin = Perlin.GetAtMap(x + 1000, y + 1000, z + 1000, terrainOctaves, txSample, tySample, tzSample);
+
+            float height = ((Perlin.GetAtMap(x + 1000, y + 1000, 1000) + 1.0F) / 2.0F) * tHeight;
+            float density = 1 - (MathHelper.Clamp(z / height, 0, 1));
+
+            bool solid = false;
+
+            perlin = perlin.Wrap(-1, 0);
+
+            if (perlin + density > 0F)
+                solid = true;
+
+            return solid;
         }
 
         /// <summary>

@@ -562,10 +562,13 @@ namespace BlockGame.Blocks
 
             for (int i = 0; i < treeCount; i++)
             {
-                TerrainGen.GenTree(
-                    TerrainGen.Random.Next(2, ChunkSize - 2),
-                    TerrainGen.Random.Next(2, ChunkSize - 2),
-                    TerrainGen.GroundLevel - WorldPos.Z, 4 + TerrainGen.Random.Next(0, 3), this);
+                int cx = TerrainGen.Random.Next(2, ChunkSize - 2);
+                int cy = TerrainGen.Random.Next(2, ChunkSize - 2);
+                int wz = World.GetTopZ(cx + WorldPos.X, cy + WorldPos.Y, 500);
+                int cz = wz - WorldPos.Z;
+
+                TerrainGen.GenTree(cx, cy, cz, 
+                    4 + TerrainGen.Random.Next(0, 3), this);
             }
 
             UpdateRenderStates(new Point3(0), new Point3(ChunkSize));

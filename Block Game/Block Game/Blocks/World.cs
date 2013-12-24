@@ -165,6 +165,23 @@ namespace BlockGame.Blocks
         {
             return loaded.Contains(new Point3(x,y,z));
         }
+
+        /// <summary>
+        /// Gets the top z value for the given x and y
+        /// </summary>
+        /// <param name="x">The x co-ord to check at</param>
+        /// <param name="y">The y co-ord to check at</param>
+        /// <param name="zStart">The z co-ord to start from to work down from</param>
+        /// <returns>The z for the top block at {x,y}</returns>
+        public static int GetTopZ(int x, int y, int zStart)
+        {
+            for (int z = zStart; z >= 0; z--)
+            {
+                if (GetBlockID(x, y, z) != 0)
+                    return z;
+            }
+            return zStart;
+        }
         
         /// <summary>
         /// Gets the chunks from the given world position
@@ -304,7 +321,7 @@ namespace BlockGame.Blocks
         {
             if (ChunkExistsCoords(x, y, z))
                 return GetChunkFromCoords(x, y, z).GetBlockIDFromWorld(x, y, z);
-            return 0;
+            return 1;
         }
 
         /// <summary>

@@ -215,8 +215,19 @@ namespace BlockGame
             return perlin.Wrap(-1, 1);
         }
 
-        public static float GetAtMap(float x, float y, float z, int octaves, 
-            float xSample = 0.5F,float ySample = 0.5F,float zSample = 0.5F)
+        /// <summary>
+        /// Returns a value between -1 and 1 that represents the density at a specific point on the map
+        /// </summary>
+        /// <param name="x">The x co-ord to check</param>
+        /// <param name="y">The y co-ord to check</param>
+        /// <param name="z">The z co-ord to check</param>
+        /// <param name="octaves">The number of octaves to use</param>
+        /// <param name="xSample">The x sampling rate (default 0.02F)</param>
+        /// <param name="ySample">The y sampling rate (default 0.02F)</param>
+        /// <param name="zSample">The z sampling rate (default 0.02F)</param>
+        /// <returns>A value between -1 and 1</returns>
+        public static float GetAtMap(float x, float y, float z, int octaves,
+            float xSample = 0.02F, float ySample = 0.02F, float zSample = 0.02F)
         {
             float perlin = 0;
             float min = float.MinValue;
