@@ -320,7 +320,7 @@ namespace BlockGame.Blocks
                     return true; //second case is if there is a non-opaque and an opaque
                 }
 
-                if (!IsOpaque(position) & (GetBlockID(position) != GetBlockID(facePos)))
+                if (!IsOpaque(position) & !IsOpaque(facePos) & ((GetBlockID(position) != GetBlockID(facePos))))
                     return true; //final case is two different types of transparent blocks
             }
             else
@@ -335,9 +335,9 @@ namespace BlockGame.Blocks
                 {
                     return true; //second case is if there is a non-opaque and an opaque
                 }
-                
 
-                if (!World.IsOpaque(position) & (World.GetBlockID(position) != World.GetBlockID(facePos)))
+
+                if (!World.IsOpaque(position) & !World.IsOpaque(facePos) & (World.GetBlockID(position) != World.GetBlockID(facePos)))
                     return true; //final case is two different types of transparent blocks
             }
 
@@ -551,6 +551,9 @@ namespace BlockGame.Blocks
         /// </summary>
         public void GenChunk()
         {
+            Stopwatch w = new Stopwatch();
+            w.Start();
+
             for (int x = 0; x < ChunkSize; x++)
             {
                 for (int y = 0; y < ChunkSize; y++)
@@ -576,7 +579,13 @@ namespace BlockGame.Blocks
                     4 + TerrainGen.Random.Next(0, 3), this);
             }
 
+            w.Stop();
+            Debug.WriteLine("Took {0} milliseconds to generate chunk data",w.ElapsedMilliseconds);
+
+            w.Start();
             UpdateRenderStates(new Point3(0), new Point3(ChunkSize));
+            w.Stop();
+            Debug.WriteLine("Took {0} milliseconds to generate chunk render data", w.ElapsedMilliseconds);
         }
 
         /// <summary>
