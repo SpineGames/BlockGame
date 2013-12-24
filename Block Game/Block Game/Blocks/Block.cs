@@ -64,6 +64,8 @@ namespace BlockGame
     /// </summary>
     public abstract class Block
     {
+        private static VertexPositionNormalTextureColor[][] models;
+
         /// <summary>
         /// Gets the block ID for this block
         /// </summary>
@@ -92,7 +94,7 @@ namespace BlockGame
         {
             BlockManager.AddBlock(this);
         }
-
+        
         /// <summary>
         /// Gets the model for this block from the given block facings
         /// </summary>
@@ -112,7 +114,7 @@ namespace BlockGame
 
             return temp.ToArray();// BlockRenderFaces.GetFacesFromState(facings, pos, this.texRef);
         }
-
+       
         /// <summary>
         /// Gets the texture ID for the given facing
         /// </summary>

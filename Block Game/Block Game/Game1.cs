@@ -106,6 +106,7 @@ namespace BlockGame
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0 / 30.0);
         }
 
         /// <summary>

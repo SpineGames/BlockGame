@@ -40,6 +40,8 @@ namespace BlockGame.Blocks
         private static BlockData WaterData = new BlockData(BlockManager.Water.ID);
         private static BlockData OceanBottomData = new BlockData(BlockManager.Sand.ID);
 
+        private static BlockData OreData = new BlockData(BlockManager.Gravel.ID);
+
         /// <summary>
         /// The x sampling to use for terrain generation
         /// </summary>
@@ -74,7 +76,8 @@ namespace BlockGame.Blocks
             BlockData currentPass =  HeightmapPass(x, y, z);
             currentPass = GrassingPass(x, y, z, currentPass);
             currentPass = WaterPass(x, y, z, currentPass);
-            currentPass = CavePass(x, y, z, currentPass);
+            currentPass = CavePass(x, y, z, currentPass, 3, 1.0F);
+            currentPass = OrePass(x, y, z, currentPass, 2, 0.8F, 32, OreData, 0.6F);
             return currentPass;
         }
 
@@ -95,6 +98,12 @@ namespace BlockGame.Blocks
                 return AirData;
         }
 
+        /// <summary>
+        /// Gets the initial terrain height
+        /// </summary>
+        /// <param name="x">The x co-ord to check</param>
+        /// <param name="y">The y co-ord to check</param>
+        /// <returns>The initial z for the given position</returns>
         private static int InitialHeight(int x, int y)
         {
             float heightmap = Perlin.GetAtMap(x + 1000, y + 1000, 1000, 2, xSample, ySample, zSample);
@@ -104,6 +113,14 @@ namespace BlockGame.Blocks
             return (int)heightmap;
         }
 
+        /// <summary>
+        /// Generates water in the terrain
+        /// </summary>
+        /// <param name="x">The x co-ord to get</param>
+        /// <param name="y">The y co-ord to get</param>
+        /// <param name="z">The z co-ord to get</param>
+        /// <param name="currentPass">The current data in the pass</param>
+        /// <returns>The post-pass data</returns>
         private static BlockData WaterPass(int x, int y, int z, BlockData currentPass)
         {
             if (z < WaterHeight & currentPass.ID == BlockManager.Air.ID)
@@ -146,13 +163,57 @@ namespace BlockGame.Blocks
             return currentPass;
         }
 
-        private static BlockData CavePass(int x, int y, int z, BlockData currentPass)
+        /// <summary>
+        /// Generates caves in the terrain
+        /// </summary>
+        /// <param name="x">The x co-ord to get</param>
+        /// <param name="y">The y co-ord to get</param>
+        /// <param name="z">The z co-ord to get</param>
+        /// <param name="currentPass">The current data in the pass</param>
+        /// <param name="caveDensity">The roughness of the caves, should be larger than 0</param>
+        /// <param name="caveSize">The size of caves, between 0 and 1. Note that this also changes
+        /// the desity of the caves</param>
+        /// <returns>the post-pass data</returns>
+        private static BlockData CavePass(int x, int y, int z, BlockData currentPass, 
+            int caveDensity, float caveSize)
         {
-            float perlin = Perlin.GetAtMap(x, y, z, 2, 0.04F, 0.04F, 0.04F);
+            float sample = 0.11F - caveSize * 0.1F;
+            float perlin = Perlin.GetAtMap(x, y, z, caveDensity, sample, sample, sample);
 
-            if (perlin > 0.5F & currentPass.ID == SolidData.ID)
+            if (perlin > 0.5F & 
+                (currentPass.ID == SolidData.ID || currentPass.ID == FillerData.ID ||
+                 currentPass.ID == SurfaceData.ID))
                 return AirData;
             else
+                return currentPass;
+        }
+
+        /// <summary>
+        /// Generates caves in the terrain
+        /// </summary>
+        /// <param name="x">The x co-ord to get</param>
+        /// <param name="y">The y co-ord to get</param>
+        /// <param name="z">The z co-ord to get</param>
+        /// <param name="currentPass">The current data in the pass</param>
+        /// <param name="oreRoughness">The roughness/size of deposits</param>
+        /// <param name="density">The density of deposits</param>
+        /// <param name="falloff">The ore falloff, default 0.5F</param>
+        /// <param name="oreDat">The ore data to generate</param>
+        /// <param name="maxZ">The maximum z of the ore</param>
+        /// <returns>the post-pass data</returns>
+        private static BlockData OrePass(int x, int y, int z, BlockData currentPass,
+            int oreRoughness, float density, int maxZ, BlockData oreDat, float falloff = 0.5F)
+        {
+            if (z <= maxZ)
+            {
+                float sample = 0.5F - density * 0.1F;
+                float perlin = Perlin.GetAtMap(x, y, z, oreRoughness, sample, sample, sample);
+
+                if (perlin > falloff &
+                    (currentPass.ID == SolidData.ID || currentPass.ID == FillerData.ID ||
+                     currentPass.ID == SurfaceData.ID))
+                    return oreDat;
+            }
                 return currentPass;
         }
 

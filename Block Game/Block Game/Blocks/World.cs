@@ -77,7 +77,6 @@ namespace BlockGame.Blocks
             Point3 t = (Point3)e.Argument;
             Chunk chunk = new Chunk(t);
             chunk.GenChunk();
-            chunk.SetBlockFromWorld(t.X * Chunk.ChunkSize, t.Y * Chunk.ChunkSize, t.Z * Chunk.ChunkSize, new BlockData(0));
             
             e.Result = new object[] { chunk, t};
         }
