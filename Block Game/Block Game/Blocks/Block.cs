@@ -34,6 +34,7 @@ namespace BlockGame
         public static readonly Block Glass = new BlockGlass();
         public static readonly Block Log = new BlockLog();
         public static readonly Block Leaves = new BlockLeaves();
+        public static readonly Block Water = new BlockWater();
 
         /// <summary>
         /// Adds the given block to the block list and overwrites the given BlockID

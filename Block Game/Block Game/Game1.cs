@@ -166,21 +166,11 @@ namespace BlockGame
             UI.AddElementLeftAlign(
                 new UIE_String(spriteFont, "Camera Facing: {0}", Color.Black, ref CameraFacing, null));
 
-            for (int x = 0; x < 3; x++)
+            for (int x = 0; x < 6; x++)
                 for (int z = 3; z >= 0; z--)
-                    for (int y = 0; y < 3; y++)
+                    for (int y = 0; y < 6; y++)
                         World.AddChunk(new Point3(x, y, z));
-
-            World.AddChunk(new Point3(3, 0, 1));
-            World.AddChunk(new Point3(4, 0, 1));
-            World.AddChunk(new Point3(3, 1, 1));
-            World.AddChunk(new Point3(4, 1, 1));
-
-            World.AddChunk(new Point3(3, 0, 0));
-            World.AddChunk(new Point3(4, 0, 0));
-            World.AddChunk(new Point3(3, 1, 0));
-            World.AddChunk(new Point3(4, 1, 0));
-            
+                        
             temp = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width,
                 GraphicsDevice.Viewport.Height);
 

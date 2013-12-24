@@ -30,6 +30,29 @@ namespace BlockGame.Blocks
         /// </summary>
         public const int GroundLevel = 52;
 
+        private static float TerrainHeight = 64.0F;
+        private static float WaterHeight = 64.0F;
+
+        private static BlockData AirData = new BlockData(BlockManager.Air.ID);
+        private static BlockData SolidData = new BlockData(BlockManager.Stone.ID);
+        private static BlockData SurfaceData = new BlockData(BlockManager.Dirt.ID, 1);
+        private static BlockData FillerData = new BlockData(BlockManager.Dirt.ID);
+        private static BlockData WaterData = new BlockData(BlockManager.Water.ID);
+        private static BlockData OceanBottomData = new BlockData(BlockManager.Sand.ID);
+
+        /// <summary>
+        /// The x sampling to use for terrain generation
+        /// </summary>
+        private static float xSample = 0.01F;
+        /// <summary>
+        /// The y sampling to use for terrain generation
+        /// </summary>
+        private static float ySample = 0.01F;
+        /// <summary>
+        /// The z sampling to use for terrain generation
+        /// </summary>
+        private static float zSample = 0.01F;
+
         /// <summary>
         /// Sets the seed for the RNG
         /// </summary>
@@ -48,24 +71,89 @@ namespace BlockGame.Blocks
         /// <returns>The BlockData for position {x,y,z}</returns>
         public static BlockData GetBlockAtPos(int x, int y, int z)
         {
-            BlockData SolidData = new BlockData(BlockManager.Stone.ID);
-            BlockData SurfaceData = new BlockData(BlockManager.Dirt.ID, 1);
-            BlockData FillerData = new BlockData(BlockManager.Dirt.ID);
+            BlockData currentPass =  HeightmapPass(x, y, z);
+            currentPass = GrassingPass(x, y, z, currentPass);
+            currentPass = WaterPass(x, y, z, currentPass);
+            currentPass = CavePass(x, y, z, currentPass);
+            return currentPass;
+        }
 
-            bool solid = IsSolid(x, y, z);
+        /// <summary>
+        /// The pass that represents the base Heightmap
+        /// </summary>
+        /// <param name="x">The x co-ord to check</param>
+        /// <param name="y">The y co-ord to check</param>
+        /// <param name="z">The z co-ord to check</param>
+        /// <returns>Either the SolidData or AirData</returns>
+        private static BlockData HeightmapPass(int x, int y, int z)
+        {
+            int heightmap = InitialHeight(x, y);
 
-            if (!solid)
-                return new BlockData(BlockManager.Air.ID);
-            else
-            {
-                if (!IsSolid(x, y, z + 1))
-                    return SurfaceData;
-
-                else if (!IsSolid(x, y, z + 2) | !IsSolid(x, y, z + 3) | !IsSolid(x, y, z + 4))
-                    return FillerData;
-
+            if (z < heightmap)
                 return SolidData;
+            else
+                return AirData;
+        }
+
+        private static int InitialHeight(int x, int y)
+        {
+            float heightmap = Perlin.GetAtMap(x + 1000, y + 1000, 1000, 2, xSample, ySample, zSample);
+
+            heightmap = ((heightmap + 1.0F) / 2.0F) * (TerrainHeight * 2);
+
+            return (int)heightmap;
+        }
+
+        private static BlockData WaterPass(int x, int y, int z, BlockData currentPass)
+        {
+            if (z < WaterHeight & currentPass.ID == BlockManager.Air.ID)
+                return WaterData;
+            else
+                return currentPass;
+        }
+
+        /// <summary>
+        /// The pass that represents the grassing pass
+        /// </summary>
+        /// <param name="x">The x co-ord to check</param>
+        /// <param name="y">The y co-ord to check</param>
+        /// <param name="z">The z co-ord to check</param>
+        /// <returns>The new pass</returns>
+        private static BlockData GrassingPass(int x, int y, int z, BlockData currentPass)
+        {
+            if (currentPass.ID != BlockManager.Air.ID)
+            {
+                if (InitialHeight(x,y) > WaterHeight)
+                {
+                    if (HeightmapPass(x, y, z + 1).ID == BlockManager.Air.ID)
+                        return SurfaceData;
+
+                    for (int d = 0; d < 3; d++)
+                    {
+                        if (HeightmapPass(x, y, z + 1 + d).ID == BlockManager.Air.ID)
+                            return FillerData;
+                    }
+                }
+                else
+                {
+                    for (int d = 0; d < 3; d++)
+                    {
+                        if (HeightmapPass(x, y, z + d).ID == BlockManager.Air.ID)
+                            return OceanBottomData;
+                    }
+                }
             }
+            return currentPass;
+        }
+
+        private static BlockData CavePass(int x, int y, int z, BlockData currentPass)
+        {
+            float perlin = Perlin.GetAtMap(x, y, z, 2, 0.04F, 0.04F, 0.04F);
+
+            if (perlin > 0.5F & currentPass.ID == SolidData.ID)
+                return AirData;
+            else
+                return currentPass;
         }
 
         /// <summary>

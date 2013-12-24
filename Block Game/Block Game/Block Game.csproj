@@ -123,6 +123,7 @@
     <Compile Include="Blocks\BlockTypes\BlockStone.cs" />
     <Compile Include="Blocks\BlockTypes\BlockLog.cs" />
     <Compile Include="Blocks\BlockTypes\BlockLeaves.cs" />
+    <Compile Include="Blocks\BlockTypes\BlockWater.cs" />
     <Compile Include="Blocks\Chunk.cs" />
     <Compile Include="Blocks\World.cs" />
     <Compile Include="Perlin.cs" />

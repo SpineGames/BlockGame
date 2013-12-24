@@ -131,7 +131,7 @@ namespace BlockGame.Blocks
             corner *= ChunkSize / 2;
 
             Point3 Normal = facing.NormalVector() * (ChunkSize / 2);
-            Point3 NormalMin = facing.NormalVector() * (ChunkSize / 2 - 1);
+            Point3 NormalMin = facing.NormalVector() * (ChunkSize / 2 - 2);
 
             Point3 Centre = new Point3(ChunkSize / 2);
 
@@ -154,14 +154,19 @@ namespace BlockGame.Blocks
         /// <param name="max">The maximum of the cube to update (chunk)</param>
         private void UpdateRenderStates(Point3 min, Point3 max)
         {
-            //min.Clamp(new Point3(0), new Point3(ChunkSize));
-            //max.Clamp(new Point3(0), new Point3(ChunkSize));
+            int minX = min.X < max.X ? min.X : max.X;
+            int minY = min.Y < max.Y ? min.Y : max.Y;
+            int minZ = min.Z < max.Z ? min.Z : max.Z;
 
-            for (int x = min.X; x <= max.X; x++)
+            int maxX = max.X > min.X ? max.X : min.X;
+            int maxY = max.Y > min.Y ? max.Y : min.Y;
+            int maxZ = max.Z > min.Z ? max.Z : min.Z;
+
+            for (int x = minX; x <= maxX; x++)
             {
-                for (int y = min.Y; y <= max.Y; y++)
+                for (int y = minY; y <= maxY; y++)
                 {
-                    for (int z = min.Z; z <= max.Z; z++)
+                    for (int z = minZ; z <= maxZ; z++)
                     {
                         UpdateRenderState(x, y, z);
                     }

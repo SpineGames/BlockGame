@@ -41,6 +41,20 @@ namespace BlockGame.Blocks
     /// </summary>
     public static class BlockFacingExt
     {
+        private static Point3 Front = new Point3(0, 1, 0);
+        private static Point3 Back = new Point3(0, -1, 0);
+        private static Point3 Left = new Point3(-1, 0, 0);
+        private static Point3 Right = new Point3(1, 0, 0);
+        private static Point3 Top = new Point3(0, 0, 1);
+        private static Point3 Bottom = new Point3(0, 0, -1);
+
+        private static Point3 FrontCorner = new Point3(1, 0, 1);
+        private static Point3 BackCorner = new Point3(1, 0, 1);
+        private static Point3 RightCorner = new Point3(0, 1, 1);
+        private static Point3 LeftCorner = new Point3(0, 1, 1);
+        private static Point3 TopCorner = new Point3(1, 1, 0);
+        private static Point3 BottomCorner = new Point3(1, 1, 0);
+
         /// <summary>
         /// Gets the normal for this block facing
         /// </summary>
@@ -51,17 +65,17 @@ namespace BlockGame.Blocks
             switch (self)
             {
                 case BlockFacing.Front:
-                    return new Point3(0, 1, 0);
+                    return Front;
                 case BlockFacing.Back:
-                    return new Point3(0, -1, 0);
+                    return Back;
                 case BlockFacing.Left:
-                    return new Point3(-1, 0, 0);
+                    return Left;
                 case BlockFacing.Right:
-                    return new Point3(1, 0, 0);
+                    return Right;
                 case BlockFacing.Top:
-                    return new Point3(0, 0, 1);
+                    return Top;
                 case BlockFacing.Bottom:
-                    return new Point3(0, 0, -1);
+                    return Bottom;
                 default: return null;
             }
         }
@@ -76,17 +90,17 @@ namespace BlockGame.Blocks
             switch (self)
             {
                 case BlockFacing.Front:
-                    return new Point3(1, 0, 0);
+                    return Right;
                 case BlockFacing.Back:
-                    return new Point3(-1, 0, 0);
+                    return Left;
                 case BlockFacing.Left:
-                    return new Point3(0, 1, 0);
+                    return Front;
                 case BlockFacing.Right:
-                    return new Point3(0, -1, 0);
+                    return Back;
                 case BlockFacing.Top:
-                    return new Point3(1, 0, 0);
+                    return Right;
                 case BlockFacing.Bottom:
-                    return new Point3(1, 0, 0);
+                    return Left;
                 default: return null;
             }
         }
@@ -101,17 +115,17 @@ namespace BlockGame.Blocks
             switch (self)
             {
                 case BlockFacing.Front:
-                    return new Point3(1, 0, 1);
+                    return FrontCorner;
                 case BlockFacing.Back:
-                    return new Point3(1, 0, 1);
+                    return BackCorner;
                 case BlockFacing.Left:
-                    return new Point3(0, 1, 1);
+                    return LeftCorner;
                 case BlockFacing.Right:
-                    return new Point3(0, 1, 1);
+                    return RightCorner;
                 case BlockFacing.Top:
-                    return new Point3(1, 1, 0);
+                    return TopCorner;
                 case BlockFacing.Bottom:
-                    return new Point3(1, 1, 0);
+                    return BottomCorner;
                 default: return null;
             }
         }
