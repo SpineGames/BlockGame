@@ -131,18 +131,20 @@ namespace BlockGame.Blocks
             corner *= ChunkSize / 2;
 
             Point3 Normal = facing.NormalVector() * (ChunkSize / 2);
-            Point3 NormalMin = facing.NormalVector() * (ChunkSize / 2 - 2);
+
+            if ((facing == BlockFacing.Front || facing == BlockFacing.Top || facing == BlockFacing.Right))
+            {
+                Normal = facing.NormalVector() * ((ChunkSize / 2) - 1);
+            }
+
+            Point3 tNormal = new Point3(Normal.X, Normal.Y, Normal.Z);
+            Point3 NormalMin = tNormal.SubtractFromLength(1);
 
             Point3 Centre = new Point3(ChunkSize / 2);
 
             Point3 min = Centre - corner + Normal;
             Point3 max = Centre + corner + NormalMin;
 
-            if ((facing == BlockFacing.Front || facing == BlockFacing.Top || facing == BlockFacing.Right))
-            {
-                //Normal = facing.NormalVector() * ((ChunkSize / 2) - 2);
-                Debug.WriteLine(facing + " | " + corner + " Min: " + min + " Max: " + max);
-            }
             
             UpdateRenderStates(min, max);
         }

@@ -121,6 +121,22 @@ namespace BlockGame.Utilities
         }
 
         /// <summary>
+        /// Subtracts the value from each vector of the point only if the vector is not equal to 0
+        /// </summary>
+        /// <param name="amount">The amount to subtract</param>
+        /// <returns>This point, with the values subtracted</returns>
+        public Point3 SubtractFromLength(int amount)
+        {
+            if (X != 0)
+                X -= amount;
+            if (Y != 0)
+                Y -= amount;
+            if (Z != 0)
+                Z -= amount;
+            return this;
+        }
+
+        /// <summary>
         /// Checks if this point is equal to another object
         /// </summary>
         /// <param name="obj">The object to compare</param>
