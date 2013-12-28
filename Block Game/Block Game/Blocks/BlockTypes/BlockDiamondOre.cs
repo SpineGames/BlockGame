@@ -5,6 +5,7 @@ namespace BlockGame.Blocks.BlockTypes
 {
     /// <summary>
     /// Represents a block of Diamond ore
+    /// fuck da poleece!
     /// </summary>
     public class BlockDiamondOre : Block
     {
