@@ -126,6 +126,7 @@
     <Compile Include="Blocks\BlockTypes\BlockWater.cs" />
     <Compile Include="Blocks\BlockTypes\BlockIronOre.cs" />
     <Compile Include="Blocks\BlockTypes\BlockGoldOre.cs" />
+    <Compile Include="Blocks\BlockTypes\BlockDiamondOre.cs" />
     <Compile Include="Blocks\Chunk.cs" />
     <Compile Include="Blocks\World.cs" />
     <Compile Include="Perlin.cs" />

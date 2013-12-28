@@ -41,6 +41,7 @@ namespace BlockGame.Blocks
         private static BlockData OceanBottomData = new BlockData(BlockManager.Sand.ID);
 
         private static BlockData IronOreData = new BlockData(BlockManager.IronOre.ID);
+        private static BlockData DiamondOreData = new BlockData(BlockManager.DiamondOre.ID);
         private static BlockData GoldOreData = new BlockData(BlockManager.GoldOre.ID);
         private static BlockData GravelData = new BlockData(BlockManager.Gravel.ID);
 
@@ -81,6 +82,7 @@ namespace BlockGame.Blocks
             currentPass = CavePass(x, y, z, currentPass, 3, 1.0F);
             currentPass = OrePass(x, y, z, currentPass, 2, 0.8F, 32, IronOreData, 0.6F);
             currentPass = OrePass(x, y, z, currentPass, 2, 0.9F, 16, GoldOreData, 0.5F);
+            currentPass = OrePass(x, y, z, currentPass, 2, 0.9F, 64, DiamondOreData, 0.9F);
             return currentPass;
         }
 

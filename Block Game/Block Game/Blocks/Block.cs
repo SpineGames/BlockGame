@@ -37,6 +37,7 @@ namespace BlockGame
         public static readonly Block Water = new BlockWater();
         public static readonly Block IronOre = new BlockIronOre();
         public static readonly Block GoldOre = new BlockGoldOre();
+        public static readonly Block DiamondOre = new BlockDiamondOre();
 
         /// <summary>
         /// Adds the given block to the block list and overwrites the given BlockID
