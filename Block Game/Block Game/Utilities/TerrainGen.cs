@@ -81,6 +81,7 @@ namespace BlockGame.Blocks
             currentPass = CavePass(x, y, z, currentPass, 3, 1.0F);
             currentPass = OrePass(x, y, z, currentPass, 2, 0.8F, 32, IronOreData, 0.6F);
             currentPass = OrePass(x, y, z, currentPass, 2, 0.9F, 16, GoldOreData, 0.5F);
+            
             return currentPass;
         }
 
@@ -141,27 +142,19 @@ namespace BlockGame.Blocks
         /// <returns>The new pass</returns>
         private static BlockData GrassingPass(int x, int y, int z, BlockData currentPass)
         {
-            if (currentPass.ID != BlockManager.Air.ID)
-            {
-                if (InitialHeight(x,y) > WaterHeight)
-                {
-                    if (HeightmapPass(x, y, z + 1).ID == BlockManager.Air.ID)
-                        return SurfaceData;
+            int initHeight = InitialHeight(x, y);
 
-                    for (int d = 0; d < 3; d++)
-                    {
-                        if (HeightmapPass(x, y, z + 1 + d).ID == BlockManager.Air.ID)
-                            return FillerData;
-                    }
-                }
-                else
-                {
-                    for (int d = 0; d < 3; d++)
-                    {
-                        if (HeightmapPass(x, y, z + d).ID == BlockManager.Air.ID)
-                            return OceanBottomData;
-                    }
-                }
+            if (initHeight > WaterHeight)
+            {
+                if (z > initHeight - 3 & z < initHeight)
+                    return FillerData;
+                if (z == initHeight)
+                    return SurfaceData;
+            }
+            else
+            {
+                if (z > initHeight - 3 & z <= initHeight)
+                    return OceanBottomData;
             }
             return currentPass;
         }
@@ -266,12 +259,12 @@ namespace BlockGame.Blocks
                     for (int sZ = - 3; sZ < + 3; sZ++)
                     {
                         if (Math.Pow(1.5, 3) > Math.Pow(sX, 2) + Math.Pow(sY, 2) + Math.Pow(sZ, 2))
-                            World.SetBlock(x + sX, y + sY, z + sZ + height, new BlockData(BlockManager.Leaves.ID, 0));
+                            World.SetBlock(x + sX, y + sY, z + sZ + height, BlockManager.Leaves.ID);
 
                     }
                 for (int zP = 0; zP <= height; zP++)
                 {
-                    World.SetBlock(x, y, z + zP, new BlockData(BlockManager.Log.ID, 1));
+                    World.SetBlock(x, y, z + zP, BlockManager.Log.ID);
                 }
         }
 
@@ -289,12 +282,12 @@ namespace BlockGame.Blocks
                     for (int sZ = -3; sZ < +3; sZ++)
                     {
                         if (Math.Pow(2, 3) > Math.Pow(sX, 2) + Math.Pow(sY, 2) + Math.Pow(sZ, 2))
-                            chunk.SetBlockWithoutNotify(x + sX, y + sY, z + sZ + height, new BlockData(BlockManager.Leaves.ID, 0));
+                            chunk.SetBlockWithoutNotify(x + sX, y + sY, z + sZ + height, BlockManager.Leaves.ID);
 
                     }
             for (int zP = 0; zP <= height; zP++)
             {
-                chunk.SetBlockWithoutNotify(x, y, z + zP, new BlockData(BlockManager.Log.ID, 1));
+                chunk.SetBlockWithoutNotify(x, y, z + zP, BlockManager.Log.ID);
             }
         }
     }

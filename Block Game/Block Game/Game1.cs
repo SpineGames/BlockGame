@@ -96,7 +96,24 @@ namespace BlockGame
         /// </summary>
         private bool didPerf;
 
-        RenderTarget2D temp;
+        /// <summary>
+        /// The camera used to map the world from above
+        /// </summary>
+        Camera mappingCamera;
+
+        /// <summary>
+        /// A temporary render target
+        /// </summary>
+        RenderTarget2D mapTarget;
+        /// <summary>
+        /// Represents the main RenderTarget to render to
+        /// </summary>
+        RenderTarget2D mainTarget;
+
+        /// <summary>
+        /// Represents the rectangle to draw the screen texture to
+        /// </summary>
+        Rectangle screenRect;
         #endregion
 
         /// <summary>
@@ -106,7 +123,7 @@ namespace BlockGame
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0 / 30.0);
+            TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0 / 60.0);
         }
 
         /// <summary>
@@ -125,9 +142,11 @@ namespace BlockGame
 
             this.IsMouseVisible = true;
 
-            World.Initialize();
             UIManager.Initialize(blank);
             camera = new Camera(new Vector3(0, 0, 32), GraphicsDevice);
+
+            mappingCamera = new Camera(new Vector3(0, 0, 1032), GraphicsDevice);
+            mappingCamera.CameraPitch = -89.9F;
 
             keyWatchers.Add("Debug", new KeyWatcher(Keys.F1, OnDebugPressed));
             keyWatchers.Add("P", new KeyWatcher(Keys.P, PPressed));
@@ -172,8 +191,14 @@ namespace BlockGame
                     for (int y = 0; y < 6; y++)
                         World.AddChunk(new Point3(x, y, z));
                         
-            temp = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width,
-                GraphicsDevice.Viewport.Height);
+            mapTarget = new RenderTarget2D(GraphicsDevice, 100, 100, false, SurfaceFormat.Rgba64, DepthFormat.Depth24,
+                0, RenderTargetUsage.PreserveContents);
+
+            mainTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, 
+                GraphicsDevice.Viewport.Height, false, SurfaceFormat.Rgba64, DepthFormat.Depth24,
+                0, RenderTargetUsage.PreserveContents);
+
+            screenRect = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
             //World.AddChunk(new Point3(0, 0, 0));
         }
@@ -231,13 +256,20 @@ namespace BlockGame
             ChunkCount.Value = World.ChunkCount;
             CameraFacing.Value = camera.CameraNormal.ToBlockFacing();
             CameraYaw.Value = camera.CameraYaw;
+
+            mappingCamera.CameraPos = camera.CameraPos + new Vector3(0, 0, 1000);
             
             foreach (KeyWatcher k in keyWatchers.Values)
             {
                 k.update();
             }
 
+            Window.Title = "FPS: " + Spine_Library.Tools.FPSHandler.getFrameRate();
+
             camera.UpdateMovement();
+            //mappingCamera.UpdateMovement();
+            mappingCamera.CameraPitch = -89;
+            mappingCamera.UpdateViewParameters();
             sun.SunTick();
             
             base.Update(gameTime);
@@ -276,15 +308,15 @@ namespace BlockGame
                 time.Start();
                 Debug.WriteLine("\nSetting Glass Cuboid\n");
                 World.SetCuboid(new Cuboid(new Point3(1, 1, 1), new Point3(63, 63, 63)),
-                    new BlockData(BlockManager.GetBlock("Glass").ID));
+                    BlockManager.GetBlock("Glass").ID);
 
                 Debug.WriteLine("\nSetting Log Cuboid\n");
                 World.SetCuboid(new Cuboid(new Point3(10, 10, 10), new Point3(54, 54, 54)),
-                new BlockData(BlockManager.GetBlock("Log").ID, 1));
+                BlockManager.GetBlock("Log").ID);
 
                 Debug.WriteLine("\nSetting Leaves Sphere\n");
                 World.SetSphere(new Point3(8, 8, 52), 5.0F,
-                new BlockData(BlockManager.GetBlock("Leaves").ID));
+                BlockManager.GetBlock("Leaves").ID);
 
                 Debug.WriteLine("\nTotal time: {0}s", time.Elapsed.TotalSeconds);
                 time.Stop();
@@ -315,8 +347,10 @@ namespace BlockGame
         private void SpriteBatchDraw()
         {
             spriteBatch.Begin();
-            
+
+            spriteBatch.Draw(mainTarget, screenRect, Color.White);
             UI.Render(spriteBatch, Vector2.Zero);
+            spriteBatch.Draw(mapTarget, new Rectangle(0, (int)UI.Size.Y, 100, 100), Color.White);
 
             spriteBatch.End();
         }
@@ -327,13 +361,13 @@ namespace BlockGame
         private void ThreedDraw()
         {
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
             GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             GraphicsDevice.RasterizerState = RasterizerState.CullClockwise;
-            
-            World.Render(camera);
 
+            World.RenderToTexture(camera, mainTarget);
+            
             sun.Render(camera);
         }
     }

@@ -13,6 +13,7 @@ using BlockGame;
 using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BlockGame.Blocks
 {
@@ -22,17 +23,16 @@ namespace BlockGame.Blocks
     public static class World
     {
         /// <summary>
-        /// The chunks in this world
+        /// The dictionary of loaded chunks
         /// </summary>
-        static Chunk[, ,] CoordChunks = new Chunk[512, 1024, 32]; 
+        static Dictionary<Point3, Chunk> _chunks;
         /// <summary>
-        /// Holds all of the points where chunks were loaded
+        /// Gets the number of currently loaded chunks
         /// </summary>
-        static Point3[] loaded = new Point3[0];
-        /// <summary>
-        /// Gets the number of chunks
-        /// </summary>
-        public static int ChunkCount { get { return loaded.Length; } }
+        public static int ChunkCount
+        {
+            get { return _chunks.Count; }
+        }
 
         /// <summary>
         /// The list of all points where chunks should be loaded
@@ -46,10 +46,12 @@ namespace BlockGame.Blocks
         /// <summary>
         /// Initializes the world
         /// </summary>
-        public static void Initialize()
+        static World()
         {
             ChunkThread.DoWork += LoadChunk;
             ChunkThread.RunWorkerCompleted += ChunkLoaded;
+
+            _chunks = new Dictionary<Point3, Chunk>();
         }
 
         /// <summary>
@@ -94,9 +96,7 @@ namespace BlockGame.Blocks
             Chunk chunk = (Chunk)((object[])e.Result)[0];
             Point3 pos = (Point3)((object[])e.Result)[1];
 
-            CoordChunks[pos.X, pos.Y, pos.Z] = chunk;
-            Array.Resize<Point3>(ref loaded, loaded.Length + 1);
-            loaded[loaded.Length - 1] = pos;
+            _chunks.Add(pos, chunk);
 
             InvalidateChunkFaces(pos);
 
@@ -136,7 +136,7 @@ namespace BlockGame.Blocks
         private static string LoadedStrings()
         {
             string s = "";
-            foreach (Point3 p in loaded)
+            foreach (Point3 p in _chunks.Keys)
                 s += " \n" + p;
             return s;
         }
@@ -162,7 +162,7 @@ namespace BlockGame.Blocks
         /// <returns>True if a chunk exists at {x,y,z}</returns>
         public static bool ChunkExistsChunkPos(int x, int y, int z)
         {
-            return loaded.Contains(new Point3(x,y,z));
+            return _chunks.ContainsKey(new Point3(x, y, z));
         }
 
         /// <summary>
@@ -191,7 +191,12 @@ namespace BlockGame.Blocks
         /// <returns>The chunk that contains the given world co-ord</returns>
         public static Chunk GetChunkFromCoords(int x, int y, int z)
         {
-            return CoordChunks[x / Chunk.ChunkSize, y / Chunk.ChunkSize, z / Chunk.ChunkSize];
+            Point3 point = new Point3(x / Chunk.ChunkSize, y / Chunk.ChunkSize, z / Chunk.ChunkSize);
+
+            if (_chunks.ContainsKey(point))
+                return _chunks[point];
+            else
+                return null;
         }
         
         /// <summary>
@@ -203,7 +208,7 @@ namespace BlockGame.Blocks
         /// <returns>The chunk at data slot {x,y,z}</returns>
         public static Chunk GetChunkFromChunkPos(int x, int y, int z)
         {
-            return CoordChunks[x, y, z];
+            return _chunks[new Point3(x, y, z)];
         }
 
         /// <summary>
@@ -213,7 +218,7 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ord (world)</param>
         /// <param name="z">The z co-ord (world)</param>
         /// <param name="dat">The new block data to set to</param>
-        public static void SetBlock(int x, int y, int z, BlockData dat)
+        public static void SetBlock(int x, int y, int z, byte dat)
         {
             if (ChunkExistsCoords(x, y, z))
                 GetChunkFromCoords(x, y, z).SetBlockFromWorld(x, y, z, dat);
@@ -226,7 +231,7 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ord (world)</param>
         /// <param name="z">The z co-ord (world)</param>
         /// <param name="dat">The new block data to set to</param>
-        public static void SetBlockNoNotify(int x, int y, int z, BlockData dat)
+        public static void SetBlockNoNotify(int x, int y, int z, byte dat)
         {
             if (ChunkExistsCoords(x, y, z))
                 GetChunkFromCoords(x, y, z).SetBlockFromWorldNoNotify(x, y, z, dat);
@@ -237,7 +242,7 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="Pos">The co-ords (world)</param>
         /// <param name="dat">The new block data to set to</param>
-        public static void SetBlock(Point3 Pos, BlockData dat)
+        public static void SetBlock(Point3 Pos, byte dat)
         {
             if (ChunkExistsCoords(Pos.X, Pos.Y, Pos.Z))
                 GetChunkFromCoords(Pos.X, Pos.Y, Pos.Z).SetBlockFromWorld(Pos.X, Pos.Y, Pos.Z, dat);
@@ -248,22 +253,29 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="cuboid">The cuboid to set</param>
         /// <param name="dat">The block data to set</param>
-        public static void SetCuboid(Cuboid cuboid, BlockData dat)
+        public static void SetCuboid(Cuboid cuboid, byte dat)
         {
+#if DEBUG
             Stopwatch time = new Stopwatch();
             time.Start();
+#endif
 
             for (int x = cuboid.Min.X; x < cuboid.Max.X; x++)
                 for (int y = cuboid.Min.Y; y < cuboid.Max.Y; y++)
                     for (int z = cuboid.Min.Z; z < cuboid.Max.Z; z++)
                         SetBlockNoNotify(x, y, z, dat);
 
+#if DEBUG
             Debug.WriteLine("Time to set {0} blocks: {1}s\n", cuboid.Volume, time.Elapsed.TotalSeconds);
             time.Restart();
+#endif
 
-            foreach (Point3 cPos in loaded)
-                    CoordChunks[cPos.X, cPos.Y, cPos.Z].ForceUpdate(cuboid);
-            Debug.WriteLine("Time to check @ update {0} chunks: {1}s\n", loaded.Length, time.Elapsed.TotalSeconds);
+            foreach (Chunk chunk in _chunks.Values)
+                    chunk.ForceUpdate(cuboid);
+            
+#if DEBUG
+            Debug.WriteLine("Time to check @ update {0} chunks: {1}s\n", _chunks.Count, time.Elapsed.TotalSeconds);
+#endif
         }
 
         /// <summary>
@@ -271,10 +283,12 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="cuboid">The bounds of the sphere to set</param>
         /// <param name="dat">The block data to set</param>
-        public static void SetSphere(Cuboid cuboid, BlockData dat)
-        {
+        public static void SetSphere(Cuboid cuboid, byte dat)
+        {            
+#if DEBUG
             Stopwatch time = new Stopwatch();
             time.Start();
+#endif
 
             Point3 centre = (cuboid.Max - cuboid.Min) / 2;
             float radius = ((Vector3)centre).Length();
@@ -287,15 +301,19 @@ namespace BlockGame.Blocks
                             SetBlock(x, y, z, dat);
                     }
 
-
+            
+#if DEBUG
             Debug.WriteLine("Time to set {0} blocks: {1}s\n", cuboid.Volume, time.Elapsed.TotalSeconds);
             time.Restart();
+#endif
 
 
-            foreach (Point3 cPos in loaded)
-                CoordChunks[cPos.X, cPos.Y, cPos.Z].ForceUpdate(cuboid);
-
-            Debug.WriteLine("Time to check & update {0} chunks: {1}s\n", loaded.Length, time.Elapsed.TotalSeconds);
+            foreach (Chunk chunk in _chunks.Values)
+                chunk.ForceUpdate(cuboid);
+            
+#if DEBUG
+            Debug.WriteLine("Time to check & update {0} chunks: {1}s\n", _chunks.Count, time.Elapsed.TotalSeconds);
+#endif
         }
 
         /// <summary>
@@ -303,7 +321,7 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="cuboid">The bounds of the sphere to set</param>
         /// <param name="dat">The block data to set</param>
-        public static void SetSphere(Point3 centre, float radius, BlockData dat)
+        public static void SetSphere(Point3 centre, float radius, byte dat)
         {
             Cuboid cuboid = new Cuboid(centre - (int)radius, centre + (int)radius);
             SetSphere(cuboid, dat);
@@ -367,11 +385,26 @@ namespace BlockGame.Blocks
         /// <param name="camera"></param>
         public static void Render(Camera camera)
         {
-            foreach (Point3 point in loaded)
-                GetChunkFromChunkPos(point.X, point.Y, point.Z).RenderOpaque(camera);
+            foreach (Chunk chunk in _chunks.Values)
+                chunk.RenderOpaque(camera);
 
-            foreach (Point3 point in loaded)
-                GetChunkFromChunkPos(point.X, point.Y, point.Z).RenderNonOPaque(camera);
+            foreach (Chunk chunk in _chunks.Values)
+                chunk.RenderNonOPaque(camera);
+        }
+
+        /// <summary>
+        /// Renders all the currently loaded chunks to a RenderTarget2D
+        /// </summary>
+        /// <param name="camera"></param>
+        public static void RenderToTexture(Camera camera, RenderTarget2D target)
+        {
+            camera.GraphicsDevice.SetRenderTarget(target);
+
+            camera.GraphicsDevice.Clear(Color.White);
+
+            Render(camera);
+
+            camera.GraphicsDevice.SetRenderTarget(null);
         }
     }
 

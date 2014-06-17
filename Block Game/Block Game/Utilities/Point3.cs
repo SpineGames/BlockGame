@@ -150,6 +150,15 @@ namespace BlockGame.Utilities
         }
 
         /// <summary>
+        /// Gets a semi-unique hash code for this object
+        /// </summary>
+        /// <returns>A semi-unique integer</returns>
+        public override int GetHashCode()
+        {
+            return X + Y + Z;
+        }
+
+        /// <summary>
         /// Casts this point to a string
         /// </summary>
         /// <returns>The string representation of this point</returns>

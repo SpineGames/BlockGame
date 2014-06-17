@@ -40,7 +40,11 @@ namespace BlockGame.Blocks
         /// <summary>
         /// The array holding all of the block ID's and metaData
         /// </summary>
-        BlockData[, ,] blocks = new BlockData[ChunkSize, ChunkSize, ChunkSize];
+        byte[, ,] _ids = new byte[ChunkSize, ChunkSize, ChunkSize];
+        /// <summary>
+        /// The array holding all of the block ID's and metaData
+        /// </summary>
+        byte[, ,] _metas = new byte[ChunkSize, ChunkSize, ChunkSize];
         /// <summary>
         /// An array holding all of the render states for easier updating later
         /// </summary>
@@ -237,7 +241,7 @@ namespace BlockGame.Blocks
                         BlockManager.Blocks[GetBlockID(x, y, z)].GetModel(
                         GetRenderStateForBlock(x, y, z),
                         new Point3(x, y, z), 
-                        blocks[x, y, z].Meta);
+                        _metas[x, y, z]);
             }
         }
 
@@ -459,7 +463,7 @@ namespace BlockGame.Blocks
         {
             if (IsinRange(x, y, z))
             {
-                return blocks[x, y, z].ID;
+                return _ids[x, y, z];
             }
             return 0;
         }
@@ -479,7 +483,7 @@ namespace BlockGame.Blocks
 
             if (IsinRange(x, y, z))
             {
-                return blocks[x, y, z].ID;
+                return _ids[x, y, z];
             }
             return 0;
         }
@@ -505,7 +509,7 @@ namespace BlockGame.Blocks
         {
             if (IsinRange(x, y, z))
             {
-                return blocks[x, y, z].Meta;
+                return _metas[x, y, z];
             }
             return 0;
         }
@@ -527,13 +531,13 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ord of the block (chunk)</param>
         /// <param name="z">The z co-ord of the block (chunk)</param>
         /// <returns>The block's data at {x,y,z}</returns>
-        public BlockData GetBlockData(int x, int y, int z)
+        public byte GetBlockData(int x, int y, int z)
         {
             if (IsinRange(x, y, z))
             {
-                return blocks[x, y, z];
+                return _ids[x, y, z];
             }
-            return new BlockData() { ID = 0, Meta = 0 };
+            return 0;
         }
 
         /// <summary>
@@ -541,7 +545,7 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="Pos">The chunk co-ords of the block to check</param>
         /// <returns>The block's data at Pos</returns>
-        public BlockData GetBlockData(Point3 Pos)
+        public byte GetBlockData(Point3 Pos)
         {
             return GetBlockData(Pos.X, Pos.Y, Pos.Z);
         }
@@ -599,7 +603,7 @@ namespace BlockGame.Blocks
         /// <param name="ID">The ID to set the block to</param>
         private void SetBlock(int x, int y, int z, byte ID)
         {
-            SetBlockWithoutNotify(x, y, z, new BlockData { ID = ID });
+            SetBlockWithoutNotify(x, y, z, ID);
         }
 
         /// <summary>
@@ -609,17 +613,7 @@ namespace BlockGame.Blocks
         /// <param name="ID">The ID to set the block to</param>
         private void SetBlock(Point3 pos, byte ID)
         {
-            SetBlockWithoutNotify(pos.X, pos.Y, pos.Z, new BlockData { ID = ID });
-        }
-        
-        /// <summary>
-        /// Sets the block at {x,y,z} to dat
-        /// </summary>
-        /// <param name="pos">The chunk co-ords for the block to set</param>
-        /// <param name="dat">The block data to set at {x,y,z}</param>
-        private void SetBlock(Point3 pos, BlockData dat)
-        {
-            SetBlockWithoutNotify(pos.X, pos.Y, pos.Z, dat);
+            SetBlockWithoutNotify(pos.X, pos.Y, pos.Z, ID);
         }
 
         /// <summary>
@@ -628,12 +622,30 @@ namespace BlockGame.Blocks
         /// <param name="x">The x co-ords of the block (chunk)</param>
         /// <param name="y">The y co-ords of the block (chunk)</param>
         /// <param name="z">The z co-ords of the block (chunk)</param>
-        /// <param name="dat">The block data to set at {x,y,z}</param>
-        public void SetBlockWithoutNotify(int x, int y, int z, BlockData dat)
+        /// <param name="ID">The ID of the block to set at {x,y,z}</param>
+        /// <param name="meta">The meta data of the block to set at {x,y,z}</param>
+        public void SetBlockWithoutNotify(int x, int y, int z, byte ID, byte meta = 0)
         {
             if (IsinRange(x, y, z))
             {
-                blocks[x, y, z] = dat;
+                _ids[x, y, z] = ID;
+                _metas[x, y, z] = meta;
+            }
+        } //base function
+
+        /// <summary>
+        /// Sets the block at {x,y,z} to dat
+        /// </summary>
+        /// <param name="x">The x co-ords of the block (chunk)</param>
+        /// <param name="y">The y co-ords of the block (chunk)</param>
+        /// <param name="z">The z co-ords of the block (chunk)</param>
+        /// <param name="data">The block data to set at {x,y,z}</param>
+        public void SetBlockWithoutNotify(int x, int y, int z, BlockData data)
+        {
+            if (IsinRange(x, y, z))
+            {
+                _ids[x, y, z] = data.ID;
+                _metas[x, y, z] = data.Meta;
             }
         } //base function
 
@@ -644,13 +656,13 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ords of the block (world)</param>
         /// <param name="z">The z co-ords of the block (world)</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        public void SetBlockFromWorld(int x, int y, int z, BlockData dat)
+        public void SetBlockFromWorld(int x, int y, int z, byte id)
         {
             x -= WorldPos.X;
             y -= WorldPos.Y;
             z -= WorldPos.Z;
 
-            SetBlockWithUpdate(x, y, z, dat);
+            SetBlockWithUpdate(x, y, z, id);
         }
 
         /// <summary>
@@ -660,13 +672,13 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ords of the block (world)</param>
         /// <param name="z">The z co-ords of the block (world)</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        public void SetBlockFromWorldNoNotify(int x, int y, int z, BlockData dat)
+        public void SetBlockFromWorldNoNotify(int x, int y, int z, byte ID)
         {
             x -= WorldPos.X;
             y -= WorldPos.Y;
             z -= WorldPos.Z;
 
-            SetBlockWithoutNotify(x, y, z, dat);
+            SetBlockWithoutNotify(x, y, z, ID);
         }
         
         /// <summary>
@@ -676,9 +688,9 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ords of the block (chunk)</param>
         /// <param name="z">The z co-ords of the block (chunk)</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        private void SetBlockWithUpdate(int x, int y, int z, BlockData dat)
+        private void SetBlockWithUpdate(int x, int y, int z, byte id)
         {
-            SetBlockWithoutNotify(x, y, z, dat);
+            SetBlockWithoutNotify(x, y, z, id);
             UpdateRenderState(x, y, z);
             PushRenderState();
         }
@@ -690,20 +702,9 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ords of the block (chunk)</param>
         /// <param name="z">The z co-ords of the block (chunk)</param>
         /// <param name="dat">The block data to set at {x,y,z}</param>
-        private void SetBlockWithUpdate(Point3 pos, BlockData dat)
+        private void SetBlockWithUpdate(Point3 pos, byte id)
         {
-            SetBlockWithUpdate(pos.X, pos.Y, pos.Z, dat);
-        }
-
-        /// <summary>
-        /// Sets a block of blocks to a single ID
-        /// </summary>
-        /// <param name="min">The minimum position to start from</param>
-        /// <param name="max">The max position to start from</param>
-        /// <param name="ID">The block ID to set the region to</param>
-        private void SetCuboid(Point3 min, Point3 max, byte ID)
-        {
-            SetCuboid(min, max, new BlockData(ID));
+            SetBlockWithUpdate(pos.X, pos.Y, pos.Z, id);
         }
 
         /// <summary>
@@ -712,7 +713,7 @@ namespace BlockGame.Blocks
         /// <param name="min">The minimum position to start from</param>
         /// <param name="max">The max position to start from</param>
         /// <param name="dat">The block data to set the region to</param>
-        private void SetCuboid(Point3 min, Point3 max, BlockData dat)
+        private void SetCuboid(Point3 min, Point3 max, byte id)
         {
             for (int x = min.X; x <= max.X; x++)
             {
@@ -720,7 +721,7 @@ namespace BlockGame.Blocks
                 {
                     for (int z = min.Z; z <= max.Z; z++)
                     {
-                        SetBlockWithoutNotify(x, y, z, dat);
+                        SetBlockWithoutNotify(x, y, z, id);
                     }
                 }
             }
@@ -733,9 +734,9 @@ namespace BlockGame.Blocks
         /// </summary>
         /// <param name="cuboid">The cuboid to set</param>
         /// <param name="dat">The block data to set the region to</param>
-        private void SetCuboid(Cuboid cuboid, BlockData dat)
+        private void SetCuboid(Cuboid cuboid, byte id)
         {
-            SetCuboid(cuboid.Min - WorldPos, cuboid.Max - WorldPos, dat);
+            SetCuboid(cuboid.Min - WorldPos, cuboid.Max - WorldPos, id);
 
             UpdateRenderStates(cuboid.Min - new Point3(1), cuboid.Max + Point3.One);
         }
@@ -760,29 +761,6 @@ namespace BlockGame.Blocks
             }
             Point3 size = new Point3((int)Math.Ceiling(radius + BlockRenderer.BlockSize));
             UpdateRenderStates(centre - size, centre + size);      
-        }
-
-        /// <summary>
-        /// Sets a sphere of blocks to a single block ID
-        /// </summary>
-        /// <param name="centre">The centre of the sphere</param>
-        /// <param name="radius">The radius of the sphere</param>
-        /// <param name="dat">The data to set to region to</param>
-        public void SetSphere(Point3 centre, float radius, BlockData dat)
-        {
-            for (int x = 0; x < ChunkSize; x++)
-            {
-                for (int y = 0; y < ChunkSize; y++)
-                {
-                    for (int z = 0; z < ChunkSize; z++)
-                    {
-                        if (Vector3.Distance(centre, new Vector3(x, y, z)) <= radius)
-                            SetBlockWithoutNotify(x, y, z, dat);
-                    }
-                }
-            }
-            Point3 size = new Point3((int)Math.Ceiling(radius + BlockRenderer.BlockSize));
-            UpdateRenderStates(centre - size, centre + size);
         }
         #endregion
 
