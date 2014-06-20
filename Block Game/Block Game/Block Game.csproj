@@ -134,12 +134,15 @@
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Render\Camera.cs" />
+    <Compile Include="Render\DynamicGeometry.cs" />
     <Compile Include="Render\EffectWrapper.cs" />
+    <Compile Include="Render\Geometry.cs" />
     <Compile Include="Render\PolyRender.cs" />
     <Compile Include="Render\ShadowWrapper.cs" />
     <Compile Include="Render\Skybox.cs" />
     <Compile Include="Render\TextureManager.cs" />
     <Compile Include="UI\UIElements.cs" />
+    <Compile Include="Utilities\Octree.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Utilities\Cuboid.cs" />
     <Compile Include="Utilities\Math.cs" />

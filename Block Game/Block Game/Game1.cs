@@ -64,33 +64,7 @@ namespace BlockGame
         /// A dictionary of all the keywatchers used in this game
         /// </summary>
         Dictionary<string, KeyWatcher> keyWatchers = new Dictionary<string, KeyWatcher>();
-
-        /// <summary>
-        /// The UI manager for the game
-        /// </summary>
-        UIManager UI;
-
-        /// <summary>
-        /// A trackable version of the framerate
-        /// </summary>
-        TrackableVariable FrameRate = new TrackableVariable();
-        /// <summary>
-        /// A trackable version of the camera;s position
-        /// </summary>
-        TrackableVariable CameraPos = new TrackableVariable();
-        /// <summary>
-        /// A trackable version of the number of currently loaded chunks
-        /// </summary>
-        TrackableVariable ChunkCount = new TrackableVariable();
-        /// <summary>
-        /// A trackable version of the the camera's block facing
-        /// </summary>
-        TrackableVariable CameraFacing = new TrackableVariable();
-        /// <summary>
-        /// A trackable version of the camera's yaw
-        /// </summary>
-        TrackableVariable CameraYaw = new TrackableVariable();
-
+                
         /// <summary>
         /// Gets if the p command was performed
         /// </summary>
@@ -174,18 +148,6 @@ namespace BlockGame
             BuildBasicEffect();
             sun = new Sun();
 
-            UI = new UIManager(new Vector2(0), new Vector2(10), Color.Gray);
-            UI.AddElementLeftAlign(
-                new UIE_String(spriteFont, "FPS: {0}", Color.Black, ref FrameRate, null));
-            UI.AddElementLeftAlign(
-                new UIE_String(spriteFont, "{0}", Color.Black, ref CameraPos, null));
-            UI.AddElementLeftAlign(
-                new UIE_String(spriteFont, "Chunks: {0}", Color.Black, ref ChunkCount, null));
-            UI.AddElementLeftAlign(
-                new UIE_String(spriteFont, "Camera Yaw: {0}", Color.Black, ref CameraYaw, null));
-            UI.AddElementLeftAlign(
-                new UIE_String(spriteFont, "Camera Facing: {0}", Color.Black, ref CameraFacing, null));
-
             for (int x = 0; x < 6; x++)
                 for (int z = 3; z >= 0; z--)
                     for (int y = 0; y < 6; y++)
@@ -220,6 +182,11 @@ namespace BlockGame
             worldEffect.DirectionalLight0.Direction = new Vector3(1, 1, 0.5F);
             worldEffect.DirectionalLight0.DiffuseColor = Color.LightYellow.ToVector3();
             worldEffect.DirectionalLight0.Enabled = true;
+
+            worldEffect.DirectionalLight1.Direction = new Vector3(-1, -1, 0);
+            worldEffect.DirectionalLight1.DiffuseColor = Color.Black.ToVector3();
+            worldEffect.DirectionalLight1.Enabled = true;
+
             worldEffect.LightingEnabled = true;
 
             worldEffect.TextureEnabled = true;
@@ -251,11 +218,11 @@ namespace BlockGame
             //worldEffect.ViewVector = camera.CameraNormal;
             Vector3 centre = new Vector3(64, 64, 64);
 
-            FrameRate.Value = Spine_Library.Tools.FPSHandler.getFrameRate();
-            CameraPos.Value = camera.CameraPos;
-            ChunkCount.Value = World.ChunkCount;
-            CameraFacing.Value = camera.CameraNormal.ToBlockFacing();
-            CameraYaw.Value = camera.CameraYaw;
+            //UI.E
+            //CameraPos.Value = camera.CameraPos;
+            //ChunkCount.Value = World.ChunkCount;
+            //CameraFacing.Value = camera.CameraNormal.ToBlockFacing();
+            //CameraYaw.Value = camera.CameraYaw;
 
             mappingCamera.CameraPos = camera.CameraPos + new Vector3(0, 0, 1000);
             
@@ -284,15 +251,6 @@ namespace BlockGame
         public void OnDebugPressed(object sender, EventArgs e)
         {
             IsBebugging = !IsBebugging;
-
-            if (IsBebugging)
-            {
-                UI.Show = true;
-            }
-            else
-            {
-                UI.Show = false;
-            }
         }
 
         /// <summary>
@@ -336,7 +294,7 @@ namespace BlockGame
             Spine_Library.Tools.FPSHandler.onDraw(gameTime);
 
             ThreedDraw();
-            SpriteBatchDraw();
+            //SpriteBatchDraw();
 
             base.Draw(gameTime);
         }
@@ -347,11 +305,7 @@ namespace BlockGame
         private void SpriteBatchDraw()
         {
             spriteBatch.Begin();
-
             spriteBatch.Draw(mainTarget, screenRect, Color.White);
-            UI.Render(spriteBatch, Vector2.Zero);
-            spriteBatch.Draw(mapTarget, new Rectangle(0, (int)UI.Size.Y, 100, 100), Color.White);
-
             spriteBatch.End();
         }
 
@@ -365,8 +319,9 @@ namespace BlockGame
             GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             GraphicsDevice.RasterizerState = RasterizerState.CullClockwise;
+            GraphicsDevice.SetRenderTarget(null);
 
-            World.RenderToTexture(camera, mainTarget);
+            World.Render(camera);
             
             sun.Render(camera);
         }

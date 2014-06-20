@@ -107,15 +107,17 @@ namespace BlockGame
         /// <returns>A VPNTC array for this block</returns>
         public virtual VertexPositionNormalTextureColor[] GetModel(BlockRenderStates facings, Point3 pos, byte Meta)
         {
-            List<VertexPositionNormalTextureColor> temp = new List<VertexPositionNormalTextureColor>();
+            VertexPositionNormalTextureColor[] model = new VertexPositionNormalTextureColor[facings.FaceCount() * 6];
 
-            foreach (BlockFacing f in (BlockFacing[])Enum.GetValues(typeof(BlockFacing)))
+            int id = 0;
+
+            foreach (BlockFacing f in BlockFacingExt.Facings)
             {
                 if (facings.IsFaced(f))
-                    temp.AddRange(BlockRenderFaces.GetFacesFromFacing(f, pos, GetTexIDForFacing(f, Meta)));
+                    BlockRenderFaces.AddFacesFromFacing(f, pos, GetTexIDForFacing(f, Meta), ref model, ref id);
             }
 
-            return temp.ToArray();// BlockRenderFaces.GetFacesFromState(facings, pos, this.texRef);
+            return model;
         }
        
         /// <summary>

@@ -40,11 +40,17 @@ namespace BlockGame.UI
             }
         }
 
-        private string Text = "";
+        private string _text = "";
         public string Format = " ";
         public SpriteFont Font;
         public readonly Color Color;
         int largestSize = 0;
+
+        public string Text
+        {
+            get { return _text; }
+            set { _text = value; }
+        }
 
         public UIE_String(SpriteFont font, string format, Color color, ref TrackableVariable variable, string refName = null)
         {
@@ -53,29 +59,40 @@ namespace BlockGame.UI
             this.Color = color;
             this.RefName = refName;
 
-            Text = Format;
-            largestSize = Text.Length;
+            _text = Format;
+            largestSize = _text.Length;
 
             variable.valueChanged += OnValueUpdate;
+        }
+        
+        public UIE_String(SpriteFont font, string format, Color color, string refName)
+        {
+            this.Format = format;
+            this.Font = font;
+            this.Color = color;
+            this.RefName = refName;
+
+            _text = Format;
+            largestSize = _text.Length;
         }
 
         public void OnValueUpdate(ObjectiveEventArgs e)
         {
-            Text = string.Format(Format, e.Value.ToString());
-            if (Text.Length > largestSize)
-                largestSize = Text.Length;
+            _text = string.Format(Format, e.Value.ToString());
+            if (_text.Length > largestSize)
+                largestSize = _text.Length;
         }
 
         public override void Render(SpriteBatch batch, Vector2 pos)
         {
-            batch.DrawString(Font, Text, Position + pos, Color);
+            batch.DrawString(Font, _text, Position + pos, Color);
         }
     }
 
     public class UIManager : UIElement
     {
         static Texture2D blankTex;
-        List<UIElement> elements = new List<UIElement>();
+        Dictionary<string, UIElement> elements = new Dictionary<string, UIElement>();
         bool RenderBackGround = false;
         Color color;
         public Color Color { 
@@ -88,7 +105,7 @@ namespace BlockGame.UI
             get
             {
                 Vector2 maxSize = Position;
-                foreach (UIElement e in elements)
+                foreach (UIElement e in elements.Values)
                 {
                     if (e.MaxPos.X > maxSize.X)
                         maxSize.X = e.MaxPos.X;
@@ -104,7 +121,7 @@ namespace BlockGame.UI
             get
             {
                 Vector2 maxSize = Position;
-                foreach (UIElement e in elements)
+                foreach (UIElement e in elements.Values)
                 {
                     if ((e.MaxPos - Margine).X > maxSize.X)
                         maxSize.X = e.MaxPos.X;
@@ -117,6 +134,11 @@ namespace BlockGame.UI
         }
         public float alpha = 0.1F;
         public bool Show = true;
+
+        public UIElement this[string refName]
+        {
+            get { return elements[refName]; }
+        }
 
         public static void Initialize(Texture2D blank)
         {
@@ -139,7 +161,7 @@ namespace BlockGame.UI
         public void AddElementLeftAlign(UIElement element)
         {
             element.Position = new Vector2(0, ContentSize.Y);
-            elements.Add(element);
+            elements.Add(element.RefName, element);
         }
 
         public override void Render(SpriteBatch spriteBatch, Vector2 position)
@@ -150,7 +172,7 @@ namespace BlockGame.UI
                 {
                     spriteBatch.Draw(blankTex, new Rectangle((int)Position.X, (int)Position.Y, (int)MaxPos.X, (int)MaxPos.Y), Color);
                 }
-                foreach (UIElement e in elements)
+                foreach (UIElement e in elements.Values)
                 {
                     e.Render(spriteBatch, Position + Margine);
                 }

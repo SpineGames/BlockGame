@@ -12,28 +12,28 @@ namespace BlockGame.Blocks
     /// Represents the different flags that a block can use for rendering
     /// </summary>
     [Flags]
-    public enum BlockRenderStates
+    public enum BlockRenderStates : byte
     {
         None = 0,
-        Front = 1 << 0,
-        Back = 1 << 2,
-        Left = 1 << 3,
-        Right = 1 << 4,
-        Top = 1 << 5,
-        Bottom = 1 << 6
+        Front = 1,
+        Back = 2,
+        Left = 4,
+        Right = 8,
+        Top = 16,
+        Bottom = 32
     }
 
     /// <summary>
     /// Represents a cardinal direction
     /// </summary>
-    public enum BlockFacing
+    public enum BlockFacing : byte
     {
-        Front,
-        Back,
-        Left,
-        Right,
-        Top,
-        Bottom
+        Front = 1,
+        Back = 2,
+        Left = 4,
+        Right = 8,
+        Top = 16,
+        Bottom = 32
     }
 
     /// <summary>
@@ -41,6 +41,12 @@ namespace BlockGame.Blocks
     /// </summary>
     public static class BlockFacingExt
     {
+        private static BlockFacing[] facings;
+        public static BlockFacing[] Facings
+        {
+            get { return facings; }
+        }
+
         private static Point3 Front = new Point3(0, 1, 0);
         private static Point3 Back = new Point3(0, -1, 0);
         private static Point3 Left = new Point3(-1, 0, 0);
@@ -54,6 +60,16 @@ namespace BlockGame.Blocks
         private static Point3 LeftCorner = new Point3(0, 1, 1);
         private static Point3 TopCorner = new Point3(1, 1, 0);
         private static Point3 BottomCorner = new Point3(1, 1, 0);
+
+        static BlockFacingExt()
+        {
+            facings = (BlockFacing[])Enum.GetValues(typeof(BlockFacing));
+        }
+
+        public static int FaceCount(this BlockRenderStates self)
+        {
+            return ((byte)self).BitCount();
+        }
 
         /// <summary>
         /// Gets the normal for this block facing
@@ -182,23 +198,7 @@ namespace BlockGame.Blocks
         /// <returns>True if there is a flag for <i>facing</i></returns>
         public static bool IsFaced(this BlockRenderStates self, BlockFacing facing)
         {
-            switch (facing)
-            {
-                case BlockFacing.Back:
-                    return self.HasFlag(BlockRenderStates.Back);
-                case BlockFacing.Front:
-                    return self.HasFlag(BlockRenderStates.Front);
-                case BlockFacing.Left:
-                    return self.HasFlag(BlockRenderStates.Left);
-                case BlockFacing.Right:
-                    return self.HasFlag(BlockRenderStates.Right);
-                case BlockFacing.Top:
-                    return self.HasFlag(BlockRenderStates.Top);
-                case BlockFacing.Bottom:
-                    return self.HasFlag(BlockRenderStates.Bottom);
-                default:
-                    return false;
-            }
+            return ((byte)self & (byte)facing) != 0;
         }
     }
 

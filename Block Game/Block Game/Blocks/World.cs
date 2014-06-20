@@ -98,6 +98,11 @@ namespace BlockGame.Blocks
 
             _chunks.Add(pos, chunk);
 
+            foreach (BlockFacing facing in BlockFacingExt.Facings)
+            {
+                _chunks[pos].InvalidateChunkFace(facing);
+            }
+
             InvalidateChunkFaces(pos);
 
             if (ToBeLoaded.Count > 0)

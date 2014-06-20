@@ -116,6 +116,105 @@ namespace BlockGame.Blocks
         {
             return (GetFacesFromNormal(point, facing.NormalVector() * -1, facing.CrossNormalVector() * -1, texID, BlockRenderer.BlockSize));
         }
+        
+        /// <summary>
+        /// Creates a quad from the given parameters
+        /// </summary>
+        /// <param name="Centre">The centre point of the quad</param>
+        /// <param name="Normal">The normal vector of the quad</param>
+        /// <param name="CrossNormal">The cross normal of the quad</param>
+        /// <param name="texID">The texture ID for the quad</param>
+        /// <param name="size">The size of the quad</param>
+        /// <param name="array">The array to push to</param>
+        /// <param name="startID">The starting ID for this face</param>
+        /// <returns>A VPNTC array representing the quad</returns>
+        public static void AddFacesFromNormal(Vector3 Centre, Vector3 Normal, Vector3 CrossNormal, byte texID, float size, ref VertexPositionNormalTextureColor[] array, ref int startID)
+        {
+            Normal.Normalize();
+            CrossNormal.Normalize();
+            Centre *= size;
+
+            Vector3 Cross = Vector3.Normalize(Vector3.Cross(Normal, CrossNormal));
+            Vector3 TL = (Centre + Cross - CrossNormal + Normal);
+            Vector3 TR = (Centre + Cross + CrossNormal + Normal);
+            Vector3 BL = (Centre - Cross - CrossNormal + Normal);
+            Vector3 BR = (Centre - Cross + CrossNormal + Normal);
+
+            array[startID] = new VertexPositionNormalTextureColor(
+                TL, Normal, TextureManager.TL(texID));
+            array[startID + 1] = new VertexPositionNormalTextureColor(
+                BL, Normal, TextureManager.BL(texID));
+            array[startID + 2] = new VertexPositionNormalTextureColor(
+                TR, Normal, TextureManager.TR(texID));
+                
+            array[startID + 3] = new VertexPositionNormalTextureColor(
+                BL, Normal, TextureManager.BL(texID));
+            array[startID + 4] = new VertexPositionNormalTextureColor(
+                BR, Normal, TextureManager.BR(texID));
+            array[startID + 5] = new VertexPositionNormalTextureColor(
+                TR, Normal, TextureManager.TR(texID));
+
+            startID += 6;
+        }
+
+        /// <summary>
+        /// Returns all the faces from the given render state
+        /// </summary>
+        /// <param name="state">The state to generate for</param>
+        /// <param name="point">The centre of the cube</param>
+        /// <param name="texID">The texture ID for the cube</param>
+        /// <param name="array">The array to append to</param>
+        /// <param name="startID">The ID to start from</param>
+        /// <returns>A VPNTC array representing the block</returns>
+        public static void AddFacesFromState(this BlockRenderStates state, Point3 point, byte texID, ref VertexPositionNormalTextureColor[] array, ref int startID)
+        {
+            if (state.HasFlag(BlockRenderStates.Front))
+                AddFacesFromNormal(point, BlockFacing.Front.NormalVector(), BlockFacing.Front.CrossNormalVector(), texID, BlockRenderer.BlockSize, ref array, ref startID);
+
+            if (state.HasFlag(BlockRenderStates.Back))
+                AddFacesFromNormal(point, BlockFacing.Back.NormalVector(), BlockFacing.Back.CrossNormalVector(), texID, BlockRenderer.BlockSize, ref array, ref startID);
+
+            if (state.HasFlag(BlockRenderStates.Top))
+                AddFacesFromNormal(point, BlockFacing.Top.NormalVector(), BlockFacing.Top.CrossNormalVector(), texID, BlockRenderer.BlockSize, ref array, ref startID); ;
+
+            if (state.HasFlag(BlockRenderStates.Bottom))
+                AddFacesFromNormal(point, BlockFacing.Bottom.NormalVector(), BlockFacing.Bottom.CrossNormalVector(), texID, BlockRenderer.BlockSize, ref array, ref startID);
+
+            if (state.HasFlag(BlockRenderStates.Left))
+                AddFacesFromNormal(point, BlockFacing.Left.NormalVector(), BlockFacing.Left.CrossNormalVector(), texID, BlockRenderer.BlockSize, ref array, ref startID);
+
+            if (state.HasFlag(BlockRenderStates.Right))
+                AddFacesFromNormal(point, BlockFacing.Right.NormalVector(), BlockFacing.Right.CrossNormalVector(), texID, BlockRenderer.BlockSize, ref array, ref startID);
+        }
+
+        /// <summary>
+        /// Gets the vertices for the given face
+        /// </summary>
+        /// <param name="facing">The facing to get the vertices for</param>
+        /// <param name="point">The cntre of the face</param>
+        /// <param name="texID">The texture ID to use</param>
+        /// <param name="array">The array to append to</param>
+        /// <param name="startID">The ID to start writing to</param>
+        /// <returns>A VPNTC array representing the face</returns>
+        public static void AddFacesFromFacing(this BlockFacing facing, Point3 point, byte texID, ref VertexPositionNormalTextureColor[] array, ref int startID)
+        {
+            AddFacesFromNormal(point, facing.NormalVector(), facing.CrossNormalVector(), texID, BlockRenderer.BlockSize, ref array, ref startID);
+        }
+
+        /// <summary>
+        /// Gets the inverted faces for a block face
+        /// </summary>
+        /// <param name="facing">The facing to generate for</param>
+        /// <param name="point">The centre of the face</param>
+        /// <param name="texID">The texture ID to use</param>
+        /// <param name="array">The array to append to</param>
+        /// <param name="startID">The ID to start writing to</param>
+        /// <returns>A VPNTC array representing the inverted face</returns>
+        public static void GetInvertedFacesFromFacing(this BlockFacing facing, Point3 point, byte texID, ref VertexPositionNormalTextureColor[] array, ref int startID)
+        {
+            AddFacesFromNormal(point, facing.NormalVector() * -1, facing.CrossNormalVector() * -1, texID, BlockRenderer.BlockSize, ref array, ref startID);
+        }
+        
     }
 
     /// <summary>

@@ -43,6 +43,7 @@ namespace BlockGame.Blocks
         private static BlockData IronOreData = new BlockData(BlockManager.IronOre.ID);
         private static BlockData GoldOreData = new BlockData(BlockManager.GoldOre.ID);
         private static BlockData GravelData = new BlockData(BlockManager.Gravel.ID);
+        private static BlockData DiamondData = new BlockData(BlockManager.DiamondOre.ID);
 
         /// <summary>
         /// The x sampling to use for terrain generation
@@ -78,9 +79,10 @@ namespace BlockGame.Blocks
             BlockData currentPass =  HeightmapPass(x, y, z);
             currentPass = GrassingPass(x, y, z, currentPass);
             currentPass = WaterPass(x, y, z, currentPass);
-            currentPass = CavePass(x, y, z, currentPass, 3, 1.0F);
+            currentPass = CavePass(x, y, z, currentPass, 1, 0.5F);
             currentPass = OrePass(x, y, z, currentPass, 2, 0.8F, 32, IronOreData, 0.6F);
             currentPass = OrePass(x, y, z, currentPass, 2, 0.9F, 16, GoldOreData, 0.5F);
+            currentPass = OrePass(x, y, z, currentPass, 2, 0.5F, 16, DiamondData, 0.8F);
             
             return currentPass;
         }

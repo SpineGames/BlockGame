@@ -11,7 +11,7 @@ namespace BlockGame.Utilities
     /// <summary>
     /// Some simple utilities for rendering things
     /// </summary>
-    public class Utils
+    public static class Utils
     {
         public static BasicEffect Effect;
         private static bool Initialized;
@@ -206,6 +206,60 @@ namespace BlockGame.Utilities
                 Effect.Projection = camera.View.Projection;
                 Effect.World = camera.View.World;
             }
+        }
+
+        public static int BitCount(this long lValue)
+        {
+            int iCount = 0;
+
+            //Loop the value while there are still bits
+            while (lValue != 0)
+            {
+                //Remove the end bit
+                lValue = lValue & (lValue - 1);
+
+                //Increment the count
+                iCount++;
+            }
+
+            //Return the count
+            return iCount;
+        }
+
+        public static int BitCount(this int lValue)
+        {
+            int iCount = 0;
+
+            //Loop the value while there are still bits
+            while (lValue != 0)
+            {
+                //Remove the end bit
+                lValue = lValue & (lValue - 1);
+
+                //Increment the count
+                iCount++;
+            }
+
+            //Return the count
+            return iCount;
+        }
+
+        public static int BitCount(this byte lValue)
+        {
+            int iCount = 0;
+
+            //Loop the value while there are still bits
+            while (lValue != 0)
+            {
+                //Remove the end bit
+                lValue = (byte)(lValue & (lValue - 1));
+
+                //Increment the count
+                iCount++;
+            }
+
+            //Return the count
+            return iCount;
         }
     }
 }

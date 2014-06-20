@@ -12,7 +12,7 @@ using BlockGame.Render;
 using BlockGame;
 using BlockGame.Blocks;
 using System.Timers;
-using System.Diagnostics;
+using System.Threading;
 
 namespace BlockGame.Blocks
 {
@@ -21,6 +21,8 @@ namespace BlockGame.Blocks
     /// </summary>
     public class Chunk
     {
+        protected readonly Point3 _worldPos;
+
         /// <summary>
         /// The size of chunks in blocks
         /// </summary>
@@ -35,7 +37,7 @@ namespace BlockGame.Blocks
         /// </summary>
         public static Point3 WorldChunkSize
         {
-            get { return new Point3((int)(ChunkSize  * BlockRenderer.BlockSize)); }
+            get { return new Point3((int)(ChunkSize * BlockRenderer.BlockSize)); }
         }
         /// <summary>
         /// The array holding all of the block ID's and metaData
@@ -60,7 +62,7 @@ namespace BlockGame.Blocks
         {
             get
             {
-                return ChunkPos * (int)(ChunkSize);
+                return _worldPos;
             }
         }
         /// <summary>
@@ -90,7 +92,7 @@ namespace BlockGame.Blocks
         /// The renderer used to render this chunk
         /// </summary>
         PolyRender Renderer;
-
+        
         /// <summary>
         /// Creates a new chunk with the given chunk position
         /// </summary>
@@ -99,11 +101,38 @@ namespace BlockGame.Blocks
         {
             this.ChunkPos = chunkPos;
 
+            _worldPos = ChunkPos * (int)(ChunkSize);
+
             Bounding = new BoundingBox(TransformedWorldPos, TransformedWorldPos + WorldChunkSize);
 
             collision = new Cuboid(WorldPos, MaxWorldPos);
             Renderer = new PolyRender(Matrix.CreateTranslation(TransformedWorldPos));
             InitialRenderStates();
+        }
+
+        void RegionUpdater_DoWork(object args)
+        {
+            Point3 min = ((RegionEventArgs)args).Min;
+            Point3 max = ((RegionEventArgs)args).Max;
+
+            int minX = min.X < max.X ? min.X : max.X;
+            int minY = min.Y < max.Y ? min.Y : max.Y;
+            int minZ = min.Z < max.Z ? min.Z : max.Z;
+
+            int maxX = max.X > min.X ? max.X : min.X;
+            int maxY = max.Y > min.Y ? max.Y : min.Y;
+            int maxZ = max.Z > min.Z ? max.Z : min.Z;
+
+            for (int x = minX; x <= maxX; x++)
+            {
+                for (int y = minY; y <= maxY; y++)
+                {
+                    for (int z = minZ; z <= maxZ; z++)
+                    {
+                        UpdateRenderState(x, y, z);
+                    }
+                }
+            }
         }
 
         #region Rendering
@@ -134,9 +163,13 @@ namespace BlockGame.Blocks
 
             corner *= ChunkSize / 2;
 
-            Point3 Normal = facing.NormalVector() * (ChunkSize / 2);
+            Point3 Normal;
 
             if ((facing == BlockFacing.Front || facing == BlockFacing.Top || facing == BlockFacing.Right))
+            {
+                Normal = facing.NormalVector() * ((ChunkSize / 2) - 1);
+            }
+            else
             {
                 Normal = facing.NormalVector() * ((ChunkSize / 2) - 1);
             }
@@ -149,7 +182,6 @@ namespace BlockGame.Blocks
             Point3 min = Centre - corner + Normal;
             Point3 max = Centre + corner + NormalMin;
 
-            
             UpdateRenderStates(min, max);
         }
 
@@ -160,27 +192,10 @@ namespace BlockGame.Blocks
         /// <param name="max">The maximum of the cube to update (chunk)</param>
         private void UpdateRenderStates(Point3 min, Point3 max)
         {
-            int minX = min.X < max.X ? min.X : max.X;
-            int minY = min.Y < max.Y ? min.Y : max.Y;
-            int minZ = min.Z < max.Z ? min.Z : max.Z;
-
-            int maxX = max.X > min.X ? max.X : min.X;
-            int maxY = max.Y > min.Y ? max.Y : min.Y;
-            int maxZ = max.Z > min.Z ? max.Z : min.Z;
-
-            for (int x = minX; x <= maxX; x++)
-            {
-                for (int y = minY; y <= maxY; y++)
-                {
-                    for (int z = minZ; z <= maxZ; z++)
-                    {
-                        UpdateRenderState(x, y, z);
-                    }
-                }
-            }
+            RegionUpdater_DoWork(new RegionEventArgs(min, max));
             PushRenderState();
         }
-        
+
         /// <summary>
         /// Updates all render states in a cuboid
         /// </summary>
@@ -188,16 +203,16 @@ namespace BlockGame.Blocks
         /// <param name="max">The maximum of the cube to update (worl)</param>
         public void ForceUpdate(Cuboid cuboid)
         {
-            Point3 min  = cuboid.Min - WorldPos;
+            Point3 min = cuboid.Min - WorldPos;
             Point3 max = cuboid.Max - WorldPos;
-            
+
             if (collision.Intersects(cuboid))
             {
                 min.Clamp(Point3.Zero, ChunkSizeP);
                 max.Clamp(Point3.Zero, ChunkSizeP);
 
-                Stopwatch time = new Stopwatch();
-                time.Start();
+                //Stopwatch time = new Stopwatch();
+                //time.Start();
 
                 for (int x = min.X; x <= max.X; x++)
                 {
@@ -210,11 +225,11 @@ namespace BlockGame.Blocks
                     }
                 }
 
-                Debug.WriteLine("Time to update {0} render states: {1}s", (max - min).Volume, time.Elapsed.TotalSeconds);
-                time.Restart();
+                //Debug.WriteLine("Time to update {0} render states: {1}s", (max - min).Volume, time.Elapsed.TotalSeconds);
+                //time.Restart();
 
                 PushRenderState();
-                Debug.WriteLine("Time to Push render states: {0}s \n", time.Elapsed.TotalSeconds);
+                //Debug.WriteLine("Time to Push render states: {0}s \n", time.Elapsed.TotalSeconds);
             }
         }
 
@@ -235,13 +250,14 @@ namespace BlockGame.Blocks
         /// <param name="z">The z co-ord of the block (chunk)</param>
         private void UpdateRenderState(int x, int y, int z)
         {
-            if (IsinRange(x, y, z))
+            if (IsinRange(x, y, z) && _ids[x, y, z] != 0)
             {
-                renderStates[x, y, z].verts =
-                        BlockManager.Blocks[GetBlockID(x, y, z)].GetModel(
-                        GetRenderStateForBlock(x, y, z),
-                        new Point3(x, y, z), 
-                        _metas[x, y, z]);
+                BlockRenderStates state = GetRenderStateForBlock(x, y, z);
+
+                if (state != BlockRenderStates.None)
+                    renderStates[x, y, z].verts =
+                            BlockManager.Blocks[GetBlockID(x, y, z)].GetModel(
+                            state, new Point3(x, y, z), _metas[x, y, z]);
             }
         }
 
@@ -286,7 +302,7 @@ namespace BlockGame.Blocks
         {
             BlockRenderStates ret = BlockRenderStates.None; // initially no render
 
-            if (IsinRange(x, y, z) && GetBlockID(x,y,z) != 0) // make sure block is in range
+            if (IsinRange(x, y, z) && GetBlockID(x, y, z) != 0) // make sure block is in range
             {
                 if (ShouldRenderFace(BlockFacing.Left, x, y, z))//left face
                     ret = ret | BlockRenderStates.Left;
@@ -326,7 +342,7 @@ namespace BlockGame.Blocks
                     return true; //second case is if there is a non-opaque and an opaque
                 }
 
-                if (!IsOpaque(position) & !IsOpaque(facePos) & ((GetBlockID(position) != GetBlockID(facePos))))
+                if (!IsOpaque(position) & !IsOpaque(facePos) & (GetBlockID(position) != GetBlockID(facePos)))
                     return true; //final case is two different types of transparent blocks
             }
             else
@@ -376,7 +392,8 @@ namespace BlockGame.Blocks
             {
                 return BlockManager.Blocks[GetBlockID(x, y, z)].IsOpaque; //return opacity                   
             }
-            return false; //otherwise assume it's air (TO BE FIXED WITH WORLD!!!)
+            else
+                return World.IsOpaque(x + WorldPos.X, y + WorldPos.Y, z + WorldPos.Z); //otherwise assume it's air (TO BE FIXED WITH WORLD!!!)
         }
 
         /// <summary>
@@ -446,8 +463,8 @@ namespace BlockGame.Blocks
 
         private void RenderBounds(Camera camera)
         {
-            Utils.ApplyCamera(camera);
-            Utils.DrawBoundingBox(Bounding, Color.Red, camera.GraphicsDevice);
+            //Utils.ApplyCamera(camera);
+            //Utils.DrawBoundingBox(Bounding, Color.Red, camera.GraphicsDevice);
         }
         #endregion
 
@@ -497,7 +514,7 @@ namespace BlockGame.Blocks
         {
             return GetBlockID(Pos.X, Pos.Y, Pos.Z);
         }
-        
+
         /// <summary>
         /// Return the Meta of the block at {x,y,z}
         /// </summary>
@@ -557,8 +574,8 @@ namespace BlockGame.Blocks
         /// </summary>
         public void GenChunk()
         {
-            Stopwatch w = new Stopwatch();
-            w.Start();
+            //Stopwatch w = new Stopwatch();
+            //w.Start();
 
             for (int x = 0; x < ChunkSize; x++)
             {
@@ -566,7 +583,7 @@ namespace BlockGame.Blocks
                 {
                     for (int z = 0; z < ChunkSize; z++)
                     {
-                        SetBlockWithoutNotify(x,y,z, 
+                        SetBlockWithoutNotify(x, y, z,
                             TerrainGen.GetBlockAtPos(x + WorldPos.X, y + WorldPos.Y, z + WorldPos.Z));
                     }
                 }
@@ -581,17 +598,17 @@ namespace BlockGame.Blocks
                 int wz = World.GetTopZ(cx + WorldPos.X, cy + WorldPos.Y, 500);
                 int cz = wz - WorldPos.Z;
 
-                TerrainGen.GenTree(cx, cy, cz, 
+                TerrainGen.GenTree(cx, cy, cz,
                     4 + TerrainGen.Random.Next(0, 3), this);
             }
 
-            w.Stop();
-            Debug.WriteLine("Took {0} milliseconds to generate chunk data",w.ElapsedMilliseconds);
+            //w.Stop();
+            //Debug.WriteLine("Took {0} milliseconds to generate chunk data", w.ElapsedMilliseconds);
 
-            w.Start();
+            //w.Start();
             UpdateRenderStates(new Point3(0), new Point3(ChunkSize));
-            w.Stop();
-            Debug.WriteLine("Took {0} milliseconds to generate chunk render data", w.ElapsedMilliseconds);
+            //w.Stop();
+            //Debug.WriteLine("Took {0} milliseconds to generate chunk render data", w.ElapsedMilliseconds);
         }
 
         /// <summary>
@@ -680,7 +697,7 @@ namespace BlockGame.Blocks
 
             SetBlockWithoutNotify(x, y, z, ID);
         }
-        
+
         /// <summary>
         /// Sets the block at {x,y,z} to dat and updates the renderer
         /// </summary>
@@ -740,7 +757,7 @@ namespace BlockGame.Blocks
 
             UpdateRenderStates(cuboid.Min - new Point3(1), cuboid.Max + Point3.One);
         }
-        
+
         /// <summary>
         /// Sets a sphere of blocks to a single block ID
         /// </summary>
@@ -754,13 +771,13 @@ namespace BlockGame.Blocks
                 {
                     for (int z = 0; z < ChunkSize; z++)
                     {
-                        if (Vector3.Distance(centre, new Vector3(x,y,z)) <= radius)
+                        if (Vector3.Distance(centre, new Vector3(x, y, z)) <= radius)
                             SetBlock(x, y, z, ID);
                     }
                 }
             }
             Point3 size = new Point3((int)Math.Ceiling(radius + BlockRenderer.BlockSize));
-            UpdateRenderStates(centre - size, centre + size);      
+            UpdateRenderStates(centre - size, centre + size);
         }
         #endregion
 
@@ -817,6 +834,18 @@ namespace BlockGame.Blocks
         public static implicit operator Chunk(Point3 p)
         {
             return new Chunk(p);
+        }
+
+        private class RegionEventArgs
+        {
+            public Point3 Min;
+            public Point3 Max;
+
+            public RegionEventArgs(Point3 min, Point3 max)
+            {
+                Min = min;
+                Max = max;
+            }
         }
     }
 }
