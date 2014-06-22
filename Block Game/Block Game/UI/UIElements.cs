@@ -52,7 +52,7 @@ namespace BlockGame.UI
             set { _text = value; }
         }
 
-        public UIE_String(SpriteFont font, string format, Color color, ref TrackableVariable variable, string refName = null)
+        public UIE_String(SpriteFont font, string format, Color color, string refName = null)
         {
             this.Format = format;
             this.Font = font;
@@ -61,28 +61,8 @@ namespace BlockGame.UI
 
             _text = Format;
             largestSize = _text.Length;
-
-            variable.valueChanged += OnValueUpdate;
         }
         
-        public UIE_String(SpriteFont font, string format, Color color, string refName)
-        {
-            this.Format = format;
-            this.Font = font;
-            this.Color = color;
-            this.RefName = refName;
-
-            _text = Format;
-            largestSize = _text.Length;
-        }
-
-        public void OnValueUpdate(ObjectiveEventArgs e)
-        {
-            _text = string.Format(Format, e.Value.ToString());
-            if (_text.Length > largestSize)
-                largestSize = _text.Length;
-        }
-
         public override void Render(SpriteBatch batch, Vector2 pos)
         {
             batch.DrawString(Font, _text, Position + pos, Color);

@@ -119,6 +119,24 @@ namespace BlockGame
 
             return model;
         }
+
+        /// <summary>
+        /// Gets the model for this block from the given block facings
+        /// </summary>
+        /// <param name="facings">The facings to generate with</param>
+        /// <param name="pos">The world pos to generate at</param>
+        /// <param name="Meta">The block's meta-data</param>
+        /// <param name="array">The array to append to</param>
+        /// <param name="startID">The initial ID of the first index, will increment by number of vertices added</param>
+        /// <returns>A VPNTC array for this block</returns>
+        public virtual void AddModel(BlockRenderStates facings, Point3 pos, byte Meta, ref VertexPositionNormalTextureColor[] array, ref int startID)
+        {
+            foreach (BlockFacing f in BlockFacingExt.Facings)
+            {
+                if (facings.IsFaced(f))
+                    BlockRenderFaces.AddFacesFromFacing(f, pos, GetTexIDForFacing(f, Meta), ref array, ref startID);
+            }
+        }
        
         /// <summary>
         /// Gets the texture ID for the given facing

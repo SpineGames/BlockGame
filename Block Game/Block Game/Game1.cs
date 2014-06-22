@@ -294,7 +294,7 @@ namespace BlockGame
             Spine_Library.Tools.FPSHandler.onDraw(gameTime);
 
             ThreedDraw();
-            //SpriteBatchDraw();
+            SpriteBatchDraw();
 
             base.Draw(gameTime);
         }
@@ -305,7 +305,8 @@ namespace BlockGame
         private void SpriteBatchDraw()
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(mainTarget, screenRect, Color.White);
+            //spriteBatch.Draw(mainTarget, screenRect, Color.White);
+            spriteBatch.DrawString(spriteFont, "" + camera.CameraNormal.ToBlockFacing(), Vector2.Zero, Color.Black);
             spriteBatch.End();
         }
 

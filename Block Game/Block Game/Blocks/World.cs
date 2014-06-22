@@ -343,7 +343,7 @@ namespace BlockGame.Blocks
         {
             if (ChunkExistsCoords(x, y, z))
                 return GetChunkFromCoords(x, y, z).GetBlockIDFromWorld(x, y, z);
-            return 1;
+            return 0;
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace BlockGame.Blocks
         {
             if (ChunkExistsCoords(x, y, z))
                 return GetChunkFromCoords(x, y, z).IsOpaqueFromWorld(x, y, z);
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -390,11 +390,12 @@ namespace BlockGame.Blocks
         /// <param name="camera"></param>
         public static void Render(Camera camera)
         {
-            foreach (Chunk chunk in _chunks.Values)
-                chunk.RenderOpaque(camera);
+            camera.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            camera.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            camera.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             foreach (Chunk chunk in _chunks.Values)
-                chunk.RenderNonOPaque(camera);
+                chunk.Render(camera);
         }
 
         /// <summary>

@@ -48,9 +48,13 @@ namespace BlockGame.Blocks
         /// </summary>
         byte[, ,] _metas = new byte[ChunkSize, ChunkSize, ChunkSize];
         /// <summary>
+        /// A list of all the block render faces
+        /// </summary>
+        BlockRenderStates[,,] _renderStates = new BlockRenderStates[ChunkSize, ChunkSize, ChunkSize];
+        /// <summary>
         /// An array holding all of the render states for easier updating later
         /// </summary>
-        BlockRenderer[, ,] renderStates = new BlockRenderer[ChunkSize, ChunkSize, ChunkSize];
+        /// BlockRenderer[, ,] renderStates = new BlockRenderer[ChunkSize, ChunkSize, ChunkSize];
         /// <summary>
         /// The chunk's relative position to other chunks
         /// </summary>
@@ -92,6 +96,8 @@ namespace BlockGame.Blocks
         /// The renderer used to render this chunk
         /// </summary>
         PolyRender Renderer;
+
+        VertexPositionNormalTextureColor[] _vertices;
         
         /// <summary>
         /// Creates a new chunk with the given chunk position
@@ -107,32 +113,49 @@ namespace BlockGame.Blocks
 
             collision = new Cuboid(WorldPos, MaxWorldPos);
             Renderer = new PolyRender(Matrix.CreateTranslation(TransformedWorldPos));
-            InitialRenderStates();
+
+            GenChunk();
+            UpdateVoxelData();
         }
 
-        void RegionUpdater_DoWork(object args)
+        void UpdateVoxelData()
         {
-            Point3 min = ((RegionEventArgs)args).Min;
-            Point3 max = ((RegionEventArgs)args).Max;
+            VertexPositionNormalTextureColor[] vertices = new VertexPositionNormalTextureColor[GetTotalFaces() * 6];
 
-            int minX = min.X < max.X ? min.X : max.X;
-            int minY = min.Y < max.Y ? min.Y : max.Y;
-            int minZ = min.Z < max.Z ? min.Z : max.Z;
+            int id = 0;
 
-            int maxX = max.X > min.X ? max.X : min.X;
-            int maxY = max.Y > min.Y ? max.Y : min.Y;
-            int maxZ = max.Z > min.Z ? max.Z : min.Z;
-
-            for (int x = minX; x <= maxX; x++)
+            for (int x = 0; x < ChunkSize; x++)
             {
-                for (int y = minY; y <= maxY; y++)
+                for (int y = 0; y < ChunkSize; y++)
                 {
-                    for (int z = minZ; z <= maxZ; z++)
+                    for (int z = 0; z < ChunkSize; z++)
                     {
-                        UpdateRenderState(x, y, z);
+                        if (_ids[x, y, z] != 0)
+                        BlockManager.Blocks[_ids[x, y, z]].AddModel(
+                        _renderStates[x, y, z], new Point3(x, y, z), _metas[x, y, z], ref vertices, ref id);
                     }
                 }
             }
+
+            _vertices = vertices;
+        }
+
+        int GetTotalFaces()
+        {
+            int count = 0;
+
+            for (int x = 0; x < ChunkSize; x++)
+            {
+                for (int y = 0; y < ChunkSize; y++)
+                {
+                    for (int z = 0; z < ChunkSize; z++)
+                    {
+                        count += _renderStates[x, y, z].FaceCount();
+                    }
+                }
+            }
+
+            return count;
         }
 
         #region Rendering
@@ -147,7 +170,7 @@ namespace BlockGame.Blocks
                 {
                     for (int z = 0; z < ChunkSize; z++)
                     {
-                        renderStates[x, y, z] = new BlockRenderer();
+                        _renderStates[x, y, z] = BlockRenderStates.None;
                     }
                 }
             }
@@ -159,30 +182,27 @@ namespace BlockGame.Blocks
         /// <param name="facing">The facing to invalidate</param>
         public void InvalidateChunkFace(BlockFacing facing)
         {
-            Point3 corner = facing.CornerVector();
-
-            corner *= ChunkSize / 2;
-
-            Point3 Normal;
-
-            if ((facing == BlockFacing.Front || facing == BlockFacing.Top || facing == BlockFacing.Right))
+            switch (facing)
             {
-                Normal = facing.NormalVector() * ((ChunkSize / 2) - 1);
+                case BlockFacing.Back:
+                    UpdateRenderStates(new Point3(0, 31, 0), new Point3(31,31,31));
+                    break;
+                case BlockFacing.Front:
+                    UpdateRenderStates(new Point3(0, 0, 0), new Point3(31, 0, 31));
+                    break;
+                case BlockFacing.Left:
+                    UpdateRenderStates(new Point3(0, 0, 0), new Point3(0, 31, 31));
+                    break;
+                case BlockFacing.Right:
+                    UpdateRenderStates(new Point3(31, 0, 0), new Point3(31, 31, 31));
+                    break;
+                case BlockFacing.Top:
+                    UpdateRenderStates(new Point3(0, 0, 31), new Point3(31, 31, 31));
+                    break;
+                case BlockFacing.Bottom:
+                    UpdateRenderStates(new Point3(0, 0, 0), new Point3(31, 31, 0));
+                    break;
             }
-            else
-            {
-                Normal = facing.NormalVector() * ((ChunkSize / 2) - 1);
-            }
-
-            Point3 tNormal = new Point3(Normal.X, Normal.Y, Normal.Z);
-            Point3 NormalMin = tNormal.SubtractFromLength(1);
-
-            Point3 Centre = new Point3(ChunkSize / 2);
-
-            Point3 min = Centre - corner + Normal;
-            Point3 max = Centre + corner + NormalMin;
-
-            UpdateRenderStates(min, max);
         }
 
         /// <summary>
@@ -191,9 +211,17 @@ namespace BlockGame.Blocks
         /// <param name="min">The minimum of the cube to update (chunk)</param>
         /// <param name="max">The maximum of the cube to update (chunk)</param>
         private void UpdateRenderStates(Point3 min, Point3 max)
-        {
-            RegionUpdater_DoWork(new RegionEventArgs(min, max));
-            PushRenderState();
+        {     
+            for (int x = min.X; x <= max.X; x++)
+            {
+                for (int y = min.Y; y <= max.Y; y++)
+                {
+                    for (int z = min.Z; z <= max.Z; z++)
+                    {
+                        UpdateRenderState(x, y, z);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -203,34 +231,7 @@ namespace BlockGame.Blocks
         /// <param name="max">The maximum of the cube to update (worl)</param>
         public void ForceUpdate(Cuboid cuboid)
         {
-            Point3 min = cuboid.Min - WorldPos;
-            Point3 max = cuboid.Max - WorldPos;
-
-            if (collision.Intersects(cuboid))
-            {
-                min.Clamp(Point3.Zero, ChunkSizeP);
-                max.Clamp(Point3.Zero, ChunkSizeP);
-
-                //Stopwatch time = new Stopwatch();
-                //time.Start();
-
-                for (int x = min.X; x <= max.X; x++)
-                {
-                    for (int y = min.Y; y <= max.Y; y++)
-                    {
-                        for (int z = min.Z; z <= max.Z; z++)
-                        {
-                            UpdateRenderState(x, y, z);
-                        }
-                    }
-                }
-
-                //Debug.WriteLine("Time to update {0} render states: {1}s", (max - min).Volume, time.Elapsed.TotalSeconds);
-                //time.Restart();
-
-                PushRenderState();
-                //Debug.WriteLine("Time to Push render states: {0}s \n", time.Elapsed.TotalSeconds);
-            }
+            UpdateRenderStates(cuboid.Min, cuboid.Max);
         }
 
         /// <summary>
@@ -250,47 +251,15 @@ namespace BlockGame.Blocks
         /// <param name="z">The z co-ord of the block (chunk)</param>
         private void UpdateRenderState(int x, int y, int z)
         {
-            if (IsinRange(x, y, z) && _ids[x, y, z] != 0)
+            if (IsinRange(x, y, z))
             {
-                BlockRenderStates state = GetRenderStateForBlock(x, y, z);
-
-                if (state != BlockRenderStates.None)
-                    renderStates[x, y, z].verts =
-                            BlockManager.Blocks[GetBlockID(x, y, z)].GetModel(
-                            state, new Point3(x, y, z), _metas[x, y, z]);
+                if (_ids[x, y, z] == 0)
+                    _renderStates[x, y, z] = BlockRenderStates.None;
+                else
+                    _renderStates[x, y, z] = GetRenderStateForBlock(x, y, z);
             }
         }
-
-        /// <summary>
-        /// Pushes all changes to the render states to the rendered
-        /// </summary>
-        public void PushRenderState()
-        {
-            Renderer.Clear();
-
-            for (int x = 0; x < ChunkSize; x++)
-            {
-                for (int y = 0; y < ChunkSize; y++)
-                {
-                    for (int z = 0; z < ChunkSize; z++)
-                    {
-                        if (!BlockManager.Blocks[GetBlockID(x, y, z)].IsOpaque)
-                        {
-                            Renderer.AddNonOpaquePolys(
-                                renderStates[x, y, z].verts);
-                        }
-                        else
-                        {
-                            Renderer.AddOpaquePolys(
-                                renderStates[x, y, z].verts);
-                        }
-                    }
-                }
-            }
-
-            Renderer.FinalizePolys();
-        }
-
+        
         /// <summary>
         /// Returns the BlockRenderState at {x,y,z}
         /// </summary>
@@ -298,25 +267,23 @@ namespace BlockGame.Blocks
         /// <param name="y">The y co-ord of the block (chunk)</param>
         /// <param name="z">The z co-ord of the block (chunk)</param>
         /// <returns>The BlockRenderState for {x,y,z}</returns>
-        public BlockRenderStates GetRenderStateForBlock(int x, int y, int z)
+        private BlockRenderStates GetRenderStateForBlock(int x, int y, int z)
         {
             BlockRenderStates ret = BlockRenderStates.None; // initially no render
 
-            if (IsinRange(x, y, z) && GetBlockID(x, y, z) != 0) // make sure block is in range
-            {
-                if (ShouldRenderFace(BlockFacing.Left, x, y, z))//left face
-                    ret = ret | BlockRenderStates.Left;
-                if (ShouldRenderFace(BlockFacing.Right, x, y, z))//right face
-                    ret = ret | BlockRenderStates.Right;
-                if (ShouldRenderFace(BlockFacing.Back, x, y, z))//back face
-                    ret = ret | BlockRenderStates.Back;
-                if (ShouldRenderFace(BlockFacing.Front, x, y, z))//front face
-                    ret = ret | BlockRenderStates.Front;
-                if (ShouldRenderFace(BlockFacing.Bottom, x, y, z))//bottom face
-                    ret = ret | BlockRenderStates.Bottom;
-                if (ShouldRenderFace(BlockFacing.Top, x, y, z))//top face
-                    ret = ret | BlockRenderStates.Top;
-            }
+            if (ShouldRenderFace(BlockFacing.Left, x, y, z))//left face
+                ret = ret | BlockRenderStates.Left;
+            if (ShouldRenderFace(BlockFacing.Right, x, y, z))//right face
+                ret = ret | BlockRenderStates.Right;
+            if (ShouldRenderFace(BlockFacing.Back, x, y, z))//back face
+                ret = ret | BlockRenderStates.Back;
+            if (ShouldRenderFace(BlockFacing.Front, x, y, z))//front face
+                ret = ret | BlockRenderStates.Front;
+            if (ShouldRenderFace(BlockFacing.Bottom, x, y, z))//bottom face
+                ret = ret | BlockRenderStates.Bottom;
+            if (ShouldRenderFace(BlockFacing.Top, x, y, z))//top face
+                ret = ret | BlockRenderStates.Top;
+
             return ret;
         }
 
@@ -431,34 +398,15 @@ namespace BlockGame.Blocks
             if (Game1.IsBebugging)
                 RenderBounds(camera);
 
-            if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint)
-                Renderer.Render(camera.View);
-        }
+            if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint && _vertices.Length > 0)
+            {
+                Game1.worldEffect.World = Matrix.CreateTranslation(TransformedWorldPos);
 
-        /// <summary>
-        /// Renders this chunk's Opaque surfaces
-        /// </summary>
-        /// <param name="view">The camera to render with</param>
-        public void RenderOpaque(Camera camera)
-        {
-            if (Game1.IsBebugging)
-                RenderBounds(camera);
+                Game1.worldEffect.CurrentTechnique.Passes[0].Apply();
 
-            if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint)
-                Renderer.RenderOpaque(camera.View);
-        }
-
-        /// <summary>
-        /// Renders this chunk's non-opaque surfaces
-        /// </summary>
-        /// <param name="view">The camera to render with</param>
-        public void RenderNonOPaque(Camera camera)
-        {
-            if (Game1.IsBebugging)
-                RenderBounds(camera);
-
-            if (camera.ViewFrustum.Contains(Bounding) != ContainmentType.Disjoint)
-                Renderer.RenderNonOpaque(camera.View);
+                Game1.worldEffect.GraphicsDevice.DrawUserPrimitives<VertexPositionNormalTextureColor>(
+                    PrimitiveType.TriangleList, _vertices, 0, _vertices.Length / 3);
+            }
         }
 
         private void RenderBounds(Camera camera)
@@ -647,6 +595,7 @@ namespace BlockGame.Blocks
             {
                 _ids[x, y, z] = ID;
                 _metas[x, y, z] = meta;
+                _renderStates[x, y, z] = GetRenderStateForBlock(x, y, z);
             }
         } //base function
 
@@ -663,6 +612,7 @@ namespace BlockGame.Blocks
             {
                 _ids[x, y, z] = data.ID;
                 _metas[x, y, z] = data.Meta;
+                _renderStates[x, y, z] = GetRenderStateForBlock(x, y, z);
             }
         } //base function
 
@@ -708,8 +658,7 @@ namespace BlockGame.Blocks
         private void SetBlockWithUpdate(int x, int y, int z, byte id)
         {
             SetBlockWithoutNotify(x, y, z, id);
-            UpdateRenderState(x, y, z);
-            PushRenderState();
+            UpdateVoxelData();
         }
 
         /// <summary>

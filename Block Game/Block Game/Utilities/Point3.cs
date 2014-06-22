@@ -19,17 +19,11 @@ namespace BlockGame.Utilities
         /// <summary>
         /// A point with all co-ords set to 1
         /// </summary>
-        public static Point3 One
-        {
-            get { return new Point3(1, 1, 1); }
-        }
+        public static readonly Point3 One = new Point3(1, 1, 1);
         /// <summary>
         /// A point with all co-ords set to 0
         /// </summary>
-        public static Point3 Zero
-        {
-            get { return new Point3(0,0,0); }
-        }
+        public static readonly Point3 Zero = new Point3(0, 0, 0);
 
         /// <summary>
         /// The x co-ords of this point
@@ -216,6 +210,16 @@ namespace BlockGame.Utilities
         public static float Distance(Point3 p1, Point3 p2)
         {
             return (float)Math.Sqrt(p1.X * p2.X + p1.Y * p2.Y + p1.Z * p2.Z);
+        }
+
+        public static Point3 TotalMin(Point3 p1, Point3 p2)
+        {
+            return new Point3(Math.Min(p1.X, p2.Y), Math.Min(p1.Y, p2.Y), Math.Min(p1.Z, p2.Z));
+        }
+
+        public static Point3 TotalMax(Point3 p1, Point3 p2)
+        {
+            return new Point3(Math.Max(p1.X, p2.Y), Math.Max(p1.Y, p2.Y), Math.Max(p1.Z, p2.Z));
         }
         #endregion
 

@@ -149,7 +149,6 @@
     <Compile Include="Utilities\Point3.cs" />
     <Compile Include="Utilities\TerrainGen.cs" />
     <Compile Include="Utilities\ThreedUtils.cs" />
-    <Compile Include="Utilities\TrackableVariables.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

@@ -107,7 +107,7 @@ namespace BlockGame.Render
             AddTri(id1, id2, id3);
             AddTri(id3, id4, id1);
         }
-
+        
         /// <summary>
         /// Finishes this geometry and prepares it for rendering
         /// </summary>

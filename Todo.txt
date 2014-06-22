@@ -1,0 +1,5 @@
+- Make chunks store a graphics device
+- Make chunks transform block positions to world positions on build
+	- Cut down on BasicEffect setting and applying
+- Add a transparent buffer to chunks
+- Biomes
