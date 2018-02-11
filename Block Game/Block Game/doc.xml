@@ -1,0 +1,2643 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlockGame</name>
+    </assembly>
+    <members>
+        <member name="T:BlockGame.BlockManager">
+            <summary>
+            A static class for managing all the block types
+            </summary>
+        </member>
+        <member name="F:BlockGame.BlockManager.Blocks">
+            <summary>
+            A list holding all the block types
+            </summary>
+        </member>
+        <member name="M:BlockGame.BlockManager.AddBlock(BlockGame.Block)">
+            <summary>
+            Adds the given block to the block list and overwrites the given BlockID
+            </summary>
+            <param name="block">The block to add</param>
+        </member>
+        <member name="M:BlockGame.BlockManager.GetBlock(System.String)">
+            <summary>
+            Gets the block with the given name
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BlockGame.Block">
+            <summary>
+            The base class for all block types
+            </summary>
+        </member>
+        <member name="M:BlockGame.Block.#ctor">
+            <summary>
+            Initializes this block and adds it to the block manager
+            </summary>
+        </member>
+        <member name="M:BlockGame.Block.GetModel(BlockGame.Blocks.BlockRenderStates,BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Gets the model for this block from the given block facings
+            </summary>
+            <param name="facings">The facings to generate with</param>
+            <param name="pos">The world pos to generate at</param>
+            <param name="Meta">The block's meta-data</param>
+            <returns>A VPNTC array for this block</returns>
+        </member>
+        <member name="M:BlockGame.Block.AddModel(BlockGame.Blocks.BlockRenderStates,BlockGame.Utilities.Point3,System.Byte,BlockGame.Utilities.VertexPositionNormalTextureColor[]@,System.Int32@)">
+            <summary>
+            Gets the model for this block from the given block facings
+            </summary>
+            <param name="facings">The facings to generate with</param>
+            <param name="pos">The world pos to generate at</param>
+            <param name="Meta">The block's meta-data</param>
+            <param name="array">The array to append to</param>
+            <param name="startID">The initial ID of the first index, will increment by number of vertices added</param>
+            <returns>A VPNTC array for this block</returns>
+        </member>
+        <member name="M:BlockGame.Block.GetTexIDForFacing(BlockGame.Blocks.BlockFacing,System.Byte)">
+            <summary>
+            Gets the texture ID for the given facing
+            </summary>
+            <param name="facing">The facing to check</param>
+            <param name="meta">The metadata of the block</param>
+            <returns>The texture ID for the facing</returns>
+        </member>
+        <member name="M:BlockGame.Block.IsOpaqueOnFace(BlockGame.Blocks.BlockFacing,System.Byte)">
+            <summary>
+            Gets whether or not the given face on a block is opaque
+            </summary>
+            <param name="facing">The facing to check</param>
+            <param name="meta">The block's metaData</param>
+            <returns>True if the face is opaque</returns>
+        </member>
+        <member name="P:BlockGame.Block.ID">
+            <summary>
+            Gets the block ID for this block
+            </summary>
+        </member>
+        <member name="P:BlockGame.Block.texRef">
+            <summary>
+            Gets the standard texture refrence
+            </summary>
+        </member>
+        <member name="P:BlockGame.Block.IsOpaque">
+            <summary>
+            Gets whether or not this block is opaque
+            </summary>
+        </member>
+        <member name="P:BlockGame.Block.Name">
+            <summary>
+            Gets the code name for this block
+            </summary>
+        </member>
+        <member name="P:BlockGame.Block.ItemName">
+            <summary>
+            Gets the name for this block in an inventory
+            </summary>
+        </member>
+        <member name="T:BlockGame.BlockData">
+            <summary>
+            Represents the data for a block instance
+            </summary>
+        </member>
+        <member name="F:BlockGame.BlockData.ID">
+            <summary>
+            The ID of the block
+            </summary>
+        </member>
+        <member name="F:BlockGame.BlockData.Meta">
+            <summary>
+            The MetaData of the block
+            </summary>
+        </member>
+        <member name="M:BlockGame.BlockData.#ctor(System.Byte,System.Byte)">
+            <summary>
+            Creates a new Block Data
+            </summary>
+            <param name="ID">The block's ID</param>
+            <param name="Meta">The block's MetaData</param>
+        </member>
+        <member name="M:BlockGame.BlockData.ToString">
+            <summary>
+            Converts this block data to a string
+            </summary>
+            <returns>The string version of this block data</returns>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockRenderStates">
+            <summary>
+            Represents the different flags that a block can use for rendering
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockFacing">
+            <summary>
+            Represents a cardinal direction
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockFacingExt">
+            <summary>
+            An extension class for block facings
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockFacingExt.NormalVector(BlockGame.Blocks.BlockFacing)">
+            <summary>
+            Gets the normal for this block facing
+            </summary>
+            <param name="self">The block facing to get the normal from</param>
+            <returns>The normal for this block facing</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockFacingExt.CrossNormalVector(BlockGame.Blocks.BlockFacing)">
+            <summary>
+            Gets a normal that is 90° to the normal
+            </summary>
+            <param name="self">The block facing to get the cross normal from</param>
+            <returns>A cross normal for this block facing</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockFacingExt.CornerVector(BlockGame.Blocks.BlockFacing)">
+            <summary>
+            Gets a corner that is on a 90° plane to the normal
+            </summary>
+            <param name="self">The block facing to get the cross normal from</param>
+            <returns>A corner vecto for this block facing</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockFacingExt.ToBlockFacing(System.Single)">
+            <summary>
+            Converts this direction in degrees to a block facing (left, right, front, back)
+            </summary>
+            <param name="direction">The direction in <b>degrees</b></param>
+            <returns>The block facing for the given angle</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockFacingExt.ToBlockFacing(Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Converts this normal into a block facing
+            </summary>
+            <param name="normal">The normal to convert</param>
+            <returns>The block facing from this normal</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockFacingExt.IsFaced(BlockGame.Blocks.BlockRenderStates,BlockGame.Blocks.BlockFacing)">
+            <summary>
+            Checks if this render state has a block facing set
+            </summary>
+            <param name="self">The render state to check</param>
+            <param name="facing">The facing to check for</param>
+            <returns>True if there is a flag for <i>facing</i></returns>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockRenderFaces">
+            <summary>
+            Used to contruct block models from block facings
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockRenderFaces.GetFacesFromNormal(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,System.Byte,System.Single)">
+            <summary>
+            Creates a quad from the given parameters
+            </summary>
+            <param name="Centre">The centre point of the quad</param>
+            <param name="Normal">The normal vector of the quad</param>
+            <param name="CrossNormal">The cross normal of the quad</param>
+            <param name="texID">The texture ID for the quad</param>
+            <param name="size">The size of the quad</param>
+            <returns>A VPNTC array representing the quad</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockRenderFaces.GetFacesFromState(BlockGame.Blocks.BlockRenderStates,BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Returns all the faces from the given render state
+            </summary>
+            <param name="state">The state to generate for</param>
+            <param name="point">The centre of the cube</param>
+            <param name="texID">The texture ID for the cube</param>
+            <returns>A VPNTC array representing the block</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockRenderFaces.GetFacesFromFacing(BlockGame.Blocks.BlockFacing,BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Gets the vertices for the given face
+            </summary>
+            <param name="facing">The facing to get the vertices for</param>
+            <param name="point">The cntre of the face</param>
+            <param name="texID">The texture ID to use</param>
+            <returns>A VPNTC array representing the face</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockRenderFaces.GetInvertedFacesFromFacing(BlockGame.Blocks.BlockFacing,BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Gets the inverted faces for a block face
+            </summary>
+            <param name="facing">The facing to generate for</param>
+            <param name="point">The centre of the face</param>
+            <param name="texID">The texture ID to use</param>
+            <returns>A VPNTC array representing the inverted face</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockRenderFaces.AddFacesFromNormal(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,System.Byte,System.Single,BlockGame.Utilities.VertexPositionNormalTextureColor[]@,System.Int32@)">
+            <summary>
+            Creates a quad from the given parameters
+            </summary>
+            <param name="Centre">The centre point of the quad</param>
+            <param name="Normal">The normal vector of the quad</param>
+            <param name="CrossNormal">The cross normal of the quad</param>
+            <param name="texID">The texture ID for the quad</param>
+            <param name="size">The size of the quad</param>
+            <param name="array">The array to push to</param>
+            <param name="startID">The starting ID for this face</param>
+            <returns>A VPNTC array representing the quad</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockRenderFaces.AddFacesFromState(BlockGame.Blocks.BlockRenderStates,BlockGame.Utilities.Point3,System.Byte,BlockGame.Utilities.VertexPositionNormalTextureColor[]@,System.Int32@)">
+            <summary>
+            Returns all the faces from the given render state
+            </summary>
+            <param name="state">The state to generate for</param>
+            <param name="point">The centre of the cube</param>
+            <param name="texID">The texture ID for the cube</param>
+            <param name="array">The array to append to</param>
+            <param name="startID">The ID to start from</param>
+            <returns>A VPNTC array representing the block</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockRenderFaces.AddFacesFromFacing(BlockGame.Blocks.BlockFacing,BlockGame.Utilities.Point3,System.Byte,BlockGame.Utilities.VertexPositionNormalTextureColor[]@,System.Int32@)">
+            <summary>
+            Gets the vertices for the given face
+            </summary>
+            <param name="facing">The facing to get the vertices for</param>
+            <param name="point">The cntre of the face</param>
+            <param name="texID">The texture ID to use</param>
+            <param name="array">The array to append to</param>
+            <param name="startID">The ID to start writing to</param>
+            <returns>A VPNTC array representing the face</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockRenderFaces.GetInvertedFacesFromFacing(BlockGame.Blocks.BlockFacing,BlockGame.Utilities.Point3,System.Byte,BlockGame.Utilities.VertexPositionNormalTextureColor[]@,System.Int32@)">
+            <summary>
+            Gets the inverted faces for a block face
+            </summary>
+            <param name="facing">The facing to generate for</param>
+            <param name="point">The centre of the face</param>
+            <param name="texID">The texture ID to use</param>
+            <param name="array">The array to append to</param>
+            <param name="startID">The ID to start writing to</param>
+            <returns>A VPNTC array representing the inverted face</returns>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockRenderer">
+            <summary>
+            Represents a vertex buffer to render a block with
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.BlockRenderer.BlockSize">
+            <summary>
+            Represents the width of a single block
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.BlockRenderer.HalfSize">
+            <summary>
+            Represents half the size of a single block
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.BlockRenderer.verts">
+            <summary>
+            Gets or sets the vertices for this block model
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockAir">
+            <summary>
+            Represents an empty air block
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockTypes.BlockAir.GetModel(BlockGame.Blocks.BlockRenderStates,BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Gets a blank VPNTC array for the model
+            </summary>
+            <param name="facings">The block facings</param>
+            <param name="pos">The position in the world</param>
+            <param name="Meta">The air's meta-data</param>
+            <returns></returns>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockDirt">
+            <summary>
+            Represents a dirt block
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockTypes.BlockDirt.GetTexIDForFacing(BlockGame.Blocks.BlockFacing,System.Byte)">
+            <summary>
+            Overrides the GetTexID to send the right texture data
+            </summary>
+            <param name="facing">The facing to get</param>
+            <param name="meta">The metadata of the block</param>
+            <returns>The texID for the given facing</returns>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockGlass">
+            <summary>
+            Represents a glass block
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockGravel">
+            <summary>
+            Represents a gravel block
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockSand">
+            <summary>
+            Represents a sand block
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockSlope">
+            <summary>
+            Represents a slope block
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.BlockTypes.BlockSlope.TexRefs">
+            <summary>
+            Holds the block texrefs
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockTypes.BlockSlope.GetModel(BlockGame.Blocks.BlockRenderStates,BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Overrides the getModel to get a unique model
+            </summary>
+            <param name="facings">The facings to use</param>
+            <param name="pos">The world position of this object</param>
+            <param name="Meta">The metadata for this block</param>
+            <returns></returns>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockStone">
+            <summary>
+            Represents a stone block
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockLog">
+            <summary>
+            Represents a Log block
+            </summary>
+            <remarks>
+            The logs meta mask is as follows:
+            b0 - is sideways (false if the the open face is on the top/bottom)
+            b0 - is rotated (false if open face faces front/back)
+            </remarks>
+        </member>
+        <member name="M:BlockGame.Blocks.BlockTypes.BlockLog.GetTexIDForFacing(BlockGame.Blocks.BlockFacing,System.Byte)">
+            <summary>
+            Gets the texture ID for the given facing
+            </summary>
+            <param name="facing">The block facing to get</param>
+            <param name="meta">The meta-data for the given block</param>
+            <returns>The texture ID for the facing</returns>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockLeaves">
+            <summary>
+            Represents a leaf block
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockWater">
+            <summary>
+            Represents a water block
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockIronOre">
+            <summary>
+            Represents a block of iron ore
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockGoldOre">
+            <summary>
+            Represents a block of Gold ore
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.BlockTypes.BlockDiamondOre">
+            <summary>
+            Represents a block of Diamond ore
+            fuck da poleece!
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.Chunk">
+            <summary>
+            Represents a chunk of block data
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.Chunk.ChunkSize">
+            <summary>
+            The size of chunks in blocks
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.Chunk.ChunkSizeP">
+            <summary>
+            Gets the size of a chunk in a point3
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.Chunk._ids">
+            <summary>
+            The array holding all of the block ID's and metaData
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.Chunk._metas">
+            <summary>
+            The array holding all of the block ID's and metaData
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.Chunk._renderStates">
+            <summary>
+            A list of all the block render faces
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.Chunk.ChunkPos">
+            <summary>
+            An array holding all of the render states for easier updating later
+            </summary>
+            BlockRenderer[, ,] renderStates = new BlockRenderer[ChunkSize, ChunkSize, ChunkSize];
+            <summary>
+            The chunk's relative position to other chunks
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.Chunk.collision">
+            <summary>
+            The private collision bounding box
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.Chunk.Renderer">
+            <summary>
+            The renderer used to render this chunk
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.#ctor(BlockGame.Utilities.Point3)">
+            <summary>
+            Creates a new chunk with the given chunk position
+            </summary>
+            <param name="chunkPos">The position of the chunk relative to other chunks</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.InitialRenderStates">
+            <summary>
+            Rebuild the whole chunk's render states
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.InvalidateChunkFace(BlockGame.Blocks.BlockFacing)">
+            <summary>
+            Invalidates all the renderstates along one fae of the chunk
+            </summary>
+            <param name="facing">The facing to invalidate</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.UpdateRenderStates(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Updates all render states in a cuboid
+            </summary>
+            <param name="min">The minimum of the cube to update (chunk)</param>
+            <param name="max">The maximum of the cube to update (chunk)</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.ForceUpdate(BlockGame.Utilities.Cuboid)">
+            <summary>
+            Updates all render states in a cuboid
+            </summary>
+            <param name="min">The minimum of the cube to update (world)</param>
+            <param name="max">The maximum of the cube to update (worl)</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.UpdateRenderState(BlockGame.Utilities.Point3)">
+            <summary>
+            Updates the render state at pos
+            </summary>
+            <param name="pos">The chunk co-ords of the render state to update</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.UpdateRenderState(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Updates the render state at {x,y,z}
+            </summary>
+            <param name="x">The x co-ord of the block (chunk)</param>
+            <param name="y">The y co-ord of the block (chunk)</param>
+            <param name="z">The z co-ord of the block (chunk)</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GetRenderStateForBlock(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Returns the BlockRenderState at {x,y,z}
+            </summary>
+            <param name="x">The x co-ord of the block (chunk)</param>
+            <param name="y">The y co-ord of the block (chunk)</param>
+            <param name="z">The z co-ord of the block (chunk)</param>
+            <returns>The BlockRenderState for {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.ShouldRenderFace(BlockGame.Blocks.BlockFacing,BlockGame.Utilities.Point3)">
+            <summary>
+            Returns true if the face shuld be rendered
+            </summary>
+            <param name="facing">The facing normal to check</param>
+            <param name="position">The block's chunk co-ords</param>
+            <returns>True if the face should be rendered</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.ShouldRenderFace(BlockGame.Blocks.BlockFacing,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Returns true if the face shuld be rendered
+            </summary>
+            <param name="facing">The facing normal to check</param>
+            <param name="x">The x co-ord of the block (chunk)</param>
+            <param name="y">The y co-ord of the block (chunk)</param>
+            <param name="z">The z co-ord of the block (chunk)</param>
+            <returns>True if the face should be rendered</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.IsOpaque(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Checks if a block is opaque or not
+            </summary>
+            <param name="x">The block's x co-ord (chunk)</param>
+            <param name="y">The block's y co-ord (chunk)</param>
+            <param name="z">The block's z co-ord (chunk)</param>
+            <returns>True if the block at {x,y,z} is opaque</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.IsOpaque(BlockGame.Utilities.Point3)">
+            <summary>
+            Checks if a block is opaque or not
+            </summary>
+            <param name="pos">The block's chunk co-ordinates</param>
+            <returns>True if the block at pos is opaque</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.IsOpaqueFromWorld(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Checks if a block is opaque or not
+            </summary>
+            <param name="x">The block's x co-ord (world)</param>
+            <param name="y">The block's y co-ord (world)</param>
+            <param name="z">The block's z co-ord (world)</param>
+            <returns>True if the block at {x,y,z} is opaque</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.Render(BlockGame.Render.Camera)">
+            <summary>
+            Renders this chunk
+            </summary>
+            <param name="view">The camera to render with</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GetBlockID(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Return the ID of the block at {x,y,z}
+            </summary>
+            <param name="x">The x co-ord of the block (chunk)</param>
+            <param name="y">The y co-ord of the block (chunk)</param>
+            <param name="z">The z co-ord of the block (chunk)</param>
+            <returns>The block's ID at {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GetBlockIDFromWorld(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Return the ID of the block at {x,y,z}
+            </summary>
+            <param name="x">The x co-ord of the block (world)</param>
+            <param name="y">The y co-ord of the block (world)</param>
+            <param name="z">The z co-ord of the block (world)</param>
+            <returns>The block's ID at {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GetBlockID(BlockGame.Utilities.Point3)">
+            <summary>
+            Gets the block ID at the specified chunk co-ordinates
+            </summary>
+            <param name="Pos">The chunk co-ords of the block to check</param>
+            <returns>The block ID at Pos</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GetBlockMeta(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Return the Meta of the block at {x,y,z}
+            </summary>
+            <param name="x">The x co-ord of the block (chunk)</param>
+            <param name="y">The y co-ord of the block (chunk)</param>
+            <param name="z">The z co-ord of the block (chunk)</param>
+            <returns>The block's Meta at {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GetBlockMeta(BlockGame.Utilities.Point3)">
+            <summary>
+            Gets the block Meta at the specified chunk co-ordinates
+            </summary>
+            <param name="Pos">The chunk co-ords of the block to check</param>
+            <returns>The block Meta at Pos</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GetBlockData(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Return the Block Data of the block at {x,y,z}
+            </summary>
+            <param name="x">The x co-ord of the block (chunk)</param>
+            <param name="y">The y co-ord of the block (chunk)</param>
+            <param name="z">The z co-ord of the block (chunk)</param>
+            <returns>The block's data at {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GetBlockData(BlockGame.Utilities.Point3)">
+            <summary>
+            Gets the block data at the specified chunk co-ordinates
+            </summary>
+            <param name="Pos">The chunk co-ords of the block to check</param>
+            <returns>The block's data at Pos</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.GenChunk">
+            <summary>
+            Generates this chunk using TerrainGen
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetBlock(System.Int32,System.Int32,System.Int32,System.Byte)">
+            <summary>
+            Sets the block at {x,y,z}
+            </summary>
+            <param name="x">The x co-ords of the block (chunk)</param>
+            <param name="y">The y co-ords of the block (chunk)</param>
+            <param name="z">The z co-ords of the block (chunk)</param>
+            <param name="ID">The ID to set the block to</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetBlock(BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Sets the block at pos
+            </summary>
+            <param name="pos">The chunk co-ords for this block</param>
+            <param name="ID">The ID to set the block to</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetBlockWithoutNotify(System.Int32,System.Int32,System.Int32,System.Byte,System.Byte)">
+            <summary>
+            Sets the block at {x,y,z} to dat
+            </summary>
+            <param name="x">The x co-ords of the block (chunk)</param>
+            <param name="y">The y co-ords of the block (chunk)</param>
+            <param name="z">The z co-ords of the block (chunk)</param>
+            <param name="ID">The ID of the block to set at {x,y,z}</param>
+            <param name="meta">The meta data of the block to set at {x,y,z}</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetBlockWithoutNotify(System.Int32,System.Int32,System.Int32,BlockGame.BlockData)">
+            <summary>
+            Sets the block at {x,y,z} to dat
+            </summary>
+            <param name="x">The x co-ords of the block (chunk)</param>
+            <param name="y">The y co-ords of the block (chunk)</param>
+            <param name="z">The z co-ords of the block (chunk)</param>
+            <param name="data">The block data to set at {x,y,z}</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetBlockFromWorld(System.Int32,System.Int32,System.Int32,System.Byte)">
+            <summary>
+            Sets the block at {x,y,z} to dat
+            </summary>
+            <param name="x">The x co-ords of the block (world)</param>
+            <param name="y">The y co-ords of the block (world)</param>
+            <param name="z">The z co-ords of the block (world)</param>
+            <param name="dat">The block data to set at {x,y,z}</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetBlockFromWorldNoNotify(System.Int32,System.Int32,System.Int32,System.Byte)">
+            <summary>
+            Sets the block at {x,y,z} to dat
+            </summary>
+            <param name="x">The x co-ords of the block (world)</param>
+            <param name="y">The y co-ords of the block (world)</param>
+            <param name="z">The z co-ords of the block (world)</param>
+            <param name="dat">The block data to set at {x,y,z}</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetBlockWithUpdate(System.Int32,System.Int32,System.Int32,System.Byte)">
+            <summary>
+            Sets the block at {x,y,z} to dat and updates the renderer
+            </summary>
+            <param name="x">The x co-ords of the block (chunk)</param>
+            <param name="y">The y co-ords of the block (chunk)</param>
+            <param name="z">The z co-ords of the block (chunk)</param>
+            <param name="dat">The block data to set at {x,y,z}</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetBlockWithUpdate(BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Sets the block at {x,y,z} to dat and updates the renderer
+            </summary>
+            <param name="x">The x co-ords of the block (chunk)</param>
+            <param name="y">The y co-ords of the block (chunk)</param>
+            <param name="z">The z co-ords of the block (chunk)</param>
+            <param name="dat">The block data to set at {x,y,z}</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetCuboid(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Sets a block of blocks to a single block data
+            </summary>
+            <param name="min">The minimum position to start from</param>
+            <param name="max">The max position to start from</param>
+            <param name="dat">The block data to set the region to</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetCuboid(BlockGame.Utilities.Cuboid,System.Byte)">
+            <summary>
+            Sets a block of blocks to a single block data
+            </summary>
+            <param name="cuboid">The cuboid to set</param>
+            <param name="dat">The block data to set the region to</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.SetSphere(BlockGame.Utilities.Point3,System.Single,System.Byte)">
+            <summary>
+            Sets a sphere of blocks to a single block ID
+            </summary>
+            <param name="centre">The centre of the sphere</param>
+            <param name="radius">The radius of the sphere</param>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.IsinRange(BlockGame.Utilities.Point3)">
+            <summary>
+            Checks if the position is within this chunk's range
+            </summary>
+            <param name="pos">The position to check for (chunk co-ords)</param>
+            <returns>True if pos is within this chunk's range</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.IsinRange(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Returns true if the given point is within range of this chunk
+            </summary>
+            <param name="x">The X co-ord (Chunk)</param>
+            <param name="y">The Y co-ord (Chunk)</param>
+            <param name="z">The Z co-ord (Chunk)</param>
+            <returns>Returns true if point {x,y,z} can exist in this chunk</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.ToChunkCoord(BlockGame.Utilities.Point3)">
+            <summary>
+            Converts world co-ords to chunk co-ords
+            </summary>
+            <param name="worldPos">The world point to convert</param>
+            <returns>A point relative to this chunk</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.op_Implicit(BlockGame.Blocks.Chunk)~BlockGame.Utilities.Point3">
+            <summary>
+            Converts a chunk to a Point3
+            </summary>
+            <param name="c">The chunk to be converted</param>
+            <returns>c cast to a Point3</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.Chunk.op_Implicit(BlockGame.Utilities.Point3)~BlockGame.Blocks.Chunk">
+            <summary>
+            Converts a point to a chunk
+            </summary>
+            <param name="p">The Point3 to convert</param>
+            <returns>p cast to a Chunk</returns>
+        </member>
+        <member name="P:BlockGame.Blocks.Chunk.WorldChunkSize">
+            <summary>
+            Gets the size of a chunk in the world
+            </summary>
+        </member>
+        <member name="P:BlockGame.Blocks.Chunk.WorldPos">
+            <summary>
+            The position that block [0,0,0] has in the world
+            </summary>
+        </member>
+        <member name="P:BlockGame.Blocks.Chunk.MaxWorldPos">
+            <summary>
+            The position that the block furthest from [0,0,0] has in the world
+            </summary>
+        </member>
+        <member name="P:BlockGame.Blocks.Chunk.TransformedWorldPos">
+            <summary>
+            The Transformation position
+            </summary>
+        </member>
+        <member name="P:BlockGame.Blocks.Chunk.Collision">
+            <summary>
+            The world-oriented collision box
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.World">
+            <summary>
+            Represents the world that can be edited
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.World._chunks">
+            <summary>
+            The dictionary of loaded chunks
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.World.ToBeLoaded">
+            <summary>
+            The list of all points where chunks should be loaded
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.World.ChunkThread">
+            <summary>
+            The thread used to load chunks
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.World.#cctor">
+            <summary>
+            Initializes the world
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.World.AddChunk(BlockGame.Utilities.Point3)">
+            <summary>
+            Registered a chunk t be loaded at the specified chunk co-ords
+            </summary>
+            <param name="chunkPos">The chunk co-ords to load</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.LoadChunk(System.Object,System.ComponentModel.DoWorkEventArgs)">
+            <summary>
+            Performs the chunk loading/generating event
+            </summary>
+            <param name="sender">The object that raised this event</param>
+            <param name="e">The work event args containing the chunk co-ords to be loaded</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.ChunkLoaded(System.Object,System.ComponentModel.RunWorkerCompletedEventArgs)">
+            <summary>
+            Finalizes the chunk loading by adding it back to the map, and starts loading the next chunk
+            if need be
+            </summary>
+            <param name="sender">The object that raised this event (should be this world)</param>
+            <param name="e">The WorkCompleted containing the chunk that was loaded</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.InvalidateChunkFaces(BlockGame.Utilities.Point3)">
+            <summary>
+            Invalidates the chunks that share a face with the given chunk position
+            </summary>
+            <param name="CentreChunk">The centre chunk to invalidate faces towards</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.LoadedStrings">
+            <summary>
+            Gets a string containing all the loaded chunks
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.ChunkExistsCoords(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Gets if the chunk at {x,y,z} is loaded
+            </summary>
+            <param name="x">The x co-ord (world)</param>
+            <param name="y">The y co-ord (world)</param>
+            <param name="z">The z co-ord (world)</param>
+            <returns>True if a chunk exists at {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.ChunkExistsChunkPos(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Gets if the chunk at {x,y,z} is loaded
+            </summary>
+            <param name="x">The x co-ord (chunk pos)</param>
+            <param name="y">The y co-ord (chunk pos)</param>
+            <param name="z">The z co-ord (chunk pos)</param>
+            <returns>True if a chunk exists at {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.GetTopZ(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Gets the top z value for the given x and y
+            </summary>
+            <param name="x">The x co-ord to check at</param>
+            <param name="y">The y co-ord to check at</param>
+            <param name="zStart">The z co-ord to start from to work down from</param>
+            <returns>The z for the top block at {x,y}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.GetChunkFromCoords(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Gets the chunks from the given world position
+            </summary>
+            <param name="x">The x co-ord (world)</param>
+            <param name="y">The y co-ord (world)</param>
+            <param name="z">The z co-ord (world)</param>
+            <returns>The chunk that contains the given world co-ord</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.GetChunkFromChunkPos(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Gets the chunks from the given chunk position
+            </summary>
+            <param name="x">The x co-ord (chunk ref)</param>
+            <param name="y">The y co-ord (chunk ref)</param>
+            <param name="z">The z co-ord (chunk ref)</param>
+            <returns>The chunk at data slot {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.SetBlock(System.Int32,System.Int32,System.Int32,System.Byte)">
+            <summary>
+            Sets a block in the world to the given ID
+            </summary>
+            <param name="x">The x co-ord (world)</param>
+            <param name="y">The y co-ord (world)</param>
+            <param name="z">The z co-ord (world)</param>
+            <param name="dat">The new block data to set to</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.SetBlockNoNotify(System.Int32,System.Int32,System.Int32,System.Byte)">
+            <summary>
+            Sets a block in the world to the given ID without pushing the render state
+            </summary>
+            <param name="x">The x co-ord (world)</param>
+            <param name="y">The y co-ord (world)</param>
+            <param name="z">The z co-ord (world)</param>
+            <param name="dat">The new block data to set to</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.SetBlock(BlockGame.Utilities.Point3,System.Byte)">
+            <summary>
+            Sets a block in the world to the given ID
+            </summary>
+            <param name="Pos">The co-ords (world)</param>
+            <param name="dat">The new block data to set to</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.SetCuboid(BlockGame.Utilities.Cuboid,System.Byte)">
+            <summary>
+            Sets a cuboid in the world
+            </summary>
+            <param name="cuboid">The cuboid to set</param>
+            <param name="dat">The block data to set</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.SetSphere(BlockGame.Utilities.Cuboid,System.Byte)">
+            <summary>
+            Sets a sphere in the world
+            </summary>
+            <param name="cuboid">The bounds of the sphere to set</param>
+            <param name="dat">The block data to set</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.SetSphere(BlockGame.Utilities.Point3,System.Single,System.Byte)">
+            <summary>
+            Sets a sphere in the world
+            </summary>
+            <param name="cuboid">The bounds of the sphere to set</param>
+            <param name="dat">The block data to set</param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.GetBlockID(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Get's a block's ID
+            </summary>
+            <param name="x">The block's x co-ord (block)</param>
+            <param name="y">The block's y co-ord (block)</param>
+            <param name="z">The block's z co-ord (bock)</param>
+            <returns>True if the block at {x,y,z} is opaque</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.GetBlockID(BlockGame.Utilities.Point3)">
+            <summary>
+            Get's a block's ID
+            </summary>
+            <param name="x">The block's x co-ord (block)</param>
+            <param name="y">The block's y co-ord (block)</param>
+            <param name="z">The block's z co-ord (bock)</param>
+            <returns>True if the block at {x,y,z} is opaque</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.IsOpaque(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Checks if a block is opaque or not
+            </summary>
+            <param name="x">The block's x co-ord (block)</param>
+            <param name="y">The block's y co-ord (block)</param>
+            <param name="z">The block's z co-ord (bock)</param>
+            <returns>True if the block at {x,y,z} is opaque</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.IsOpaque(BlockGame.Utilities.Point3)">
+            <summary>
+            Checks if a block is opaque or not
+            </summary>
+            <param name="x">The block's x co-ord (block)</param>
+            <param name="y">The block's y co-ord (block)</param>
+            <param name="z">The block's z co-ord (bock)</param>
+            <returns>True if the block at {x,y,z} is opaque</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.World.Render(BlockGame.Render.Camera)">
+            <summary>
+            Renders all the currently loaded chunks
+            </summary>
+            <param name="camera"></param>
+        </member>
+        <member name="M:BlockGame.Blocks.World.RenderToTexture(BlockGame.Render.Camera,Microsoft.Xna.Framework.Graphics.RenderTarget2D)">
+            <summary>
+            Renders all the currently loaded chunks to a RenderTarget2D
+            </summary>
+            <param name="camera"></param>
+        </member>
+        <member name="P:BlockGame.Blocks.World.ChunkCount">
+            <summary>
+            Gets the number of currently loaded chunks
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.ChunkLoadedHandler">
+            <summary>
+            Invoked when a chunk is loaded
+            </summary>
+            <param name="e">The ChunkLoadedArgs to use</param>
+        </member>
+        <member name="T:BlockGame.Blocks.ChunkLoadedArgs">
+            <summary>
+            Represents the agruments for a chunk loaded event
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.ChunkLoadedArgs.chunk">
+            <summary>
+            The chunk that was generated
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.ChunkLoadedArgs.#ctor(BlockGame.Blocks.Chunk)">
+            <summary>
+            Creates a new event args for a chunk load
+            </summary>
+            <param name="chunk">The chunk that has been loaded</param>
+        </member>
+        <member name="F:BlockGame.Perlin.p">
+            adapted from http://cs.nyu.edu/~perlin/noise/
+        </member>
+        <member name="M:BlockGame.Perlin.GetAtMap(System.Single,System.Single,System.Single,System.Int32,System.Single,System.Single,System.Single)">
+            <summary>
+            Returns a value between -1 and 1 that represents the density at a specific point on the map
+            </summary>
+            <param name="x">The x co-ord to check</param>
+            <param name="y">The y co-ord to check</param>
+            <param name="z">The z co-ord to check</param>
+            <param name="octaves">The number of octaves to use</param>
+            <param name="xSample">The x sampling rate (default 0.02F)</param>
+            <param name="ySample">The y sampling rate (default 0.02F)</param>
+            <param name="zSample">The z sampling rate (default 0.02F)</param>
+            <returns>A value between -1 and 1</returns>
+        </member>
+        <member name="T:BlockGame.Perlin2D">
+            <summary>
+            Implements improved Perlin noise in 2D. 
+            Transcribed from http://www.siafoo.net/snippet/144?nolinenos#perlin2003
+            </summary>
+        </member>
+        <member name="M:BlockGame.Perlin2D.Reseed">
+            <summary>
+            generate a new permutation.
+            </summary>
+        </member>
+        <member name="M:BlockGame.Perlin2D.Wrap(System.Single,System.Single,System.Single)">
+            <summary>
+            Wraps the given value between a min and a max
+            </summary>
+            <param name="min">The minimum value to wrap to</param>
+            <param name="max">The maximum value to wrap to</param>
+            <param name="val">The value to wrap</param>
+            <returns><i>val</i> wrapped between <i>max</i> and <i>min</i></returns>
+        </member>
+        <member name="M:BlockGame.Program.Main(System.String[])">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="T:BlockGame.Game1">
+            <summary>
+            This is the main type for your game
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.camera">
+            <summary>
+            The manin camera in the game
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.sun">
+            <summary>
+            The sun for the level
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.worldEffect">
+            <summary>
+            The base effect that controls lighting for the world
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.IsBebugging">
+            <summary>
+            True if the game is in debugging mode
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.graphics">
+            <summary>
+            The graphics device manager
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.spriteBatch">
+            <summary>
+            The spritebbatch used for 2D drawing
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.spriteFont">
+            <summary>
+            The standard font to draw with
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.keyWatchers">
+            <summary>
+            A dictionary of all the keywatchers used in this game
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.didPerf">
+            <summary>
+            Gets if the p command was performed
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.mappingCamera">
+            <summary>
+            The camera used to map the world from above
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.mapTarget">
+            <summary>
+            A temporary render target
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.mainTarget">
+            <summary>
+            Represents the main RenderTarget to render to
+            </summary>
+        </member>
+        <member name="F:BlockGame.Game1.screenRect">
+            <summary>
+            Represents the rectangle to draw the screen texture to
+            </summary>
+        </member>
+        <member name="M:BlockGame.Game1.#ctor">
+            <summary>
+            The initializer for the main game class
+            </summary>
+        </member>
+        <member name="M:BlockGame.Game1.Initialize">
+            <summary>
+            Allows the game to perform any initialization it needs to before starting to run.
+            This is where it can query for any required services and load any non-graphic
+            related content.  Calling base.Initialize will enumerate through any components
+            and initialize them as well.
+            </summary>
+        </member>
+        <member name="M:BlockGame.Game1.LoadContent">
+            <summary>
+            LoadContent will be called once per game and is the place to load
+            all of your content.
+            </summary>
+        </member>
+        <member name="M:BlockGame.Game1.BuildBasicEffect">
+            <summary>
+            Creates the effect to render with
+            </summary>
+        </member>
+        <member name="M:BlockGame.Game1.UnloadContent">
+            <summary>
+            UnloadContent will be called once per game and is the place to unload
+            all content.
+            </summary>
+        </member>
+        <member name="M:BlockGame.Game1.Update(Microsoft.Xna.Framework.GameTime)">
+            <summary>
+            Allows the game to run logic such as updating the world,
+            checking for collisions, gathering input, and playing audio.
+            </summary>
+            <param name="gameTime">Provides a snapshot of timing values.</param>
+        </member>
+        <member name="M:BlockGame.Game1.OnDebugPressed(System.Object,System.EventArgs)">
+            <summary>
+            Called when the debug key is pressed
+            </summary>
+            <param name="sender">The object that raised this event (the KeyWatcher in this case)</param>
+            <param name="e">The event args generated for this event</param>
+        </member>
+        <member name="M:BlockGame.Game1.PPressed(System.Object,System.EventArgs)">
+            <summary>
+            Called when the test key is pressed
+            </summary>
+            <param name="sender">The object that raised this event (the KeyWatcher in this case)</param>
+            <param name="e">The event args generated for this event</param>
+        </member>
+        <member name="M:BlockGame.Game1.Draw(Microsoft.Xna.Framework.GameTime)">
+            <summary>
+            This is called when the game should draw itself.
+            </summary>
+            <param name="gameTime">Provides a snapshot of timing values.</param>
+        </member>
+        <member name="M:BlockGame.Game1.SpriteBatchDraw">
+            <summary>
+            Handles 2D drawng for the game
+            </summary>
+        </member>
+        <member name="M:BlockGame.Game1.ThreedDraw">
+            <summary>
+            Handles the 3D drawing for the game
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.Camera">
+            <summary>
+            Represents a view from an orgin
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Camera.cameraPos">
+            <summary>
+            The orgin point of the camera
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Camera.cameraNormal">
+            <summary>
+            The normal for the camera
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Camera.cameraYaw">
+            <summary>
+            The Yaw around the z-axis
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Camera.cameraPitch">
+            <summary>
+            The up/down pitch of the camera
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Camera.graphicsDevice">
+            <summary>
+            The graphicsdevice that this camera was initialized with
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Camera.View">
+            <summary>
+            The view parameters for this camera
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.Camera.#ctor(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Creates a new camera instance
+            </summary>
+            <param name="Position">The camera's position</param>
+            <param name="graphics">The GraphicsDeviceManager to use</param>
+        </member>
+        <member name="M:BlockGame.Render.Camera.UpdateViewParameters">
+            <summary>
+            Force update the view parameter
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.Camera.UpdateMovement">
+            <summary>
+            Handles moing the camera around using W/A/S/D and arrow keys
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.Camera.CameraPos">
+            <summary>
+            The orgin point of the camera
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.Camera.CameraNormal">
+            <summary>
+            The normal for the camera
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.Camera.CameraCrossNormal">
+            <summary>
+            The left-facing vector to the camera
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.Camera.CameraYaw">
+            <summary>
+            The Yaw around the z-axis
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.Camera.CameraPitch">
+            <summary>
+            The up/down pitch of the camera
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.Camera.GraphicsDevice">
+            <summary>
+            Gets the graphicsdevice that this camera was initialized with
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.ViewParameters">
+            <summary>
+            Represents a camera's view paramaters
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.ViewParameters.View">
+            <summary>
+            The view matrix
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.ViewParameters.Projection">
+            <summary>
+            The projection matrix
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.ViewParameters.World">
+            <summary>
+            The world matrix
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.DynamicGeometry`1">
+            <summary>
+            Represents a peice of 3D geometry
+            </summary>
+            <typeparam name="T">The vertex type to use</typeparam>
+        </member>
+        <member name="F:BlockGame.Render.DynamicGeometry`1._vertBuffer">
+            <summary>
+            The vertex buffer to render with
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.DynamicGeometry`1._indexBuffer">
+            <summary>
+            The index buffer to render with
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.DynamicGeometry`1._vertices">
+            <summary>
+            A temporary list of vertices
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.DynamicGeometry`1._indices">
+            <summary>
+            A temporary list of indices
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.DynamicGeometry`1._graphics">
+            <summary>
+            The graphics device to use for rendering
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.DynamicGeometry`1._primitiveType">
+            <summary>
+            The primitive type to use for rendering
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.DynamicGeometry`1.#ctor(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.PrimitiveType,System.Int32,System.Int32)">
+            <summary>
+            Creates a new 3D geometry
+            </summary>
+            <param name="graphics">The graphics device to use</param>
+            <param name="primitiveType">The primitive type to use</param>
+        </member>
+        <member name="M:BlockGame.Render.DynamicGeometry`1.AddVertex(`0)">
+            <summary>
+            Adds a vertex to this geometry
+            </summary>
+            <param name="vertex">The vertex to add</param>
+        </member>
+        <member name="M:BlockGame.Render.DynamicGeometry`1.AddIndex(System.Int32)">
+            <summary>
+            Adds an index to this geometry
+            </summary>
+            <param name="index">The index to add</param>
+        </member>
+        <member name="M:BlockGame.Render.DynamicGeometry`1.AddTri(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Adds a triangle to this geometry. Must be defined in the correct culling order
+            </summary>
+            <param name="id1">The ID of the first index</param>
+            <param name="id2">The ID of the second index</param>
+            <param name="id3">The ID of the third index</param>
+        </member>
+        <member name="M:BlockGame.Render.DynamicGeometry`1.AddQuad(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Adds a quad between 4 vertices. Must be defined in clockwise order
+            </summary>
+            <param name="id1">The first index</param>
+            <param name="id2">The second index</param>
+            <param name="id3">The third index</param>
+            <param name="id4">The fourth index</param>
+        </member>
+        <member name="M:BlockGame.Render.DynamicGeometry`1.Finish">
+            <summary>
+            Finishes this geometry and prepares it for rendering
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.DynamicGeometry`1.Render(Microsoft.Xna.Framework.Graphics.EffectTechnique)">
+            <summary>
+            Renders this geometry
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.PointLightEffect">
+            <summary>
+            Represents a point light shader
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLightEffect.MAX_LIGHTS">
+            <summary>
+            The maximum number of lights to use
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLightEffect.BaseEffect">
+            <summary>
+            The Effect to render with
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLightEffect.LightPositions">
+            <summary>
+            The array of all positions for point lights
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLightEffect.LightDiffuseColors">
+            <summary>
+            The array of all Colors for point lights
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLightEffect.LightDistances">
+            <summary>
+            The array of all the light radui for point lights
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLightEffect.lightCount">
+            <summary>
+            The number of point lights currently used
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.PointLightEffect.#ctor(Microsoft.Xna.Framework.Content.ContentManager)">
+            <summary>
+            Creates a new point light shader from a content manager
+            </summary>
+            <param name="content">The content manager to load from</param>
+        </member>
+        <member name="M:BlockGame.Render.PointLightEffect.#ctor(Microsoft.Xna.Framework.Graphics.Effect)">
+            <summary>
+            Creates a new point light shader from an effect
+            </summary>
+            <param name="BaseEffect">The effect to use</param>
+        </member>
+        <member name="M:BlockGame.Render.PointLightEffect.Clone">
+            <summary>
+            Creates an exact duplicate of this shader
+            </summary>
+            <returns>An exact clone of this shader</returns>
+        </member>
+        <member name="M:BlockGame.Render.PointLightEffect.AddPointLight(BlockGame.Render.PointLight)">
+            <summary>
+            Adds a new point light to this shader
+            </summary>
+            <param name="light">The pointLight to add</param>
+            <returns>The ID of the light, or -1 if it ould not be added</returns>
+        </member>
+        <member name="M:BlockGame.Render.PointLightEffect.SetLightPos(System.Int32,Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Sets the lights position
+            </summary>
+            <param name="lightID">The light ID of the light</param>
+            <param name="pos">The new position for the light</param>
+        </member>
+        <member name="M:BlockGame.Render.PointLightEffect.SetLightColor(System.Int32,Microsoft.Xna.Framework.Vector4)">
+            <summary>
+            Sets the color of a light
+            </summary>
+            <param name="lightID">The light ID for the light</param>
+            <param name="color">The new color for the light</param>
+        </member>
+        <member name="M:BlockGame.Render.PointLightEffect.SetLightRadius(System.Int32,System.Single)">
+            <summary>
+            Sets a new radius for a light
+            </summary>
+            <param name="lightID">The light ID of the light</param>
+            <param name="radius">The new radius of the light</param>
+        </member>
+        <member name="M:BlockGame.Render.PointLightEffect.UpdatePointLightLists">
+            <summary>
+            Updates all the lighting lists on the GPU
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.World">
+            <summary>
+            The world transformation to use
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.View">
+            <summary>
+            The view transformation to use
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.Projection">
+            <summary>
+            The projection transformation to use
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.AmbientLightColor">
+            <summary>
+            The color of the ambient lighting
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.AmbientLightIntensity">
+            <summary>
+            The intensity for the ambient lighting. Default is 0.1
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.DiffuseDirection">
+            <summary>
+            Represents the normal for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.DiffuseColor">
+            <summary>
+            The color for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.DiffuseIntensity">
+            <summary>
+            The intensity of the diffuse
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.PointLightEffect.Texture">
+            <summary>
+            The texture to draw with
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.NormalMapEffect">
+            <summary>
+            A wrapper for the normal mapping shader
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.NormalMapEffect.BaseEffect">
+            <summary>
+            The basic efefect to render with
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.NormalMapEffect.#ctor(Microsoft.Xna.Framework.Content.ContentManager)">
+            <summary>
+            Creates a new normal map shader using a content manager
+            </summary>
+            <param name="content">The content manager to load from</param>
+        </member>
+        <member name="M:BlockGame.Render.NormalMapEffect.#ctor(Microsoft.Xna.Framework.Graphics.Effect)">
+            <summary>
+            Creates a new normal map using an effect
+            </summary>
+            <param name="BaseEffect">The effect to use</param>
+        </member>
+        <member name="M:BlockGame.Render.NormalMapEffect.Clone">
+            <summary>
+            Clones this normal shader
+            </summary>
+            <returns>An exact copy of this shader</returns>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.World">
+            <summary>
+            The world transformation to use
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.View">
+            <summary>
+            The view transformation to use
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.Projection">
+            <summary>
+            The projection transformation to use
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.AmbientLightColor">
+            <summary>
+            The color of the ambient lighting
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.AmbientLightIntensity">
+            <summary>
+            The intensity for the ambient lighting. Default is 0.1
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.DiffuseDirection">
+            <summary>
+            Represents the normal for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.DiffuseColor">
+            <summary>
+            The color for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.Texture">
+            <summary>
+            The texture to render with
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.NormalMapEffect.NormalMap">
+            <summary>
+            The normal map to use
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.StandardEffect">
+            <summary>
+            A wrapper around the standard shader
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.StandardEffect.BaseEffect">
+            <summary>
+            The Effect to render with
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.StandardEffect.#ctor(Microsoft.Xna.Framework.Content.ContentManager)">
+            <summary>
+            Creates a new StandardEffect
+            </summary>
+            <param name="content">The content manager to load from</param>
+        </member>
+        <member name="M:BlockGame.Render.StandardEffect.#ctor(Microsoft.Xna.Framework.Graphics.Effect)">
+            <summary>
+            Creates a new standardeffect
+            </summary>
+            <param name="BaseEffect">The Effect to use</param>
+        </member>
+        <member name="M:BlockGame.Render.StandardEffect.Clone">
+            <summary>
+            Creates a clone of this shader
+            </summary>
+            <returns>An exact clone of this shader</returns>
+        </member>
+        <member name="P:BlockGame.Render.StandardEffect.AmbientLightColor">
+            <summary>
+            The color of the ambient lighting
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.StandardEffect.AmbientLightIntensity">
+            <summary>
+            The intensity for the ambient lighting. Default is 0.1
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.StandardEffect.DiffuseDirection">
+            <summary>
+            Represents the normal for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.StandardEffect.DiffuseColor">
+            <summary>
+            The color for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.StandardEffect.DiffuseIntensity">
+            <summary>
+            The color for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.StandardEffect.Texture">
+            <summary>
+            The texture to render with
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.VegetationEffect">
+            <summary>
+            A Wrapper for the vegetation shader
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.VegetationEffect.BaseEffect">
+            <summary>
+            The base Effect class
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.VegetationEffect.#ctor(Microsoft.Xna.Framework.Content.ContentManager)">
+            <summary>
+            Creates a new vegetation shader
+            </summary>
+            <param name="content">The content to load from</param>
+        </member>
+        <member name="M:BlockGame.Render.VegetationEffect.#ctor(Microsoft.Xna.Framework.Graphics.Effect)">
+            <summary>
+            Creates a new vegetation shader
+            </summary>
+            <param name="BaseEffect">The BaseEffect to use</param>
+        </member>
+        <member name="M:BlockGame.Render.VegetationEffect.Clone">
+            <summary>
+            Clones this shader
+            </summary>
+            <returns>A shader that has all values set the same</returns>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.World">
+            <summary>
+            The world transformation to apply to the effect
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.View">
+            <summary>
+            The view transformation to apply to the effect
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.Projection">
+            <summary>
+            The projection to apply to the effect
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.Wind">
+            <summary>
+            A value describing the current flow of the wind in this shader
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.AmbientLightColor">
+            <summary>
+            The color of the ambient lighting
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.AmbientLightIntensity">
+            <summary>
+            The intensity for the ambient lighting. Default is 0.1
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.DiffuseDirection">
+            <summary>
+            Represents the normal for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.DiffuseColor">
+            <summary>
+            The color for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.DiffuseIntensity">
+            <summary>
+            The color for the diffuse light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.VegetationEffect.Texture">
+            <summary>
+            The texture used to render the effect with
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.PointLight">
+            <summary>
+            Represents a PointLight for shaders
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLight.DiffuseColor">
+            <summary>
+            The color of this light
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLight.Radius">
+            <summary>
+            How far the light travels
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PointLight.LightPos">
+            <summary>
+            The position of the light
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.Geometry`1">
+            <summary>
+            Represents a peice of 3D geometry
+            </summary>
+            <typeparam name="T">The vertex type to use</typeparam>
+        </member>
+        <member name="F:BlockGame.Render.Geometry`1._vertBuffer">
+            <summary>
+            The vertex buffer to render with
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Geometry`1._indexBuffer">
+            <summary>
+            The index buffer to render with
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Geometry`1._vertices">
+            <summary>
+            A temporary list of vertices
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Geometry`1._indices">
+            <summary>
+            A temporary list of indices
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Geometry`1._graphics">
+            <summary>
+            The graphics device to use for rendering
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Geometry`1._primitiveType">
+            <summary>
+            The primitive type to use for rendering
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.Geometry`1.#ctor(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.PrimitiveType)">
+            <summary>
+            Creates a new 3D geometry
+            </summary>
+            <param name="graphics">The graphics device to use</param>
+            <param name="primitiveType">The primitive type to use</param>
+        </member>
+        <member name="M:BlockGame.Render.Geometry`1.AddVertex(`0)">
+            <summary>
+            Adds a vertex to this geometry
+            </summary>
+            <param name="vertex">The vertex to add</param>
+        </member>
+        <member name="M:BlockGame.Render.Geometry`1.AddIndex(System.Int32)">
+            <summary>
+            Adds an index to this geometry
+            </summary>
+            <param name="index">The index to add</param>
+        </member>
+        <member name="M:BlockGame.Render.Geometry`1.AddTri(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Adds a triangle to this geometry. Must be defined in the correct culling order
+            </summary>
+            <param name="id1">The ID of the first index</param>
+            <param name="id2">The ID of the second index</param>
+            <param name="id3">The ID of the third index</param>
+        </member>
+        <member name="M:BlockGame.Render.Geometry`1.AddQuad(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Adds a quad between 4 vertices. Must be defined in clockwise order
+            </summary>
+            <param name="id1">The first index</param>
+            <param name="id2">The second index</param>
+            <param name="id3">The third index</param>
+            <param name="id4">The fourth index</param>
+        </member>
+        <member name="M:BlockGame.Render.Geometry`1.Finish">
+            <summary>
+            Finishes this geometry and prepares it for rendering
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.Geometry`1.Render">
+            <summary>
+            Renders this geometry
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.PolyRender">
+            <summary>
+            Represents a polynomial renderer
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.OpaqueBuffer">
+            <summary>
+            The buffer for all opaque faces
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.NonOpaqueBuffer">
+            <summary>
+            The buffer for all non-opaque faces
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.OpaquePrimitiveCount">
+            <summary>
+            The number of opaque primitives (triangles)
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.NonOpaquePrimitiveCount">
+            <summary>
+            The number of non-opaque primitives (triangles)
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.OpaqueTemp">
+            <summary>
+            The temporary buffer for the opaque vertices
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.NonOpaqueTemp">
+            <summary>
+            The temporary buffer for the non-opaque vertices
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.World">
+            <summary>
+            The world transformation for this renderer
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.OpaqueDepthStencil">
+            <summary>
+            Represents the depth stencil uses for opaque polies
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.PolyRender.TransparentDepthStencil">
+            <summary>
+            Represents the depth stencil uses for transparent polies
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.PolyRender.#ctor(Microsoft.Xna.Framework.Matrix)">
+            <summary>
+            Creates a new poly renderer
+            </summary>
+            <param name="World">The world transformation to use</param>
+        </member>
+        <member name="M:BlockGame.Render.PolyRender.Clear">
+            <summary>
+            clears the temporary and final buffers
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.PolyRender.AddOpaquePolys(BlockGame.Utilities.VertexPositionNormalTextureColor[])">
+            <summary>
+            Adds a range of opaque vertices to the temp buffer
+            </summary>
+            <param name="buffer">The buffer to append</param>
+        </member>
+        <member name="M:BlockGame.Render.PolyRender.AddNonOpaquePolys(BlockGame.Utilities.VertexPositionNormalTextureColor[])">
+            <summary>
+            Adds a range of non-opaque vertices to the temp buffer
+            </summary>
+            <param name="buffer">The buffer to append</param>
+        </member>
+        <member name="M:BlockGame.Render.PolyRender.FinalizePolys">
+            <summary>
+            Copies over and clears the temp buffers
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.PolyRender.Render(BlockGame.Render.ViewParameters)">
+            <summary>
+            Renders Opaque and non-opaque polys
+            </summary>
+            <param name="view">The view paramaters to render with</param>
+        </member>
+        <member name="M:BlockGame.Render.PolyRender.RenderOpaque(BlockGame.Render.ViewParameters)">
+            <summary>
+            Renders all opaque polys
+            </summary>
+            <param name="view">The view parameters to render with</param>
+        </member>
+        <member name="M:BlockGame.Render.PolyRender.RenderNonOpaque(BlockGame.Render.ViewParameters)">
+            <summary>
+            Draws all the non-opaque polys
+            </summary>
+            <param name="view">The view parameters to render with</param>
+        </member>
+        <member name="F:BlockGame.Render.ShadowWrapper.tempTarget">
+            <summary>
+            The render target to draw the shadow map to
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.ShadowWrapper.Texture">
+            <summary>
+            The texture to apply to the drawn elements
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.ShadowWrapper.ShadowMap">
+            <summary>
+            The shadow map generated
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.ShadowWrapper.LightMask">
+            <summary>
+            The light mask to apply to the light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.ShadowWrapper.CameraViewProjection">
+            <summary>
+            The camera's view projection (view * projection)
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.ShadowWrapper.LightViewProjection">
+            <summary>
+            The light's view projection (view * projection)
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.ShadowWrapper.World">
+            <summary>
+            The world transformation matrix
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.ShadowWrapper.LightPower">
+            <summary>
+            The power of the light
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.ShadowWrapper.AmbientPower">
+            <summary>
+            The ambient light power
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.Sun">
+            <summary>
+            Represents the sun
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Sun.Radius">
+            <summary>
+            The pixel-distance from the sun to the player
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Sun.sunAngle">
+            <summary>
+            The angle that the sun is relative to the player
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Sun.Pos">
+            <summary>
+            The centre point of the sun
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.Sun.verts">
+            <summary>
+            The vertices to render
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.Sun.#ctor">
+            <summary>
+            Creates a new sun
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.Sun.Render(BlockGame.Render.Camera)">
+            <summary>
+            Renders this sun
+            </summary>
+            <param name="camera">The camera to render with</param>
+        </member>
+        <member name="M:BlockGame.Render.Sun.SunTick">
+            <summary>
+            Ticks this sun
+            </summary>
+        </member>
+        <member name="T:BlockGame.Render.TextureManager">
+            <summary>
+            Manages a texture for 3D shiat
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.TextureManager.TexSize">
+            <summary>
+            The width/height of each texture in the sheet
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.TextureManager.PercentPerBlock">
+            <summary>
+            What percentage each pixel represents
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.TextureManager.terrain">
+            <summary>
+            The terrain texture
+            </summary>
+        </member>
+        <member name="F:BlockGame.Render.TextureManager.normal">
+            <summary>
+            The normal map for terrain
+            </summary>
+        </member>
+        <member name="M:BlockGame.Render.TextureManager.Initialize(Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Graphics.Texture2D)">
+            <summary>
+            Initializes the texture manager
+            </summary>
+            <param name="terrain">The terrain texture to use</param>
+            <param name="normal">The normal map for terrain</param>
+        </member>
+        <member name="M:BlockGame.Render.TextureManager.BL(System.Byte)">
+            <summary>
+            Gets the bottom-left texture co-ord for the texture ID
+            </summary>
+            <param name="ID">The texture ID to search for</param>
+            <returns>The bottom-left corner for the texture refrence</returns>
+        </member>
+        <member name="M:BlockGame.Render.TextureManager.BR(System.Byte)">
+            <summary>
+            Gets the bottom-right texture co-ord for the texture ID
+            </summary>
+            <param name="ID">The texture ID to search for</param>
+            <returns>The bottom-right corner for the texture refrence</returns>
+        </member>
+        <member name="M:BlockGame.Render.TextureManager.TL(System.Byte)">
+            <summary>
+            Gets the top-left texture co-ord for the texture ID
+            </summary>
+            <param name="ID">The texture ID to search for</param>
+            <returns>The top-left corner for the texture refrence</returns>
+        </member>
+        <member name="M:BlockGame.Render.TextureManager.TR(System.Byte)">
+            <summary>
+            Gets the top-right texture co-ord for the texture ID
+            </summary>
+            <param name="ID">The texture ID to search for</param>
+            <returns>The top-right corner for the texture refrence</returns>
+        </member>
+        <member name="P:BlockGame.Render.TextureManager.Terrain">
+            <summary>
+            Gets the terrain texture for this texture manager
+            </summary>
+        </member>
+        <member name="P:BlockGame.Render.TextureManager.NormalMap">
+            <summary>
+            Gets the normal map texture for this texture manager
+            </summary>
+        </member>
+        <member name="F:BlockGame.UI.UIElement.Position">
+            <summary>
+            This elements position relative to the top-left corner of the UI manager
+            </summary>
+        </member>
+        <member name="T:BlockGame.Utilities.Utils">
+            <summary>
+            Some simple utilities for rendering things
+            </summary>
+        </member>
+        <member name="M:BlockGame.Utilities.Utils.DrawLine(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Draws a single line segment between two points
+            </summary>
+            <param name="Point1">The first point</param>
+            <param name="Point2">The second point</param>
+            <param name="color">The color of the line to draw</param>
+            <param name="Graphics">The GraphicsDevice to draw with</param>
+        </member>
+        <member name="M:BlockGame.Utilities.Utils.DrawBoundingBox(Microsoft.Xna.Framework.BoundingBox,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Draws a bounding box with lines
+            </summary>
+            <param name="Box">The Bounding Box to render</param>
+            <param name="color">The color of the line to draw</param>
+            <param name="Graphics">The GraphicsDevice to draw with</param>
+        </member>
+        <member name="M:BlockGame.Utilities.Utils.DrawBoundingFrustum(Microsoft.Xna.Framework.BoundingFrustum,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Draws a bounding box with lines
+            </summary>
+            <param name="Frustum">The bounding frustum to draw</param>
+            <param name="color">The color of the line to draw</param>
+            <param name="Graphics">The GraphicsDevice to draw with</param>
+        </member>
+        <member name="M:BlockGame.Utilities.Utils.DrawQuad2D(Microsoft.Xna.Framework.Rectangle,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Draws a quad
+            </summary>
+            <param name="Point1">The first point</param>
+            <param name="Point2">The second point</param>
+            <param name="color">The color of the line to draw</param>
+            <param name="Graphics">The GraphicsDevice to draw with</param>
+        </member>
+        <member name="T:BlockGame.Utilities.Cuboid">
+            <summary>
+            Represents an axis aligned, integer co-ord cuboid
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.Cuboid.Min">
+            <summary>
+            The minimum value of this cuboid
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.Cuboid.Max">
+            <summary>
+            The maximum value of this cuboid
+            </summary>
+        </member>
+        <member name="M:BlockGame.Utilities.Cuboid.#ctor(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Creates a new cuboid with the given min/max
+            </summary>
+            <param name="min">The minimum value of the cuboid</param>
+            <param name="max">The maximum value of the cuboid</param>
+        </member>
+        <member name="M:BlockGame.Utilities.Cuboid.Contains(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Checks if the given co-ordinates intersect with this cuboid
+            </summary>
+            <param name="x">The x co-ord</param>
+            <param name="y">The y co-ord</param>
+            <param name="z">The z co-ord</param>
+            <returns>True if {x,y,z} intersects this cuboid</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Cuboid.Intersects(BlockGame.Utilities.Cuboid)">
+            <summary>
+            Checks if this cuboid intersects another cuboid
+            </summary>
+            <param name="other">The cuboid to check against</param>
+            <returns>True if this cuboid intersects another</returns>
+        </member>
+        <member name="P:BlockGame.Utilities.Cuboid.Volume">
+            <summary>
+            Gets the volume of this cuboid
+            </summary>
+        </member>
+        <member name="T:BlockGame.Utilities.Extensions">
+            <summary>
+            A class holding miscelaneous extenstions for other classes
+            </summary>
+        </member>
+        <member name="M:BlockGame.Utilities.Extensions.IsBitSet(System.Byte,System.Int32)">
+            <summary>
+            Checks if a given bit is set in this byte
+            </summary>
+            <param name="b">The byte to check</param>
+            <param name="pos">The position to check at</param>
+            <returns>True if the n'th bit is set</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Extensions.IsGreater(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Returns true if either the X or y values are larger than the other
+            vector's
+            </summary>
+            <param name="v1">The first vector to compare</param>
+            <param name="v2">The second vector to compare</param>
+            <returns>True if x or y in v1 is greater than the same component in
+            v2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Extensions.Wrap(System.Single,System.Single,System.Single)">
+            <summary>
+            Wraps this float around a min and a max
+            </summary>
+            <param name="val">The value to wrap</param>
+            <param name="min">The min value to wrap by</param>
+            <param name="max">The max value to wrap by</param>
+            <returns>val wrapped to min -> max</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.MathUtils.LengthdirX(System.Single,System.Single)">
+            <summary>
+            Gets the change in x over the given rotation and length
+            </summary>
+            <param name="rotation">The rotation, in degrees. 0 is pointing to the right</param>
+            <param name="length">The length to calculate</param>
+            <returns>The change in x over the given rotation and length</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.MathUtils.LengthdirY(System.Single,System.Single)">
+            <summary>
+            Gets the change in y over the given rotation and length
+            </summary>
+            <param name="rotation">The rotation, in degrees. 0 is pointing to the right</param>
+            <param name="length">The length to calculate</param>
+            <returns>The change in y over the given rotation and length</returns>
+        </member>
+        <member name="T:BlockGame.Utilities.Point3">
+            <summary>
+            Represents a 3D co-ordinate with integer x,y,z
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.Point3.One">
+            <summary>
+            A point with all co-ords set to 1
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.Point3.Zero">
+            <summary>
+            A point with all co-ords set to 0
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.Point3.X">
+            <summary>
+            The x co-ords of this point
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.Point3.Y">
+            <summary>
+            The y co-ords of this point
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.Point3.Z">
+            <summary>
+            The z co-ords of this point
+            </summary>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.#ctor(System.Int32)">
+            <summary>
+            Creates a new point with all co-ords set to one value
+            </summary>
+            <param name="size">The value to set all the coords to</param>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a new 3D point with different unit vectors
+            </summary>
+            <param name="x">The x co-ord</param>
+            <param name="y">The y co-ord</param>
+            <param name="z">The z co-ord</param>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.IsInCuboid(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Checks if this point is inside a cuboid
+            </summary>
+            <param name="min">The minimum point in the cuboid</param>
+            <param name="max">The maximum point in the cuboid</param>
+            <returns>True if this point is intersecting or within the cuboid</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.IsInCuboid(BlockGame.Utilities.Cuboid)">
+            <summary>
+            Checks if this point is inside a cuboid
+            </summary>
+            <param name="cuboid">The cuboid to check against</param>
+            <returns>True if this point is intersecting or within the cuboid</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.Clamp(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Clamps this point to be equal to or between two other points
+            </summary>
+            <param name="min">The min value to clamp to</param>
+            <param name="max">The max value to clamp to</param>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.Distance(BlockGame.Utilities.Point3)">
+            <summary>
+            Gets the distance between two points
+            </summary>
+            <param name="p2">The point to check this point against</param>
+            <returns>The distance from this point to P2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.SubtractFromLength(System.Int32)">
+            <summary>
+            Subtracts the value from each vector of the point only if the vector is not equal to 0
+            </summary>
+            <param name="amount">The amount to subtract</param>
+            <returns>This point, with the values subtracted</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.Equals(System.Object)">
+            <summary>
+            Checks if this point is equal to another object
+            </summary>
+            <param name="obj">The object to compare</param>
+            <returns>True if this point is equal to the object</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.GetHashCode">
+            <summary>
+            Gets a semi-unique hash code for this object
+            </summary>
+            <returns>A semi-unique integer</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.ToString">
+            <summary>
+            Casts this point to a string
+            </summary>
+            <returns>The string representation of this point</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.Clamp(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Clamps a point between teo other points
+            </summary>
+            <param name="p">The point to clamp</param>
+            <param name="min">The min value to clamp to</param>
+            <param name="max">The max value to clamp to</param>
+            <returns>A new point representing p as a clamped value</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.IsInCuboid(BlockGame.Utilities.Point3,BlockGame.Utilities.Cuboid)">
+            <summary>
+            Checks if a point is in a cuboid
+            </summary>
+            <param name="p">The point to check</param>
+            <param name="cuboid">The cuboid to compare against</param>
+            <returns>True if point is instersecting or inside of cuboid</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.IsInCuboid(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Checks if a point is in a cuboid
+            </summary>
+            <param name="p">The point to check</param>
+            <param name="min">The minimum value to check against</param>
+            <param name="max">The maximum value to check against</param>
+            <returns>True if point is instersecting or inside of cuboid</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.Distance(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Gets the distance between two points
+            </summary>
+            <param name="p1">The first point to check</param>
+            <param name="p2">The second point to check against</param>
+            <returns></returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Equality(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Checks if two points are equal
+            </summary>
+            <param name="source">The source point to check</param>
+            <param name="other">The other point to check</param>
+            <returns>True if <i>source</i> has the same x/y/z values as <i>other</i></returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Inequality(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Checks if two points are not equal
+            </summary>
+            <param name="source">The source point to check</param>
+            <param name="other">The other point to check</param>
+            <returns>True if <i>source</i> does not have the same x/y/z values as <i>other</i></returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Subtraction(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Handles subtracting one point from another
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p2">The point to subtract</param>
+            <returns>p1 - p2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Addition(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Handles adding one point to another
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p2">The point to add</param>
+            <returns>p1 + p2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Multiply(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Handles multiplying two points
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p2">The point to multiply by</param>
+            <returns>p1 * p2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Division(BlockGame.Utilities.Point3,BlockGame.Utilities.Point3)">
+            <summary>
+            Handles dividing two points
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p2">The point to divide by</param>
+            <returns>p1 / p2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Subtraction(BlockGame.Utilities.Point3,Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Handles subtracting a vector from a point
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p2">The vector to subtract</param>
+            <returns>p1 - p2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Addition(BlockGame.Utilities.Point3,Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Handles adding one point to another
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p2">The point to add</param>
+            <returns>p1 + p2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Multiply(BlockGame.Utilities.Point3,Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Handles multiplying a point by a vector
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p2">The vector to multiply by</param>
+            <returns>p1 * p2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Division(BlockGame.Utilities.Point3,Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Handles dividing a point by a vector
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p2">The vector to divide by</param>
+            <returns>p1 / p2</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Multiply(BlockGame.Utilities.Point3,System.Int32)">
+            <summary>
+            Handles multiplying a point by an integer value
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p">The value to multiply all unit vectors by</param>
+            <returns>p1 * p</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Division(BlockGame.Utilities.Point3,System.Int32)">
+            <summary>
+            Handles dividing a point by an integer value
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="p">The value to divide all unit vectors by</param>
+            <returns>p1 / p</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Subtraction(BlockGame.Utilities.Point3,System.Int32)">
+            <summary>
+            Handles subtracting one point from another
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="v">The distance to add</param>
+            <returns>p1 - v</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Addition(BlockGame.Utilities.Point3,System.Int32)">
+            <summary>
+            Handles adding one point to another
+            </summary>
+            <param name="p1">The source point</param>
+            <param name="v">The distance to add</param>
+            <returns>p1 + v</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Implicit(BlockGame.Utilities.Point3)~Microsoft.Xna.Framework.Vector3">
+            <summary>
+            Handles casting a 3D point to a Vector3
+            </summary>
+            <param name="point">The point to cast</param>
+            <returns>The Vector3 version of point</returns>
+        </member>
+        <member name="M:BlockGame.Utilities.Point3.op_Implicit(Microsoft.Xna.Framework.Vector3)~BlockGame.Utilities.Point3">
+            <summary>
+            Handles casting a Vector3 to a 3D point 
+            </summary>
+            <param name="point">The point to cast</param>
+            <returns>The Point3 version of <i>point</i></returns>
+        </member>
+        <member name="P:BlockGame.Utilities.Point3.Volume">
+            <summary>
+            Gets the voulume under this point
+            </summary>
+        </member>
+        <member name="T:BlockGame.Blocks.TerrainGen">
+            <summary>
+            The terrain generator to use
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.TerrainGen.GroundLevel">
+            <summary>
+            The base z that the ground is at
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.TerrainGen.rand">
+            <summary>
+            The random number generator for this terrain
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.TerrainGen.xSample">
+            <summary>
+            The x sampling to use for terrain generation
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.TerrainGen.ySample">
+            <summary>
+            The y sampling to use for terrain generation
+            </summary>
+        </member>
+        <member name="F:BlockGame.Blocks.TerrainGen.zSample">
+            <summary>
+            The z sampling to use for terrain generation
+            </summary>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.SetSeed(System.Int32)">
+            <summary>
+            Sets the seed for the RNG
+            </summary>
+            <param name="seed">The seed to use for this level</param>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.GetBlockAtPos(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Get the BlockData at {x,y,z}
+            </summary>
+            <param name="x">The x co-ords of the block to get</param>
+            <param name="y">The y co-ords of the block to get</param>
+            <param name="z">The z co-ords of the block to get</param>
+            <returns>The BlockData for position {x,y,z}</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.HeightmapPass(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            The pass that represents the base Heightmap
+            </summary>
+            <param name="x">The x co-ord to check</param>
+            <param name="y">The y co-ord to check</param>
+            <param name="z">The z co-ord to check</param>
+            <returns>Either the SolidData or AirData</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.InitialHeight(System.Int32,System.Int32)">
+            <summary>
+            Gets the initial terrain height
+            </summary>
+            <param name="x">The x co-ord to check</param>
+            <param name="y">The y co-ord to check</param>
+            <returns>The initial z for the given position</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.WaterPass(System.Int32,System.Int32,System.Int32,BlockGame.BlockData)">
+            <summary>
+            Generates water in the terrain
+            </summary>
+            <param name="x">The x co-ord to get</param>
+            <param name="y">The y co-ord to get</param>
+            <param name="z">The z co-ord to get</param>
+            <param name="currentPass">The current data in the pass</param>
+            <returns>The post-pass data</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.GrassingPass(System.Int32,System.Int32,System.Int32,BlockGame.BlockData)">
+            <summary>
+            The pass that represents the grassing pass
+            </summary>
+            <param name="x">The x co-ord to check</param>
+            <param name="y">The y co-ord to check</param>
+            <param name="z">The z co-ord to check</param>
+            <returns>The new pass</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.CavePass(System.Int32,System.Int32,System.Int32,BlockGame.BlockData,System.Int32,System.Single)">
+            <summary>
+            Generates caves in the terrain
+            </summary>
+            <param name="x">The x co-ord to get</param>
+            <param name="y">The y co-ord to get</param>
+            <param name="z">The z co-ord to get</param>
+            <param name="currentPass">The current data in the pass</param>
+            <param name="caveDensity">The roughness of the caves, should be larger than 0</param>
+            <param name="caveSize">The size of caves, between 0 and 1. Note that this also changes
+            the desity of the caves</param>
+            <returns>the post-pass data</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.OrePass(System.Int32,System.Int32,System.Int32,BlockGame.BlockData,System.Int32,System.Single,System.Int32,BlockGame.BlockData,System.Single)">
+            <summary>
+            Generates caves in the terrain
+            </summary>
+            <param name="x">The x co-ord to get</param>
+            <param name="y">The y co-ord to get</param>
+            <param name="z">The z co-ord to get</param>
+            <param name="currentPass">The current data in the pass</param>
+            <param name="oreRoughness">The roughness/size of deposits</param>
+            <param name="density">The density of deposits</param>
+            <param name="falloff">The ore falloff, default 0.5F</param>
+            <param name="oreDat">The ore data to generate</param>
+            <param name="maxZ">The maximum z of the ore</param>
+            <returns>the post-pass data</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.IsSolid(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Checks if a given position is solid
+            </summary>
+            <param name="x">The x co-ord to check</param>
+            <param name="y">The y co-ord to check</param>
+            <param name="z">The z co-ord to check</param>
+            <returns>True if the position at {x,y,z} is solid</returns>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.GenTree(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Generates a tree in the world
+            </summary>
+            <param name="x">The x co-ord of the tree</param>
+            <param name="y">The y co-ord of the tree</param>
+            <param name="z">The z co-ord of the tree</param>
+            <param name="height">The height of the tree</param>
+        </member>
+        <member name="M:BlockGame.Blocks.TerrainGen.GenTree(System.Int32,System.Int32,System.Int32,System.Int32,BlockGame.Blocks.Chunk)">
+            <summary>
+            Generates a tree in the chunk
+            </summary>
+            <param name="x">The x co-ord of the tree</param>
+            <param name="y">The y co-ord of the tree</param>
+            <param name="z">The z co-ord of the tree</param>
+            <param name="height">The height of the tree</param>
+        </member>
+        <member name="T:BlockGame.Utilities.VertexPositionNormalTextureColor">
+            <summary>
+            Custom vertex structure for more advanced drawing
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.VertexPositionNormalTextureColor.SizeInBytes">
+            <summary>
+            The byte size of this vertex declaration
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.VertexPositionNormalTextureColor.Position">
+            <summary>
+            Stores the position of this vertex
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.VertexPositionNormalTextureColor.Normal">
+            <summary>
+            The normal for this vertex
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.VertexPositionNormalTextureColor.Color">
+            <summary>
+            The color of this vertex
+            </summary>
+        </member>
+        <member name="F:BlockGame.Utilities.VertexPositionNormalTextureColor.TexCoords">
+            <summary>
+            The UV co-ords for this vertex (the co-ords in the texture)
+            </summary>
+        </member>
+        <member name="M:BlockGame.Utilities.VertexPositionNormalTextureColor.#ctor(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Creates a new VertexPositionNormalTextureColor
+            </summary>
+            <param name="position">The position in space for this vertex</param>
+            <param name="Normal">The nomal for this vector</param>
+            <param name="TexCoords">The UV co-ords for this vertex</param>
+        </member>
+        <member name="M:BlockGame.Utilities.VertexPositionNormalTextureColor.#ctor(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Creates a new VertexPositionNormalTextureColor
+            </summary>
+            <param name="position">The position in space for this vertex</param>
+            <param name="Normal">The nomal for this vector</param>
+            <param name="TexCoords">The UV co-ords for this vertex</param>
+            <param name="color">The color of this vertex</param>
+        </member>
+        <member name="P:BlockGame.Utilities.VertexPositionNormalTextureColor.VertexDeclaration">
+            <summary>
+            The vertex declaration for this vertex type
+            </summary>
+        </member>
+    </members>
+</doc>

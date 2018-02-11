@@ -7,7 +7,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -17,7 +16,6 @@ using BlockGame.Render;
 using BlockGame.Blocks;
 using BlockGame.Utilities;
 using BlockGame.Blocks.BlockTypes;
-using Spine_Library.Input;
 using System.Diagnostics;
 
 namespace BlockGame
@@ -137,7 +135,7 @@ namespace BlockGame
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             //load a new font
-            spriteFont = Content.Load<SpriteFont>("DebugFont");
+            spriteFont = Content.Load<SpriteFont>("Font_Arial_10");
 
             //initialize the texture manager
             TextureManager.Initialize(
@@ -231,7 +229,7 @@ namespace BlockGame
                 k.update();
             }
 
-            Window.Title = "FPS: " + Spine_Library.Tools.FPSHandler.getFrameRate();
+            //Window.Title = "FPS: " + FPSHandler.getFrameRate();
 
             camera.UpdateMovement();
             //mappingCamera.UpdateMovement();
@@ -291,7 +289,7 @@ namespace BlockGame
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            Spine_Library.Tools.FPSHandler.onDraw(gameTime);
+            //FPSHandler.onDraw(gameTime);
 
             ThreedDraw();
             SpriteBatchDraw();

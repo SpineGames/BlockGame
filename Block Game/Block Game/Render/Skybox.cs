@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using BlockGame;
 using BlockGame.Utilities;
-using Spine_Library.Tools;
 using BlockGame.Blocks;
 
 namespace BlockGame.Render
@@ -62,8 +61,8 @@ namespace BlockGame.Render
         {
             Pos = camera.CameraPos + new Vector3(
                     0,
-                    (float)extraMath.lengthdir_x(MathHelper.ToRadians(sunAngle), 500),
-                    (float)extraMath.lengthdir_y(MathHelper.ToRadians(sunAngle), 500));
+                    (float)MathUtils.LengthdirX(sunAngle, 500),
+                    (float)MathUtils.LengthdirY(sunAngle, 500));
 
             Game1.worldEffect.World = Matrix.CreateScale(10F) * Matrix.CreateTranslation(Pos);
             

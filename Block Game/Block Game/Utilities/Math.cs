@@ -54,4 +54,34 @@ namespace BlockGame.Utilities
             return val;
         }
     }
+
+    public static class MathUtils
+    {
+        /// <summary>
+        /// Gets the change in x over the given rotation and length
+        /// </summary>
+        /// <param name="rotation">The rotation, in degrees. 0 is pointing to the right</param>
+        /// <param name="length">The length to calculate</param>
+        /// <returns>The change in x over the given rotation and length</returns>
+        public static float LengthdirX(float rotation, float length = 1.0f)
+        {
+            return (float)Math.Cos(MathHelper.ToRadians(rotation)) * length;
+        }
+
+        /// <summary>
+        /// Gets the change in y over the given rotation and length
+        /// </summary>
+        /// <param name="rotation">The rotation, in degrees. 0 is pointing to the right</param>
+        /// <param name="length">The length to calculate</param>
+        /// <returns>The change in y over the given rotation and length</returns>
+        public static float LengthdirY(float rotation, float length = 1.0f)
+        {
+            return (float)Math.Sin(MathHelper.ToRadians(rotation)) * length;
+        }
+
+        public static Vector3 FromYawPitch(float yaw, float pitch)
+        {
+            return new Vector3(LengthdirX(yaw), LengthdirY(yaw), LengthdirY(pitch));
+        }
+    }
 }

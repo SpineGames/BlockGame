@@ -274,9 +274,11 @@ namespace BlockGame.Blocks
             Debug.WriteLine("Time to set {0} blocks: {1}s\n", cuboid.Volume, time.Elapsed.TotalSeconds);
             time.Restart();
 #endif
-
-            foreach (Chunk chunk in _chunks.Values)
-                    chunk.ForceUpdate(cuboid);
+            lock (_chunks.Values)
+            {
+                for (int index = 0; index < _chunks.Count; index ++)
+                    _chunks.Values.ElementAt(index).ForceUpdate(cuboid);
+            }
             
 #if DEBUG
             Debug.WriteLine("Time to check @ update {0} chunks: {1}s\n", _chunks.Count, time.Elapsed.TotalSeconds);
@@ -394,8 +396,8 @@ namespace BlockGame.Blocks
             camera.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             camera.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
-            foreach (Chunk chunk in _chunks.Values)
-                chunk.Render(camera);
+            for (int i = 0; i < _chunks.Count; i ++ )
+                    _chunks.Values.ElementAt(i).Render(camera);
         }
 
         /// <summary>

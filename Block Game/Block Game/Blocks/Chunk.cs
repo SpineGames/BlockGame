@@ -411,8 +411,8 @@ namespace BlockGame.Blocks
 
         private void RenderBounds(Camera camera)
         {
-            //Utils.ApplyCamera(camera);
-            //Utils.DrawBoundingBox(Bounding, Color.Red, camera.GraphicsDevice);
+            Utils.ApplyCamera(camera);
+            Utils.DrawBoundingBox(Bounding, Color.Red, camera.GraphicsDevice);
         }
         #endregion
 

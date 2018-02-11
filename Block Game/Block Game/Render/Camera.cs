@@ -56,7 +56,7 @@ namespace BlockGame.Render
         {
             get
             {
-                Vector3 temp = Spine_Library.Tools.extraMath.getVector3(new Vector2(MathHelper.ToRadians(CameraYaw), MathHelper.ToRadians(CameraPitch)), 1);
+                Vector3 temp = MathUtils.FromYawPitch(cameraYaw + 90, cameraPitch);
                 temp.Normalize();
                 return temp;
             }
@@ -68,7 +68,7 @@ namespace BlockGame.Render
         {
             get
             {
-                Vector3 temp = Spine_Library.Tools.extraMath.getVector3(new Vector2(MathHelper.ToRadians(cameraYaw + 90), 0), 1);
+                Vector3 temp = MathUtils.FromYawPitch(cameraYaw + 90, 0);
                 temp.Normalize();
                 return temp;
             }
@@ -121,7 +121,7 @@ namespace BlockGame.Render
             this.cameraNormal = new Vector3(1,0,0);
 
             View = new ViewParameters();
-            View.Projection = Matrix.CreatePerspectiveFieldOfView(
+            View.Projection = Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(60),
                 (float)graphics.Viewport.Width /
                 (float)graphics.Viewport.Height,
